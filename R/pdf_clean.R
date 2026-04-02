@@ -27,6 +27,7 @@
 #' the output text to memory. Defaults to T.
 #' @param suppressWarn Boolean; F by default. Setting this to T suppresses pdf_text conversion warnings, which can be verbose.
 #' @param auto_headfoot_remove Boolean. Tries to remove headers and footers if T. May remove small amounts of paragraph text, especially if there is no header on a page. Defaults to T to avoid having entities that appear consistently in headers be artificially inflated in the textnet_extract network. Recommend keeping this parameter T unless using a separate header/footer removal tool.
+#' @param sentence_shift Boolean. If T, tries to shift a beginning partial sentence to the previous page.
 #' @return If return_to_memory is T, returns a list with a length equal 
 #' to the length of the pdfs parameter. Each element in the list is a character vector
 #' with a length equal to the number of pages in its respective document. If export_paths
@@ -37,7 +38,7 @@
 #' @export
 #' 
 
-pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=NULL, return_to_memory=T, suppressWarn = F, auto_headfoot_remove = T){
+pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=NULL, return_to_memory=T, suppressWarn = F, auto_headfoot_remove = T, sentence_shift = F){
   if(!requireNamespace("pdftools", quietly = TRUE)) {
     stop("Package 'pdftools' is required for pdf_clean(). ",
          "Install it with: pak::pak('pdftools') or install.packages('pdftools')\n",
@@ -376,6 +377,25 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
         #roman and arabic numerals) or (a letter, hyphen, and
         #set of numbers such as c-28) at the end of a page
       }   
+    }
+    
+    if(sentence_shift == T){
+      if(length(texts) > 1){
+        for(q in 2:length(texts)){
+          potential_fragment <- str_split_i(texts[q], "\\.( |\n|$)", 1)
+          potential_fragment <- str_remove(potential_fragment, pattern = "^\\n*")
+          #put period back on end of fragment
+          potential_fragment <- ifelse(
+            str_detect(potential_fragment, "^[a-z]"), paste0(potential_fragment,"."), "")
+          #if previous page does not end in a period, and if potential_fragment exists,
+          if(!str_detect(texts[q-1], "\\.$") & nchar(potential_fragment)>0){
+            #append fragment to previous page
+            texts[q-1] <- paste(texts[q-1], " ", potential_fragment)
+            #and delete fragment from current page
+            texts[q] <- str_remove(texts[q], fixed(potential_fragment))
+          }
+        }
+      }
     }
     
     if(!is.null(export_paths)){
