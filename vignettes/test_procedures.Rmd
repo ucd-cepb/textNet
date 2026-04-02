@@ -1,7 +1,7 @@
 ---
 title: "Testing Protocol Companion to textNet Vignette"
 author: Elise Zufall and Tyler Scott
-date: Updated 6 March 2026
+date: Updated 2 Apr 2026
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Testing Protocol Companion to textNet Vignette}
@@ -222,7 +222,7 @@ print(table)
 ```
 
 
-```{r plot, message=F, warning=F}
+```{r plot, message=F, warning=F, fig.width=5,fig.height=5, fig.retina=2}
 library(ggraph)
 set.seed(50000)
 old_extract_plot <- export_to_network(old_extract_clean, "igraph", keep_isolates = F, 
@@ -282,7 +282,7 @@ table(igraph::E(old_extract_net[[1]])$head_verb_tense)
 
 
 
-```{r composite}
+```{r composite, fig.width=5,fig.height=5, fig.retina=2}
 composite_net <- combine_networks(list(old_extract_net[[1]], new_extract_net[[1]]), 
                                      mode = "weighted")
 
@@ -409,7 +409,7 @@ with(combineddf,table(plan_version,num_graphs_in))
 
 
 
-```{r step8b4, eval=FALSE}
+```{r step8b4, eval=FALSE, fig.width=8,fig.height=6, fig.retina=2}
 library(gridExtra)
 library(ggplot2)
 b1 <- ggplot(old_node_df, aes(x = entity_type, y = deg)) + geom_boxplot() + 
