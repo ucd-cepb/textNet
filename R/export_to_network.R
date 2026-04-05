@@ -43,14 +43,14 @@
 #' @importFrom igraph cluster_louvain
 #' @importFrom igraph modularity
 #' @importFrom igraph V
-#' @importFrom igraph delete.vertices
+#' @importFrom igraph delete_vertices
 #' @importFrom igraph vertex_attr
 #' @importFrom igraph graph_from_data_frame
 #' @importFrom igraph is.loop
 #' @importFrom igraph simplify
 #' @importFrom igraph degree
 #' @importFrom igraph as_data_frame
-#' @importFrom igraph as.undirected
+#' @importFrom igraph as_undirected
 #' @importFrom dplyr filter
 #' @importFrom network network network.size network.edgecount network.density
 #' @importFrom sna connectedness centralization gtrans
@@ -118,7 +118,7 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
         igr <- igraph::delete.edges(igr, igraph::E(igr)[igraph::is.loop(igr)])
         
       }
-      igr <- igraph::delete.vertices(igr, igraph::V(igr)[igraph::degree(igr, igraph::V(igr), mode = "all",loops = self_loops)==0])
+      igr <- igraph::delete_vertices(igr, igraph::V(igr)[igraph::degree(igr, igraph::V(igr), mode = "all",loops = self_loops)==0])
     }else if(keep_isolates==F & collapse_edges == T){
       #remove isolates and use weighted
       igr <- igraph::graph_from_data_frame(d = textnet_extract$edgelist,  
@@ -131,7 +131,7 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
       
       igraph::E(igr)$weight <- 1
       igr <- igraph::simplify(igr, edge.attr.comb=list(weight="sum"), remove.loops = !self_loops)
-      igr <- igraph::delete.vertices(igr, igraph::V(igr)[igraph::degree(igr, igraph::V(igr), mode = "all",loops = self_loops)==0])
+      igr <- igraph::delete_vertices(igr, igraph::V(igr)[igraph::degree(igr, igraph::V(igr), mode = "all",loops = self_loops)==0])
       
     }
 
@@ -187,7 +187,7 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
   
   if(collapse_edges==T){
     #uses weighted graph to create undirected weighted graph, where new weight=sum of dir edge weights
-    undir <- igraph::as.undirected(igr, mode = "collapse")
+    undir <- igraph::as_undirected(igr, mode = "collapse")
     lc <- igraph::cluster_louvain(undir, weights = igraph::edge_attr(undir,"weight"))#uses weights of undirected igraph
     attr_tbl$modularity <- igraph::modularity(undir,membership = lc$membership, weights = igraph::edge_attr(undir, "weight"))
     attr_tbl$num_communities <- length(base::unique(lc$membership))
@@ -209,7 +209,7 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
     igraph::E(undir)$weight <- 1
     undir <- igraph::simplify(undir, edge.attr.comb=list(weight="sum"), remove.loops = !self_loops)
     #undir is an undirected, weighted version of the network
-    undir <- igraph::as.undirected(undir, mode = "collapse")
+    undir <- igraph::as_undirected(undir, mode = "collapse")
     lc <- igraph::cluster_louvain(undir, weights = igraph::edge_attr(undir,"weight"))#uses weights of undirected igraph
     attr_tbl$modularity <- igraph::modularity(undir,membership = lc$membership, weights = igraph::edge_attr(undir, "weight"))
     attr_tbl$num_communities <- length(base::unique(lc$membership))

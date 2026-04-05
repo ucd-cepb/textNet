@@ -28,9 +28,7 @@ test_that("number of elements equals number of files", {
 
 ### Pre-Processing Step II: Parse Text
 
-
-library(findpython)
-ret_path <- find_python_cmd(required_modules = c('spacy', 'en_core_web_lg'))
+ret_path <- textNet:::find_spacy_python(model = 'en_core_web_trf')
 
 water_bodies <- c("surface water", "Surface water", "groundwater", "Groundwater", 
                   "San Joaquin River", "Cottonwood Creek", "Chowchilla Canal Bypass", 
