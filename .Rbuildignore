@@ -7,3 +7,4 @@
 ^img$
 ^.github
 ^.claude
+^vignettes/.*\.html$

@@ -2,12 +2,13 @@
 title: "Testing Protocol Companion to textNet Vignette"
 author: Elise Zufall and Tyler Scott
 date: Updated 2 Apr 2026
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Testing Protocol Companion to textNet Vignette}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: rmarkdown::html_document
 ---
+
+<!-- NOTE: This script requires spacyr, reticulate, and a working spaCy
+     Python environment. It is not built as a vignette because these are
+     suggested (not required) dependencies. Run it manually on a machine
+     with spacyr configured. -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
