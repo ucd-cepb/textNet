@@ -34,7 +34,7 @@
 #' is not null, each character vector of text will be saved to a separate RDS file, where the 
 #' number of files is equal to the number of pdfs. 
 #' @importFrom methods is
-#' @importFrom stringr str_split str_detect str_remove
+#' @importFrom stringr str_split str_detect str_remove str_count str_split_i fixed
 #' @export
 #' 
 

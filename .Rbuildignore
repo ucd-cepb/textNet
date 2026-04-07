@@ -8,3 +8,5 @@
 ^.github
 ^.claude
 ^vignettes/.*\.html$
+^CONTRIBUTING\.md$
+^data-raw$

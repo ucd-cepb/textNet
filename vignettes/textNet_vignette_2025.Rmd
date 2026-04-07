@@ -11,7 +11,7 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 #knitr::opts_knit$set(root.dir = "~/Documents")
 ```
 
@@ -91,14 +91,13 @@ old_new_parsed <- textNet::old_new_parsed
 #initialize empty list of extracts to populate
 extracts <- vector(mode="list",length=length(old_new_parsed))
 #populate each element of list with results of textnet_extract
-#increasing "cl" to 4 for speed
 #keeping four types of entities: organizations, 
 #geopolitical entities, people, and water bodies
 #keep_incomplete_edges is F by default; T keeps
 #'edges' that are missing either a source node
 #or a target node
 for(m in 1:length(old_new_parsed)){
-  extracts[[m]] <- textnet_extract(old_new_parsed[[m]],cl=2,
+  extracts[[m]] <- textnet_extract(old_new_parsed[[m]],
                    keep_entities = c('ORG','GPE','PERSON','WATER'), 
                    keep_incomplete_edges=T)
    }
@@ -505,7 +504,7 @@ names(old_new_text) <- c("old","new")
 
 The above code produces results equivalent to the bundled sample data, which can be loaded directly:
 
-```{r pdf_clean_load, echo = FALSE}
+```{r pdf_clean_load, echo = TRUE}
 library(textNet)
 library(stringr)
 old_new_text <- textNet::old_new_text
@@ -554,7 +553,7 @@ old_new_parsed <- textNet::parse_text(ret_path,
 
 The above code produces results equivalent to the bundled sample data, which can be loaded directly:
 
-```{r parse_load, echo = FALSE}
+```{r parse_load, echo = TRUE}
 old_new_parsed <- textNet::old_new_parsed
 ```
 
