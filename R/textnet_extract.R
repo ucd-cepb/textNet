@@ -1,11 +1,11 @@
 # Exported function
 # textnet_extract 
 
-#' Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and apposititve list
+#' Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and appositive list
 #'
 #' @param x parsed spacy document
 #' @param concatenator how entity parts are concatenated (defaults to "_")
-#' @param file location where an list object with an edgelist, nodelist, verblist, and appositivelist should be saved as .RDS file
+#' @param file location where a list object with an edgelist, nodelist, verblist, and appositivelist should be saved as .RDS file
 #' @param cl number of cores to crawl sentences in parallel (defaults to 1)
 #' @param keep_entities character vector of spacy entity types to retain, defaults to people (PERSON), organizations (ORG), and geographic entities (GPE)
 #' @param return_to_memory boolean for whether function should return final result as workspace object

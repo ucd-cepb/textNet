@@ -143,25 +143,25 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
     #keep_all
     net <- network::network(x=agency_df$edges, directed = T,
                    hyper = F, loops = self_loops, multiple = T, 
-                   bipartiate = F, vertices = agency_df$vertices,
+                   bipartite = F, vertices = agency_df$vertices,
                    matrix.type = "edgelist")
   }else if(keep_isolates==T & collapse_edges == T){
     #keep isolates but use weighted
     net <- network::network(x=agency_df$edges, directed = T,
                    hyper = F, loops = self_loops, multiple = F, 
-                   bipartiate = F, vertices = agency_df$vertices,
+                   bipartite = F, vertices = agency_df$vertices,
                    matrix.type = "edgelist")
   }else if(keep_isolates==F & collapse_edges == F){
     #remove isolates but use original edges
     net <- network::network(x=agency_df$edges, directed = T,
                    hyper = F, loops = self_loops, multiple = T, 
-                   bipartiate = F, vertices = nodes_no_iso,
+                   bipartite = F, vertices = nodes_no_iso,
                    matrix.type = "edgelist")
   }else if(keep_isolates==F & collapse_edges == T){
     #remove isolates and use weighted
     net <- network::network(x=agency_df$edges, directed = T,
                    hyper = F, loops = self_loops, multiple = F,
-                   bipartiate = F, vertices = nodes_no_iso,
+                   bipartite = F, vertices = nodes_no_iso,
                    matrix.type = "edgelist")
   }
   

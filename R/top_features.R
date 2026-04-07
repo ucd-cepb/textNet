@@ -45,7 +45,7 @@ top_features <- function(files, from_file=F){
     
     net <- network::network(x=igr_df$edges[,1:2], directed = T,
                           hyper = F, loops = T, multiple = T, 
-                          bipartiate = F, vertices = igr_df$vertices,
+                          bipartite = F, vertices = igr_df$vertices,
                           matrix.type = "edgelist")
     
     

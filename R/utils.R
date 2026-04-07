@@ -2,7 +2,7 @@
 # create_empty_sentence_parse_list
 # generate_proper_name
 
-#' Create an list to iterate over a sentence and store items
+#' Create a list to iterate over a sentence and store items
 #'
 #' Takes an integer value equivalent to token length of sentence and generates named list
 #' @param N integer value that sets vector length
