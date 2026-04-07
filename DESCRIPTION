@@ -32,9 +32,7 @@ Imports:
     igraph,
     sna,
     ohenery,
-    R.utils,
-    methods,
-    xml2
+    methods
 Suggests:
     reticulate,
     spacyr,

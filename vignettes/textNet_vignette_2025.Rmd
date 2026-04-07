@@ -2,7 +2,7 @@
 title: "textNet: Directed, Multiplex, Multimodal Event Network Extraction from Textual Data"
 author: Elise Zufall and Tyler Scott
 date: Updated 2 Apr 2026
-bibliography: paper.bib
+bibliography: vignette_references.bib
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{textNet: Directed, Multiplex, Multimodal Event Network Extraction from Textual Data}
@@ -13,6 +13,9 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 #knitr::opts_knit$set(root.dir = "~/Documents")
+has_viz <- requireNamespace("ggraph", quietly = TRUE) &&
+           requireNamespace("ggplot2", quietly = TRUE) &&
+           requireNamespace("gridExtra", quietly = TRUE)
 ```
 
 ## Introduction
@@ -219,7 +222,11 @@ print(table)
 ```
 The *ggraph* package [@pedersen_ggraph_2024] has been used to create the two network visualizations seen here, using a weighted version of the igraphs constructed below. We set collapse_edges = T to convert the multiplex graph into its weighted equivalent.
 
-```{r plot, message=F, warning=F}
+```{r viz_note, echo=FALSE, results='asis', eval=!has_viz}
+cat("**Note:** The plots in this vignette require the ggraph, ggplot2, and gridExtra packages. Install them to see the visualizations: `install.packages(c('ggraph', 'ggplot2', 'gridExtra'))`")
+```
+
+```{r plot, message=F, warning=F, eval=has_viz}
 library(ggraph)
 #to plot the networks, the same export_to_network function can be used, 
 #but a weighted version of the graph, such that all edges between 
@@ -292,10 +299,13 @@ The combine_networks function allows a composite network to be generated from mu
 
 For best results, composite network generation should not be done without an adequate disambiguation in Step 4. A function is included that merges the edgelists and nodelists of all documents. If the same node name is mentioned in multiple documents, the node attributes associated with the highest total number of edges for that node name are preserved.
 
-```{r composite, fig.width=5,fig.height=5, fig.retina=2}
+```{r composite_data}
 #we generate a composite network with the function below
-composite_net <- combine_networks(list(old_extract_net[[1]], new_extract_net[[1]]), 
+composite_net <- combine_networks(list(old_extract_net[[1]], new_extract_net[[1]]),
                                      mode = "weighted")
+```
+
+```{r composite_plot, fig.width=5,fig.height=5, fig.retina=2, eval=has_viz}
 set.seed(50000)
 ggraph(composite_net, layout = 'fr')+
       geom_edge_fan(aes(alpha = weight),
@@ -424,7 +434,7 @@ with(combineddf,table(plan_version,num_graphs_in))
 
 We can also investigate differences in network statistics between the two plans. For instance, the distribution of degree does not change much between plan versions. The distribution of betweenness, likewise, is relatively stable except for person nodes, which are the least common nodes in the graph.
 
-```{r step8b4, warning=F, message=F, fig.width=10,fig.height=8, fig.retina=2}
+```{r step8b4, warning=F, message=F, fig.width=10,fig.height=8, fig.retina=2, eval=has_viz}
 library(gridExtra)
 library(ggplot2)
 #summary of differences between the two plans
