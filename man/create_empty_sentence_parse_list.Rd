@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{create_empty_sentence_parse_list}
 \alias{create_empty_sentence_parse_list}
-\title{Create an list to iterate over a sentence and store items}
+\title{Create a list to iterate over a sentence and store items}
 \usage{
 create_empty_sentence_parse_list(N)
 }

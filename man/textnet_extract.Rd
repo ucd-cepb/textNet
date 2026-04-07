@@ -2,7 +2,7 @@
 % Please edit documentation in R/textnet_extract.R
 \name{textnet_extract}
 \alias{textnet_extract}
-\title{Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and apposititve list}
+\title{Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and appositive list}
 \usage{
 textnet_extract(
   x,
@@ -20,7 +20,7 @@ textnet_extract(
 
 \item{concatenator}{how entity parts are concatenated (defaults to "_")}
 
-\item{file}{location where an list object with an edgelist, nodelist, verblist, and appositivelist should be saved as .RDS file}
+\item{file}{location where a list object with an edgelist, nodelist, verblist, and appositivelist should be saved as .RDS file}
 
 \item{cl}{number of cores to crawl sentences in parallel (defaults to 1)}
 
@@ -75,5 +75,5 @@ A list with four objects:
 data frame with original parsed sentence + added dependency parsing
 }
 \description{
-Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and apposititve list
+Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and appositive list
 }

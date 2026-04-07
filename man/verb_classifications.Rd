@@ -14,7 +14,7 @@ An object of class "data.table"
 data(verb_classifications)
 }
 \description{
-Attributes from this table are bound to the verblist exported by custom_entity_extract.
+Attributes from this table are bound to the verblist exported by textnet_extract.
 }
 \examples{
 data(verb_classifications)
