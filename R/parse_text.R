@@ -1,7 +1,7 @@
 # Exported function
 #parse_text
 
-#' Parse text using spaCy (CPU, en_core_web_lg model)
+#' Parse text using spaCy (en_core_web_lg model)
 #'
 #' Creates an edgelist and nodelist for each document using spaCy's en_core_web_lg model.
 #'
@@ -23,7 +23,6 @@
 #' @importFrom stringr str_detect str_replace_all
 #' @importFrom stringi stri_replace_all_regex stri_escape_unicode
 #' @importFrom pbapply pblapply
-#' @importFrom utils data
 #' @export
 
 parse_text <- function(ret_path, keep_hyph_together=FALSE, phrases_to_concatenate=NA,
@@ -103,11 +102,6 @@ parse_text <- function(ret_path, keep_hyph_together=FALSE, phrases_to_concatenat
          call.=FALSE)
   }
   reticulate::py_config()
-
-  # Initialize spaCy with en_core_web_lg (CPU)
-  if(!stringr::str_detect("en_core_web_lg", "^en_")){
-    warning("This package was developed and tested on English texts.")
-  }
 
   tryCatch({
     spacyr::spacy_initialize(model = "en_core_web_lg")
@@ -195,8 +189,7 @@ parse_text <- function(ret_path, keep_hyph_together=FALSE, phrases_to_concatenat
 
       lettertokens <- parsedtxt$token[stringr::str_detect(parsedtxt$token, "[a-zA-Z]")]
       lettertokensunicodeescaped <- stringi::stri_escape_unicode(lettertokens)
-      utils::data(eng_words)
-      pctlettersineng <- sum(lettertokensunicodeescaped %in% eng_words)/length(lettertokensunicodeescaped)
+      pctlettersineng <- sum(lettertokensunicodeescaped %in% textNet::eng_words)/length(lettertokensunicodeescaped)
 
       if(pctlettersineng<0.5){
         warning(paste0("Fewer than 50% of letter-containing tokens in the document ", unique_files[m] ," are English words."))

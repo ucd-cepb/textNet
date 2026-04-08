@@ -57,7 +57,6 @@
 #' @importFrom dplyr group_by filter
 #' @importFrom tidyr expand
 #' @importFrom pbapply pblapply
-#' @importFrom utils data
 #' @export
 #'
 
@@ -333,8 +332,7 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   
   #appending verb classification
   #this currently only captures single-word verbs
-  utils::data(verb_classifications)
-  verblist <- data.table::merge.data.table(unique_lemmas,verb_classifications,by.x="head_verb_lemma",by.y="verb", all.x=TRUE, all.y=FALSE)
+  verblist <- data.table::merge.data.table(unique_lemmas,textNet::verb_classifications,by.x="head_verb_lemma",by.y="verb", all.x=TRUE, all.y=FALSE)
   
   #putting source and target first
   data.table::setcolorder(edgelist, c(2:ncol(edgelist),1))

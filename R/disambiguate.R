@@ -64,7 +64,9 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
     stop("'concatenator' must be a single character string")
   }
 
+  old_warn <- getOption("warn")
   options(warn=1)
+  on.exit(options(warn=old_warn), add=TRUE)
   #Data formatting checks####
   multi_to <- sapply(1:length(to), function(w) length(to[[w]]) > 1)
   multi_from <- sapply(1:length(from), function(w) length(from[[w]]) > 1)
