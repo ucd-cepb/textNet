@@ -78,7 +78,7 @@ combine_networks <- function(textnet_igraphs, mode = c('multiplex','weighted')){
   
   supernetwork <- igraph::graph_from_data_frame(superedgesdt,
                                                 vertices = supernodesdt,
-                                                directed = T)
+                                                directed = TRUE)
   
   if(mode == "weighted"){
     weighted_graph <- supernetwork
@@ -88,7 +88,7 @@ combine_networks <- function(textnet_igraphs, mode = c('multiplex','weighted')){
     }
     
     igraph::E(weighted_graph)$weight <- 1
-    weighted_graph <- igraph::simplify(weighted_graph, edge.attr.comb=list(weight="sum"), remove.loops = F)
+    weighted_graph <- igraph::simplify(weighted_graph, edge.attr.comb=list(weight="sum"), remove.loops = FALSE)
     
     return(weighted_graph)
     

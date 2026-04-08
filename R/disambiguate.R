@@ -13,8 +13,8 @@
 #' These vector entities are disambiguated first, followed by the rest of the strings in order of appearance in 'from' and 'to'.
 #rows such that there is an edge for each of the entities in the "to" cell. 
 #' @param match_partial_entity A logical vector of the same length as 'from'. 
-#' If match_partial_entity is T for an element, it can match on the 'from' term separated by concatenator. 
-#' Otherwise, the 'from' term must match the whole entity name to be accepted. Defaults to "F" for all elements.
+#' If match_partial_entity is TRUE for an element, it can match on the 'from' term separated by concatenator. 
+#' Otherwise, the 'from' term must match the whole entity name to be accepted. Defaults to "FALSE" for all elements.
 #' @param textnet_extract An output of the function textnet_extract
 #' @param try_drop A regex expression representing one or more terms to try dropping. 
 #' The usual case for this is country or state names, such as "^US_". 
@@ -22,7 +22,7 @@
 #' If not, it determines whether removing try_drop from the remaining elements enables them to match a term in 'from'. 
 #' If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.' 
 #' The non-matches remains unchanged.
-#' @param recursive A logical value, defaulting to T. If recursive is T, the function runs multiple times. 
+#' @param recursive A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times. 
 #' The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from', 
 #' which may in turn correspond to a 'to' value that is found in 'from', and so on. 
 #' @param concatenator The word boundary to look for when match_partial_entity is true. Defaults to "_". 
@@ -38,7 +38,7 @@
 
 #if recursive is true, runs it multiple times to reach the end of the chain.
 
-disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, length(from)), try_drop=NULL, recursive=T, concatenator="_"){
+disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FALSE, length(from)), try_drop=NULL, recursive=TRUE, concatenator="_"){
   # Input validation
   if(!is.list(from)) {
     stop("'from' must be a list")
@@ -78,15 +78,15 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
      length(to) != length(from)){
     stop("The arguments to, from, and match_partial_entity must all be the same length.")
   }
-  if(sum(multi_to==T & match_partial_entity==T)>0){
-    stop("Elements for which 'to' is a list of length greater than 1 may not be matched on a partial string. Please set match_partial_entity to F for these elements.")
+  if(sum(multi_to==TRUE & match_partial_entity==TRUE)>0){
+    stop("Elements for which 'to' is a list of length greater than 1 may not be matched on a partial string. Please set match_partial_entity to FALSE for these elements.")
   }
   
   which_froms_are_subsets_of_tos <- which(sapply(seq_along(to), function (x) sum(
     stringr::str_detect(string = to[[x]], pattern = from[[x]])))==1)
   if(length(which_froms_are_subsets_of_tos)>0 & sum(match_partial_entity[which_froms_are_subsets_of_tos])>0){
-    match_partial_entity[which_froms_are_subsets_of_tos] <- F
-    warning("Some elements in 'from' are substrings of the corresponding elements in 'to.' The match_partial_entity value has been automatically changed to F for these 'from' elements to avoid unexpected behavior: ",
+    match_partial_entity[which_froms_are_subsets_of_tos] <- FALSE
+    warning("Some elements in 'from' are substrings of the corresponding elements in 'to.' The match_partial_entity value has been automatically changed to FALSE for these 'from' elements to avoid unexpected behavior: ",
      paste0(from[which_froms_are_subsets_of_tos], collapse = ", ")
             )
   }
@@ -118,7 +118,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
   carryovers <- to0[which(to0 %in% vectfrom)]
   previous_carryover_length <- length(carryovers)
   times_to_repeat <- 1
-  is_inf_loop <- F
+  is_inf_loop <- FALSE
   to_nmin1 <- to0
   while(length(carryovers)>0 & !is_inf_loop){
     from_n <- vectfrom[which(vectfrom %in% carryovers)]
@@ -170,7 +170,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     }
     b <- b+1
   }
-  if(is_inf_loop==T){
+  if(is_inf_loop==TRUE){
     warning(paste0("The following to/from terms were in an infinite loop: ", paste0(carryovers, collapse = ", "), ". ",
                    "Resolved by removing 'from' elements ",paste0(removedelements, collapse=", ")))
     #rerun the bit of code that finds the number of times to repeat now that the loop is resolved  
@@ -180,7 +180,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     to0 <- vectto[step0]
     carryovers <- to0[which(to0 %in% vectfrom)]
     times_to_repeat <- 1
-    is_inf_loop <- F
+    is_inf_loop <- FALSE
     to_nmin1 <- to0
     while(length(carryovers)>0 & !is_inf_loop){
       from_n <- vectfrom[which(vectfrom %in% carryovers)]
@@ -210,7 +210,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
   carryovers <- to0[which(sapply(lapply(seq_along(to0),
                   function(x) stringr::str_detect(to0[x], 
                          fromsthatallowpartialmatching)), function(x) sum(x))>0)]
-  is_inf_loop <- F
+  is_inf_loop <- FALSE
   to_nmin1 <- to0
   while(length(carryovers)>0 & !is_inf_loop){
     from_n <- vectfrom[which(sapply(lapply(seq_along(vectfrom),
@@ -225,12 +225,12 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
   }
   problematicfroms <- which(sapply(lapply(seq_along(vectfrom),
                       function(x) stringr::str_detect(carryovers, vectfrom[x])), function(x) sum(x))>0)
-  match_partial_entity[problematicfroms] <- F
+  match_partial_entity[problematicfroms] <- FALSE
   
   
-  if(is_inf_loop==T){
+  if(is_inf_loop==TRUE){
     warning(paste0("The following to/from terms were in an infinite loop because of partial matching allowments: ", paste0(carryovers, collapse = ", "), ". ",
-                   "Resolved by automatically setting match_partial_entity to F for elements ", paste0(problematicfroms, collapse = ", ")))
+                   "Resolved by automatically setting match_partial_entity to FALSE for elements ", paste0(problematicfroms, collapse = ", ")))
     
   }
   
@@ -244,19 +244,19 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
               paste0("^",concatenator,"*the$"),
               paste0("^",concatenator,"*THE$"))
  
-  index <- which(grepl(paste(remove,collapse='|'),from,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'),from,perl=TRUE))
   from[index] <- stringr::str_remove_all(from[index],paste(remove,collapse= '|'))
   
-  index <- which(grepl(paste(remove,collapse='|'),to,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'),to,perl=TRUE))
   to[index] <- stringr::str_remove_all(to[index],paste(remove,collapse= '|'))
   
-  index <- which(grepl(paste(remove,collapse='|'), textnet_extract$edgelist$source,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'), textnet_extract$edgelist$source,perl=TRUE))
   textnet_extract$edgelist$source[index] <- stringr::str_remove_all(textnet_extract$edgelist$source[index],paste(remove,collapse= '|'))
   
-  index <- which(grepl(paste(remove,collapse='|'), textnet_extract$edgelist$target,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'), textnet_extract$edgelist$target,perl=TRUE))
   textnet_extract$edgelist$target[index] <- stringr::str_remove_all(textnet_extract$edgelist$target[index],paste(remove,collapse= '|'))
   
-  index <- which(grepl(paste(remove,collapse='|'), textnet_extract$nodelist$entity_name,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'), textnet_extract$nodelist$entity_name,perl=TRUE))
   textnet_extract$nodelist$entity_name[index] <- stringr::str_remove_all(textnet_extract$nodelist$entity_name[index],paste(remove,collapse= '|'))
   
   #Section 2: Start Recursive Disambiguation ####
@@ -265,8 +265,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     
     sub_try_drop_forlists <- function(remove, terms, didntmatch){
       tempv <- terms
-      rem <- grepl(paste(remove,collapse = '|'),terms,perl = T)
-      tempv[rem ==T & didntmatch==T] <- stringr::str_remove_all(tempv[rem==T& didntmatch==T],paste(remove,collapse = '|'))
+      rem <- grepl(paste(remove,collapse = '|'),terms,perl = TRUE)
+      tempv[rem ==TRUE & didntmatch==TRUE] <- stringr::str_remove_all(tempv[rem==TRUE& didntmatch==TRUE],paste(remove,collapse = '|'))
       
       #step two, now that try_drop is removed, does it match the from? if so, substitute the from.
       #then return only the terms that actually changed
@@ -316,7 +316,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     names(namedvect) <- fromregex
     
     #if the extract matches something that's supposed to turn into a list, send it to a temp column
-    if(sum(multi_to==T)>0){
+    if(sum(multi_to==TRUE)>0){
       froms_of_multi_to <- from[multi_to]
       tos_of_multi_to <- to[multi_to]
       
@@ -325,11 +325,11 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
       textnet_extract$nodelist$entity_nametemp <- textnet_extract$nodelist$entity_name
       
       #Sub-subsection 1: Sourcetemp####
-      index <- rep(F, length=length(textnet_extract$edgelist$sourcetemp))
+      index <- rep(FALSE, length=length(textnet_extract$edgelist$sourcetemp))
       for(q in 1:length(froms_of_multi_to)){
         index <- ifelse(is.na(textnet_extract$edgelist$sourcetemp),
-                        F, ifelse(textnet_extract$edgelist$sourcetemp == froms_of_multi_to[[q]], 
-                                  T, index))
+                        FALSE, ifelse(textnet_extract$edgelist$sourcetemp == froms_of_multi_to[[q]], 
+                                  TRUE, index))
         
         textnet_extract$edgelist$sourcetemp <- ifelse(is.na(textnet_extract$edgelist$sourcetemp),
                            NA, ifelse(textnet_extract$edgelist$sourcetemp == froms_of_multi_to[[q]], 
@@ -342,12 +342,12 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
       }
       
       #Sub-subsection 2: Targettemp####
-      index <- rep(F, length=length(textnet_extract$edgelist$targettemp))
+      index <- rep(FALSE, length=length(textnet_extract$edgelist$targettemp))
       for(q in 1:length(froms_of_multi_to)){
         #progressively adds all of the multi-length entities to index as cycles through vals of q
         index <- ifelse(is.na(textnet_extract$edgelist$targettemp),
-                        F, ifelse(textnet_extract$edgelist$targettemp == froms_of_multi_to[[q]], 
-                                  T, index))
+                        FALSE, ifelse(textnet_extract$edgelist$targettemp == froms_of_multi_to[[q]], 
+                                  TRUE, index))
         
         textnet_extract$edgelist$targettemp <- ifelse(is.na(textnet_extract$edgelist$targettemp),
                                                       NA, ifelse(textnet_extract$edgelist$targettemp == froms_of_multi_to[[q]], 
@@ -361,11 +361,11 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
       }
       
       #Sub-subsection 3: entity_nametemp####
-      index <- rep(F, length=length(textnet_extract$nodelist$entity_nametemp))
+      index <- rep(FALSE, length=length(textnet_extract$nodelist$entity_nametemp))
       for(q in 1:length(froms_of_multi_to)){
         index <- ifelse(is.na(textnet_extract$nodelist$entity_nametemp),
-                        F, ifelse(textnet_extract$nodelist$entity_nametemp == froms_of_multi_to[[q]], 
-                                  T, index))
+                        FALSE, ifelse(textnet_extract$nodelist$entity_nametemp == froms_of_multi_to[[q]], 
+                                  TRUE, index))
         
         textnet_extract$nodelist$entity_nametemp <- ifelse(is.na(textnet_extract$nodelist$entity_nametemp),
                                                           NA, ifelse(textnet_extract$nodelist$entity_nametemp == froms_of_multi_to[[q]], 
@@ -401,8 +401,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     #if doesn't match, remove try_drop from the edgelist and nodelist and see if it matches
     sub_try_drop <- function(remove, terms, didntmatch){
       tempv <- terms
-      rem <- grepl(paste(remove,collapse = '|'),terms,perl = T)
-      tempv[rem ==T & didntmatch==T] <- stringr::str_remove_all(tempv[rem==T& didntmatch==T],paste(remove,collapse = '|'))
+      rem <- grepl(paste(remove,collapse = '|'),terms,perl = TRUE)
+      tempv[rem ==TRUE & didntmatch==TRUE] <- stringr::str_remove_all(tempv[rem==TRUE& didntmatch==TRUE],paste(remove,collapse = '|'))
       
       #step two, now that try_drop is removed, does it match the from? if so, substitute the to.
       #then return only the terms that actually changed
@@ -453,8 +453,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     #if source node with try_drop dropped matches a different node in the nodelist,
     #convert it, and remove the node that's identical that contains try_drop
     tempv <- textnet_extract$edgelist$source
-    rem <- grepl(paste(try_drop,collapse = '|'),textnet_extract$edgelist$source,perl = T)
-    abbrevs <- stringr::str_remove_all(tempv[rem==T],paste(try_drop,collapse = '|'))
+    rem <- grepl(paste(try_drop,collapse = '|'),textnet_extract$edgelist$source,perl = TRUE)
+    abbrevs <- stringr::str_remove_all(tempv[rem==TRUE],paste(try_drop,collapse = '|'))
     #now that try_drop is removed, does it match another node? if so, substitute the name of that other node.
     dropped_in_terms <- which(abbrevs %in% 
                                 textnet_extract$nodelist$entity_name)
@@ -475,8 +475,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     #if target node with try_drop dropped matches a different node in the nodelist,
     #convert it, and remove the node that's identical that contains try_drop
     tempv <- textnet_extract$edgelist$target
-    rem <- grepl(paste(try_drop,collapse = '|'),textnet_extract$edgelist$target,perl = T)
-    abbrevs <- stringr::str_remove_all(tempv[rem==T],paste(try_drop,collapse = '|'))
+    rem <- grepl(paste(try_drop,collapse = '|'),textnet_extract$edgelist$target,perl = TRUE)
+    abbrevs <- stringr::str_remove_all(tempv[rem==TRUE],paste(try_drop,collapse = '|'))
     #now that try_drop is removed, does it match another node? if so, substitute the name of that other node.
     dropped_in_terms <- which(abbrevs %in% 
                                 textnet_extract$nodelist$entity_name)
@@ -497,8 +497,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
     #if nodelist node with try_drop dropped matches a different node in the nodelist,
     #convert it, and remove the node that's identical that contains try_drop
     tempv <- textnet_extract$nodelist$entity_name
-    rem <- grepl(paste(try_drop,collapse = '|'),textnet_extract$nodelist$entity_name,perl = T)
-    abbrevs <- stringr::str_remove_all(tempv[rem==T],paste(try_drop,collapse = '|'))
+    rem <- grepl(paste(try_drop,collapse = '|'),textnet_extract$nodelist$entity_name,perl = TRUE)
+    abbrevs <- stringr::str_remove_all(tempv[rem==TRUE],paste(try_drop,collapse = '|'))
     #now that try_drop is removed, does it match another node? if so, substitute the name of that other node.
     dropped_in_terms <- which(abbrevs %in% 
                                 textnet_extract$nodelist$entity_name)
@@ -526,7 +526,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
   
   #removes the again
   remove <- c(paste0("^",concatenator,"*the_"),paste0("^",concatenator,"*the$"))
-  index <- which(grepl(paste(remove,collapse='|'),textnet_extract$nodelist$entity_name,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'),textnet_extract$nodelist$entity_name,perl=TRUE))
   textnet_extract$nodelist$entity_name[index] <- stringr::str_remove_all(
     textnet_extract$nodelist$entity_name[index],paste(remove,collapse= '|'))
   
@@ -561,11 +561,11 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
   textnet_extract$edgelist$target <- tolower(textnet_extract$edgelist$target)
   
   #removes "the" again
-  index <- which(grepl(paste(remove,collapse='|'),textnet_extract$edgelist$source,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'),textnet_extract$edgelist$source,perl=TRUE))
   textnet_extract$edgelist$source[index] <- stringr::str_remove_all(
     textnet_extract$edgelist$source[index],paste(remove,collapse= '|'))
   
-  index <- which(grepl(paste(remove,collapse='|'),textnet_extract$edgelist$target,perl=T))
+  index <- which(grepl(paste(remove,collapse='|'),textnet_extract$edgelist$target,perl=TRUE))
   textnet_extract$edgelist$target[index] <- stringr::str_remove_all(
     textnet_extract$edgelist$target[index],paste(remove,collapse= '|'))
   
@@ -583,8 +583,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(F, 
   #remove any incomplete edges that may have resulted from the disambiguation process
   #this function should not cause any additions to the existing incomplete edges in a usual case
   textnet_extract$edgelist$edgeiscomplete <- !is.na(textnet_extract$edgelist$source) & !is.na(textnet_extract$edgelist$target)
-  textnet_extract$edgelist[, `:=`(hascompleteedge, any(edgeiscomplete==T)), by = c("doc_sent_verb")]
-  textnet_extract$edgelist <- textnet_extract$edgelist %>% dplyr::filter((hascompleteedge==T & edgeiscomplete==T) | hascompleteedge==F)
+  textnet_extract$edgelist[, `:=`(hascompleteedge, any(edgeiscomplete==TRUE)), by = c("doc_sent_verb")]
+  textnet_extract$edgelist <- textnet_extract$edgelist %>% dplyr::filter((hascompleteedge==TRUE & edgeiscomplete==TRUE) | hascompleteedge==FALSE)
   textnet_extract$edgelist$hascompleteedge <- NULL
   #Section 4: Return####
   return(textnet_extract)

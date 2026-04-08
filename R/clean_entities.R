@@ -7,11 +7,11 @@
 #' All non-word characters are removed.
 #' Consecutive underscores are collapsed to a single underscore.
 #' Leading and trailing underscores are removed.
-#' Entities that have no letters are removed, if remove_nums is set to T.
+#' Entities that have no letters are removed, if remove_nums is set to TRUE.
 #'
 #' @param v a vector of entity names
-#' @param remove_nums A boolean. If T, sets entities that contain no letters to an empty string. If F, sets entities that contain no letters or numbers to an empty string.
-#' @param remove_trailing_s A boolean. If T, removes trailing instances of concatenator+s, or apostrophe+s in each element of v.
+#' @param remove_nums A boolean. If TRUE, sets entities that contain no letters to an empty string. If FALSE, sets entities that contain no letters or numbers to an empty string.
+#' @param remove_trailing_s A boolean. If TRUE, removes trailing instances of concatenator+s, or apostrophe+s in each element of v.
 #' @param concatenator Defaults to an underscore. Use regex notation. The concatenator used in elements of v.
 #' @return a cleaned vector of entity names
 
@@ -20,7 +20,7 @@
 #' @export
 #' 
 
-clean_entities <- function(v, remove_nums=T, remove_trailing_s=T, concatenator = "_"){
+clean_entities <- function(v, remove_nums=TRUE, remove_trailing_s=TRUE, concatenator = "_"){
   # Input validation
   if (!is.vector(v)) {
     stop("'v' must be a vector")
@@ -59,20 +59,20 @@ clean_entities <- function(v, remove_nums=T, remove_trailing_s=T, concatenator =
                            vectorize_all = FALSE)
   })
   
-  if(remove_trailing_s==T){
+  if(remove_trailing_s==TRUE){
     #remove strings with specific placement: trailing "'s"
-    index <- which(grepl("'s$",v,perl = T))
+    index <- which(grepl("'s$",v,perl = TRUE))
     v[index] <- str_remove_all(v[index],"'s$")
     
     #remove strings with specific placement: trailing concatenator + s, e.g. "_s"
-    index <- which(grepl(paste0(concatenator,"s$"),v,perl = T))
+    index <- which(grepl(paste0(concatenator,"s$"),v,perl = TRUE))
     v[index] <- str_remove_all(v[index],paste0(concatenator,"s$"))
     
   }
   
   #next, remove all non-word characters
   remove <- c("\\W")
-  index <- which(grepl(paste(remove,collapse = '|'),v,perl = T))
+  index <- which(grepl(paste(remove,collapse = '|'),v,perl = TRUE))
   v[index] <- str_remove_all(v[index],paste(remove,collapse = '|'))
   
   #remove consecutive underscores that may have arisen due to previous cleaning step
@@ -80,10 +80,10 @@ clean_entities <- function(v, remove_nums=T, remove_trailing_s=T, concatenator =
   
   #remove leading or trailing underscores that may have arisen due to previous cleaning steps
   remove <- c(paste0("^",concatenator), paste0(concatenator, "$"))
-  index <- which(grepl(paste(remove,collapse = '|'),v,perl = T))
+  index <- which(grepl(paste(remove,collapse = '|'),v,perl = TRUE))
   v[index] <- str_remove_all(v[index],paste(remove,collapse = '|'))
   
-  #remove entities that have no letters (or numbers, if remove_nums == F)
+  #remove entities that have no letters (or numbers, if remove_nums == FALSE)
   if(remove_nums){
     index <- which(!grepl("[a-zA-Z]", v))
     v[index] <- ""

@@ -31,7 +31,7 @@ entity_consolidate_replicate <- function(x, concatenator = "_", remove = NULL) {
 
   spacy_result <- as.data.table(x)
   if(!is.null(remove)){
-    index <- which(grepl(paste(remove,collapse = '|'),spacy_result$token,perl = T)&spacy_result$entity!="")
+    index <- which(grepl(paste(remove,collapse = '|'),spacy_result$token,perl = TRUE)&spacy_result$entity!="")
     spacy_result$token[index] <- str_remove_all(spacy_result$token[index],paste(remove,collapse = '|'))
     spacy_result$entity[index] <- ""
   }

@@ -4,10 +4,10 @@
 #' Takes a textnet_extract output and converts it into an "igraph" or "network" object, then calculates network summary statistics. Note, this function does not preserve incomplete edges. The verblist and appositivelist are not used.
 #'
 #' @param textnet_extract An object output from textnet_extract
-#' @param keep_isolates A boolean, where T means to keep nodes from the nodelist that are not included in the edgelist, and F otherwise.
+#' @param keep_isolates A boolean, where TRUE means to keep nodes from the nodelist that are not included in the edgelist, and FALSE otherwise.
 #' @param export_format A string, either "igraph" for an igraph object, or "network" for a network object
-#' @param collapse_edges A boolean, where T removes edge attributes and collapses edges into a single weighted edge, and where F preserves all edges and edge attributes
-#' @param self_loops A boolean, where T allows self-loops, and F removes them
+#' @param collapse_edges A boolean, where TRUE removes edge attributes and collapses edges into a single weighted edge, and where FALSE preserves all edges and edge attributes
+#' @param self_loops A boolean, where TRUE allows self-loops, and FALSE removes them
 #' @return Returns the "igraph" or "network" object as the first element and the network statistics as the second element. For a weighted graph, the weight is equal to the original number of edges between the respective source and target nodes. Edge attributes for a multiplex graph are described in the help file of textnet_extract. Network statistics are as described below.
 #' \itemize{
 #'    \item num_nodes -- the number of nodes in the resulting "igraph" or "network" object
@@ -19,14 +19,14 @@
 #'    \item reciprocity -- reciprocity of the graph
 #'    \item median_in_degree, median_out_degree, mean_in_degree, mean_out_degree -- the median, or mean in-degree or out-degree of all nodes in the network object, respectively
 #'  
-#'For weighted graphs, if collapse_edges == T:
+#'For weighted graphs, if collapse_edges == TRUE:
 #'    \item modularity -- calculates igraph::modularity on a weighted, undirected, non-multiplex version of the network.
 #'    \item num_communities -- number of communities using louvain cluster algorithm on a weighted, undirected, non-multiplex version of the network
 #'    \item density -- density of the graph
 #'    \item mean_edge_weight -- mean weight of all edges in the graph
 #'    \item mean_in_strength, mean_out_strength, median_in_strength, median_out_strength -- the mean or median strength -- weighted in-degree or weighted out-degree, respectively -- of a node in the network
 #'    
-#'For multiplex graphs, if collapse_edges == F:
+#'For multiplex graphs, if collapse_edges == FALSE:
 #'    \item modularity -- calculates igraph::modularity on a weighted, undirected, non-multiplex version of the network.
 #'    \item num_communities -- number of communities using louvain cluster algorithm on a weighted, undirected, non-multiplex version of the network
 #'    \item percent_vbn, percent_vbg, percent_vpb, percent_vbd, percent_vb, percent_vbz -- percent of edges in the graph that are of the respective verb tense
@@ -58,7 +58,7 @@
 #' @export
 #'
 
-export_to_network <- function(textnet_extract, export_format, keep_isolates=T, collapse_edges, self_loops){
+export_to_network <- function(textnet_extract, export_format, keep_isolates=TRUE, collapse_edges, self_loops){
   # Input validation
   if(!is.list(textnet_extract)) {
     stop("'textnet_extract' must be a list")
@@ -88,20 +88,20 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
   
   
     #make igraph object.
-    if(keep_isolates==T & collapse_edges == F){
+    if(keep_isolates==TRUE & collapse_edges == FALSE){
       #keep all
       igr <- igraph::graph_from_data_frame(d = textnet_extract$edgelist, 
                                            vertices = textnet_extract$nodelist, 
-                                           directed = T)
-      if(self_loops==F){
+                                           directed = TRUE)
+      if(self_loops==FALSE){
         igr <- igraph::delete.edges(igr, igraph::E(igr)[igraph::is.loop(igr)])
         
       }
-    }else if(keep_isolates==T & collapse_edges == T){
+    }else if(keep_isolates==TRUE & collapse_edges == TRUE){
       #keep isolates but use weighted
       igr <- igraph::graph_from_data_frame(d = textnet_extract$edgelist, 
                                            vertices = textnet_extract$nodelist, 
-                                           directed = T)
+                                           directed = TRUE)
       for(q in igraph::edge_attr_names(igr)){
         igr <- igraph::delete_edge_attr(igr, q)
       }
@@ -109,21 +109,21 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
       igraph::E(igr)$weight <- 1
       igr <- igraph::simplify(igr, edge.attr.comb=list(weight="sum"), remove.loops = !self_loops)
       
-    }else if(keep_isolates==F & collapse_edges == F){
+    }else if(keep_isolates==FALSE & collapse_edges == FALSE){
       #remove isolates but use original edges
       igr <- igraph::graph_from_data_frame(d = textnet_extract$edgelist,  
                                            vertices = textnet_extract$nodelist, 
-                                           directed = T)
-      if(self_loops==F){
+                                           directed = TRUE)
+      if(self_loops==FALSE){
         igr <- igraph::delete.edges(igr, igraph::E(igr)[igraph::is.loop(igr)])
         
       }
       igr <- igraph::delete_vertices(igr, igraph::V(igr)[igraph::degree(igr, igraph::V(igr), mode = "all",loops = self_loops)==0])
-    }else if(keep_isolates==F & collapse_edges == T){
+    }else if(keep_isolates==FALSE & collapse_edges == TRUE){
       #remove isolates and use weighted
       igr <- igraph::graph_from_data_frame(d = textnet_extract$edgelist,  
                                            vertices = textnet_extract$nodelist, 
-                                           directed = T)
+                                           directed = TRUE)
       
       for(q in igraph::edge_attr_names(igr)){
         igr <- igraph::delete_edge_attr(igr, q)
@@ -139,29 +139,29 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
   agency_df <- igraph::as_data_frame(igr, what = "both")
   nodes_no_iso <- agency_df$vertices %>% filter(name %in% agency_df$edges$from |
                                                   name %in% agency_df$edges$to)
-  if(keep_isolates==T & collapse_edges == F){
+  if(keep_isolates==TRUE & collapse_edges == FALSE){
     #keep_all
-    net <- network::network(x=agency_df$edges, directed = T,
-                   hyper = F, loops = self_loops, multiple = T, 
-                   bipartite = F, vertices = agency_df$vertices,
+    net <- network::network(x=agency_df$edges, directed = TRUE,
+                   hyper = FALSE, loops = self_loops, multiple = TRUE, 
+                   bipartite = FALSE, vertices = agency_df$vertices,
                    matrix.type = "edgelist")
-  }else if(keep_isolates==T & collapse_edges == T){
+  }else if(keep_isolates==TRUE & collapse_edges == TRUE){
     #keep isolates but use weighted
-    net <- network::network(x=agency_df$edges, directed = T,
-                   hyper = F, loops = self_loops, multiple = F, 
-                   bipartite = F, vertices = agency_df$vertices,
+    net <- network::network(x=agency_df$edges, directed = TRUE,
+                   hyper = FALSE, loops = self_loops, multiple = FALSE, 
+                   bipartite = FALSE, vertices = agency_df$vertices,
                    matrix.type = "edgelist")
-  }else if(keep_isolates==F & collapse_edges == F){
+  }else if(keep_isolates==FALSE & collapse_edges == FALSE){
     #remove isolates but use original edges
-    net <- network::network(x=agency_df$edges, directed = T,
-                   hyper = F, loops = self_loops, multiple = T, 
-                   bipartite = F, vertices = nodes_no_iso,
+    net <- network::network(x=agency_df$edges, directed = TRUE,
+                   hyper = FALSE, loops = self_loops, multiple = TRUE, 
+                   bipartite = FALSE, vertices = nodes_no_iso,
                    matrix.type = "edgelist")
-  }else if(keep_isolates==F & collapse_edges == T){
+  }else if(keep_isolates==FALSE & collapse_edges == TRUE){
     #remove isolates and use weighted
-    net <- network::network(x=agency_df$edges, directed = T,
-                   hyper = F, loops = self_loops, multiple = F,
-                   bipartite = F, vertices = nodes_no_iso,
+    net <- network::network(x=agency_df$edges, directed = TRUE,
+                   hyper = FALSE, loops = self_loops, multiple = FALSE,
+                   bipartite = FALSE, vertices = nodes_no_iso,
                    matrix.type = "edgelist")
   }
   
@@ -177,7 +177,7 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
   attr_tbl$num_edges <- network::network.edgecount(net)
   attr_tbl$connectedness <- sna::connectedness(net)
   attr_tbl$centralization <- sna::centralization(net,sna::degree, diag=self_loops)
-  attr_tbl$transitivity <- sna::gtrans(net, mode = "digraph", measure = "weak", diag=self_loops, use.adjacency=F)
+  attr_tbl$transitivity <- sna::gtrans(net, mode = "digraph", measure = "weak", diag=self_loops, use.adjacency=FALSE)
   attr_tbl$pct_entitytype_homophily <- mean(igraph::vertex_attr(igr, "entity_type",igraph::head_of(igr, igraph::E(igr))) == igraph::vertex_attr(igr, "entity_type",igraph::tail_of(igr, igraph::E(igr))))
   attr_tbl$reciprocity <- igraph::reciprocity(igr, ignore.loops = !self_loops, mode = "default")
   attr_tbl$mean_in_degree <- mean(igraph::degree(igr,mode="in", loops=self_loops))
@@ -185,7 +185,7 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=T, c
   attr_tbl$median_in_degree <- stats::median(igraph::degree(igr,mode="in",loops=self_loops))
   attr_tbl$median_out_degree <- stats::median(igraph::degree(igr,mode="out",loops=self_loops))
   
-  if(collapse_edges==T){
+  if(collapse_edges==TRUE){
     #uses weighted graph to create undirected weighted graph, where new weight=sum of dir edge weights
     undir <- igraph::as_undirected(igr, mode = "collapse")
     lc <- igraph::cluster_louvain(undir, weights = igraph::edge_attr(undir,"weight"))#uses weights of undirected igraph
