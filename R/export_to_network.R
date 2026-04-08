@@ -52,6 +52,7 @@
 #' @importFrom igraph as_data_frame
 #' @importFrom igraph as_undirected
 #' @importFrom dplyr filter
+#' @importFrom rlang .data
 #' @importFrom network network network.size network.edgecount network.density
 #' @importFrom sna connectedness centralization gtrans
 #' @importFrom stats median
@@ -84,7 +85,7 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=TRUE
     stop("'self_loops' must be a single logical value")
   }
 
-  textnet_extract$edgelist <-  dplyr::filter(textnet_extract$edgelist, !is.na(textnet_extract$edgelist$source) & !is.na(textnet_extract$edgelist$target))
+  textnet_extract$edgelist <- dplyr::filter(textnet_extract$edgelist, !is.na(.data$source) & !is.na(.data$target))
   
   
     #make igraph object.
@@ -137,8 +138,8 @@ export_to_network <- function(textnet_extract, export_format, keep_isolates=TRUE
 
   #network object
   agency_df <- igraph::as_data_frame(igr, what = "both")
-  nodes_no_iso <- agency_df$vertices %>% filter(name %in% agency_df$edges$from |
-                                                  name %in% agency_df$edges$to)
+  nodes_no_iso <- agency_df$vertices %>% dplyr::filter(.data$name %in% agency_df$edges$from |
+                                                         .data$name %in% agency_df$edges$to)
   if(keep_isolates==TRUE & collapse_edges == FALSE){
     #keep_all
     net <- network::network(x=agency_df$edges, directed = TRUE,

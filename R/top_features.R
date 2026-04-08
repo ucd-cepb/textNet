@@ -8,16 +8,15 @@
 #' 
 #' @return list of all entities and lemmas in the corpus, along with their average normalized prevalence as a fraction of a plan. For entities, this is the entity degree over the sum of all entity degrees in the plan, averaged across all plans  
 #' @importFrom magrittr %>%
-#' @importFrom network network
 #' @importFrom ohenery normalize
 #' @importFrom tidyr tibble
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
 #' @importFrom dplyr arrange
 #' @importFrom dplyr desc
+#' @importFrom rlang .data
 #' @importFrom igraph degree
 #' @importFrom igraph edge_attr
-#' @importFrom igraph as_data_frame
 #' 
 #' @export
 
@@ -41,14 +40,6 @@ top_features <- function(files, from_file=FALSE){
     }else{
       igr <- files[[i]]
     }
-    igr_df <- igraph::as_data_frame(igr, what = "both")
-    
-    net <- network::network(x=igr_df$edges[,1:2], directed = TRUE,
-                          hyper = FALSE, loops = TRUE, multiple = TRUE, 
-                          bipartite = FALSE, vertices = igr_df$vertices,
-                          matrix.type = "edgelist")
-    
-    
     all_entities[[i]] <- sort(igraph::degree(igr),decreasing = TRUE)
     all_lemmas[[i]] <- sort(table(igraph::edge_attr(
       igr, "head_verb_lemma")), decreasing = TRUE)
@@ -65,10 +56,10 @@ top_features <- function(files, from_file=FALSE){
   all_lemmas_df <- tidyr::tibble("names" =names(all_lemmas_normalized),
                           "fraction_of_doc"=unname(all_lemmas_normalized))
   #prevalence over entire corpus as avg fraction of a plan
-  all_entity_percents <- all_entities_df %>% dplyr::group_by(names) %>% 
-    dplyr::summarize("avg_fract_of_a_doc" = sum(fraction_of_doc)/length(files)) %>% dplyr::arrange(dplyr::desc(avg_fract_of_a_doc))
-  all_lemma_percents <- all_lemmas_df %>% dplyr::group_by(names) %>% 
-    dplyr::summarize("avg_fract_of_a_doc" = sum(fraction_of_doc)/length(files)) %>% dplyr::arrange(dplyr::desc(avg_fract_of_a_doc))
+  all_entity_percents <- all_entities_df %>% dplyr::group_by(.data$names) %>%
+    dplyr::summarize("avg_fract_of_a_doc" = sum(.data$fraction_of_doc)/length(files)) %>% dplyr::arrange(dplyr::desc(.data$avg_fract_of_a_doc))
+  all_lemma_percents <- all_lemmas_df %>% dplyr::group_by(.data$names) %>%
+    dplyr::summarize("avg_fract_of_a_doc" = sum(.data$fraction_of_doc)/length(files)) %>% dplyr::arrange(dplyr::desc(.data$avg_fract_of_a_doc))
   
   #only keep entities that have letters
   all_entity_percents <- all_entity_percents[grepl("[A-Za-z]", all_entity_percents$names),]

@@ -1,5 +1,5 @@
 # Exported function
-# pdf_clean
+# find_acronyms
 
 #' Take a character vector and detect all parenthetical statements in which an acronym is uniquely defined within the character vector. 
 #'

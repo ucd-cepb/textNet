@@ -2,19 +2,13 @@
 % Please edit documentation in R/filter_sentences.R
 \name{filter_sentences}
 \alias{filter_sentences}
-\title{Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to T.}
+\title{Filter sentences from parsed text based on dictionary coverage}
 \usage{
 filter_sentences(
   file,
   filter = textNet::eng_words,
   percent_threshold = 40,
-  case_sensitive = F
+  case_sensitive = FALSE
 )
 }
 \arguments{
@@ -24,17 +18,12 @@ filter_sentences(
 
 \item{percent_threshold}{The required percentage of tokens in a sentence required to be found in the filter to keep the sentence in the dataset. Defaults to 40.}
 
-\item{case_sensitive}{Whether the token is required to have the specific casing used in the dictionary to count as a match. Defaults to F.}
+\item{case_sensitive}{Whether the token is required to have the specific casing used in the dictionary to count as a match. Defaults to FALSE.}
 }
 \value{
 a cleaned version of 'file', keeping only the sentences that pass the threshold requirement.
 }
 \description{
-Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to T.
+Removes sentences from a spaCy-parsed data frame whose tokens fall below a
+minimum dictionary-match threshold.
 }

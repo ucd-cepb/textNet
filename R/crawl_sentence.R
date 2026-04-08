@@ -1,4 +1,4 @@
-# Exported functions 
+# Exported function
 # crawl_sentence 
 
 #' Take a sentence and follow the dependencies

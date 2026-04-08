@@ -55,6 +55,7 @@
 #' @import data.table
 #' @importFrom magrittr %>%
 #' @importFrom dplyr group_by filter
+#' @importFrom rlang .data
 #' @importFrom tidyr expand
 #' @importFrom pbapply pblapply
 #' @export
@@ -142,7 +143,6 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   apposlist <- pbapply::pblapply(cat_splits, function(z) {
       anchor <- which(!(z$head_token_id %in% z$token_id))[1]
       if(x[x$doc_sent==z$doc_sent[1] & x$token_id==z$head_token_id[anchor],"entity_type"]%in%keep_entities){
-        print(x[x$doc_sent==z$doc_sent[1] & x$token_id==z$head_token_id[anchor],])
         as.data.table(cbind(unname(z[1,"entity_name"]),
                             unname(x[x$doc_sent==z$doc_sent[1] & x$token_id==z$head_token_id[anchor],"entity_name"])))
         
@@ -243,7 +243,7 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   st_pivot <- data.table::dcast(source_target_list,doc_sent_verb+row_id~source_or_target, value.var= "entity_name")
   
   if(nrow(st_pivot)>0){
-    st_pivot <- data.table::as.data.table(st_pivot %>% dplyr::group_by(doc_sent_verb) %>% tidyr::expand(source, target))
+    st_pivot <- data.table::as.data.table(st_pivot %>% dplyr::group_by(.data$doc_sent_verb) %>% tidyr::expand(.data$source, .data$target))
     edgelist <- data.table::merge.data.table(st_pivot, verb_dt, by = c("doc_sent_verb"),all.x=FALSE, all.y=FALSE)
     
   }else{
@@ -270,10 +270,10 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
     #if there is
     edgelist$edgeiscomplete <- !is.na(edgelist$source) & !is.na(edgelist$target)
     edgelist[, `:=`(hascompleteedge, any(edgeiscomplete==TRUE)), by = c("doc_sent_verb")]
-    edgelist <- edgelist %>% dplyr::filter((hascompleteedge==TRUE & edgeiscomplete==TRUE) | hascompleteedge==FALSE)
+    edgelist <- edgelist %>% dplyr::filter((.data$hascompleteedge==TRUE & .data$edgeiscomplete==TRUE) | .data$hascompleteedge==FALSE)
     edgelist$hascompleteedge <- NULL
   }else{
-    edgelist <- edgelist %>% dplyr::filter(!is.na(source) & !is.na(target))
+    edgelist <- edgelist %>% dplyr::filter(!is.na(.data$source) & !is.na(.data$target))
   }
   
   hedging_helpers <- c("may","might","can","could")

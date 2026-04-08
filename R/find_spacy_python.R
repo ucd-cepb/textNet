@@ -35,10 +35,16 @@ find_spacy_python <- function(model = "en_core_web_lg") {
   }, error = function(e) NULL)
 
   # PATH-based fallback (system python, activated envs)
-  tryCatch({
-    candidates <- c(candidates,
-                    findpython::find_python_cmd(required_modules = c("spacy", model)))
-  }, error = function(e) NULL)
+  if (!requireNamespace("findpython", quietly = TRUE)) {
+    warning("Package 'findpython' is not installed; skipping PATH-based Python search. ",
+            "Install it with install.packages('findpython') for broader Python discovery.",
+            call. = FALSE)
+  } else {
+    tryCatch({
+      candidates <- c(candidates,
+                      findpython::find_python_cmd(required_modules = c("spacy", model)))
+    }, error = function(e) NULL)
+  }
 
   for (path in unique(candidates)) {
     if (check_python(path)) return(path)

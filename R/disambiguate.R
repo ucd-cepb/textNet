@@ -31,6 +31,7 @@
 #' @import data.table
 #' @importFrom stringr str_detect str_remove_all str_replace_all
 #' @importFrom dplyr arrange desc filter
+#' @importFrom rlang .data
 #' @importFrom magrittr %>%
 #' @importFrom methods is
 #' @export
@@ -534,7 +535,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   
   #redoes count of num_appearances, prioritizes most common entity_type by using desc()
   textnet_extract$nodelist <- textnet_extract$nodelist[,c(.SD,"new_appr" = sum(num_appearances)),by=entity_name]
-  textnet_extract$nodelist <- dplyr::arrange(textnet_extract$nodelist, dplyr::desc(num_appearances))
+  textnet_extract$nodelist <- dplyr::arrange(textnet_extract$nodelist, dplyr::desc(.data$num_appearances))
   
   #if any other node attribute columns, prioritizes the most common entity_type that is not NA
   for(attr in colnames(textnet_extract$nodelist)[
@@ -586,7 +587,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   #this function should not cause any additions to the existing incomplete edges in a usual case
   textnet_extract$edgelist$edgeiscomplete <- !is.na(textnet_extract$edgelist$source) & !is.na(textnet_extract$edgelist$target)
   textnet_extract$edgelist[, `:=`(hascompleteedge, any(edgeiscomplete==TRUE)), by = c("doc_sent_verb")]
-  textnet_extract$edgelist <- textnet_extract$edgelist %>% dplyr::filter((hascompleteedge==TRUE & edgeiscomplete==TRUE) | hascompleteedge==FALSE)
+  textnet_extract$edgelist <- textnet_extract$edgelist %>% dplyr::filter((.data$hascompleteedge==TRUE & .data$edgeiscomplete==TRUE) | .data$hascompleteedge==FALSE)
   textnet_extract$edgelist$hascompleteedge <- NULL
   #Section 4: Return####
   return(textnet_extract)

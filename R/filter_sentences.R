@@ -1,13 +1,10 @@
 # Exported functions 
 # filter_sentences
 
-#' Take a vector and clean the strings using regex. 
-#' Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-#' Any trailing "'s" at the end of the entity name is removed. 
-#' All non-word characters are removed.
-#' Consecutive underscores are collapsed to a single underscore.
-#' Leading and trailing underscores are removed.
-#' Entities that have no letters are removed, if remove_nums is set to TRUE.
+#' Filter sentences from parsed text based on dictionary coverage
+#'
+#' Removes sentences from a spaCy-parsed data frame whose tokens fall below a
+#' minimum dictionary-match threshold.
 #'
 #' @param file Data frame to be cleaned. To ensure file format appropriateness, it should be of the form that results from spacy_parse output
 #' @param filter Dictionary on which to filter file for acceptable words. Defaults to SCOWL 2020.12.07, including files with extension <= 60, with filenames that include "variant", "american", "british", canadian", or "australian".

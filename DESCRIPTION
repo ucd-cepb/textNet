@@ -23,6 +23,7 @@ RoxygenNote: 7.3.3
 Imports:
     magrittr,
     dplyr,
+    rlang,
     stringr,
     stringi,
     network,
