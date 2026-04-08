@@ -4,7 +4,6 @@
 #' Parse text using spaCy (CPU, en_core_web_lg model)
 #'
 #' Creates an edgelist and nodelist for each document using spaCy's en_core_web_lg model.
-#' For GPU-accelerated processing with the transformer model, use parse_text_trf().
 #'
 #' @param ret_path filepath to use for Sys.setenv reticulate python call. Note: Python and miniconda must already be installed.
 #' @param keep_hyph_together Set to true to replace hyphens within a single word with underscores. Defaults to false.

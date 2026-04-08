@@ -50,5 +50,4 @@ A data.frame of tokens. For more information on the format, see the spacyr::spac
 }
 \description{
 Creates an edgelist and nodelist for each document using spaCy's en_core_web_lg model.
-For GPU-accelerated processing with the transformer model, use parse_text_trf().
 }
