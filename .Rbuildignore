@@ -1,9 +1,13 @@
 ^LICENSE\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^vignettes/paper\.md$
-^vignettes/paper\.pdf$
+^paper$
 ^create_heximage.R
 ^img$
 ^.github
 ^.claude
+^vignettes/.*\.html$
+^CONTRIBUTING\.md$
+^data-raw$
+^doc$
+^Meta$

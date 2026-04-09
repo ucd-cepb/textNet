@@ -7,38 +7,38 @@
 #' All non-word characters are removed.
 #' Consecutive underscores are collapsed to a single underscore.
 #' Leading and trailing underscores are removed.
-#' Entities that have no letters are removed, if remove_nums is set to T.
+#' Entities that have no letters are removed, if remove_nums is set to TRUE.
 #'
 #' @param pdfs a vector of file names
 #' @param keep_pages By default, NULL keeps all pages. Alternatively, the user can specify a list of logical or numeric vectors of pages to keep in the exported file. 
 #' When specified, the length of keep_pages must be equivalent to the length of pdfs.
 #' Each logical vector in keep_pages must have a length equivalent to the number of pages in the corresponding input pdf. 
-#' All pages with a value of T will be included in the exported file. 
+#' All pages with a value of TRUE will be included in the exported file. 
 #' Each numeric vector in keep_pages enumerates specific page numbers to keep. 
 #' For numeric vectors in keep_pages, duplicate values will be returned only once, and the vector will be sorted before processing.
-#' @param ocr A logical value: T to run ocr image-to-text detection on pages with fewer than 20 characters;
-#' F to not run ocr on any pages.
+#' @param ocr A logical value: TRUE to run ocr image-to-text detection on pages with fewer than 20 characters;
+#' FALSE to not run ocr on any pages.
 #' @param maxchar A numeric value representing the maximum allowable number of characters per page, 
 #' with a default of 10,000. Pages on which the number of characters exceeds maxchar will have the output text 
 #' set to NA.
 #' @param export_paths A vector of filenames to which to save the text outputs. 
 #' Defaults to NULL, which does not save the output to a file.
 #' @param return_to_memory A logical value representing whether or not to return 
-#' the output text to memory. Defaults to T.
-#' @param suppressWarn Boolean; F by default. Setting this to T suppresses pdf_text conversion warnings, which can be verbose.
-#' @param auto_headfoot_remove Boolean. Tries to remove headers and footers if T. May remove small amounts of paragraph text, especially if there is no header on a page. Defaults to T to avoid having entities that appear consistently in headers be artificially inflated in the textnet_extract network. Recommend keeping this parameter T unless using a separate header/footer removal tool.
-#' @param sentence_shift Boolean. If T, tries to shift a beginning partial sentence to the previous page.
-#' @return If return_to_memory is T, returns a list with a length equal 
+#' the output text to memory. Defaults to TRUE.
+#' @param suppressWarn Boolean; FALSE by default. Setting this to TRUE suppresses pdf_text conversion warnings, which can be verbose.
+#' @param auto_headfoot_remove Boolean. Tries to remove headers and footers if TRUE. May remove small amounts of paragraph text, especially if there is no header on a page. Defaults to TRUE to avoid having entities that appear consistently in headers be artificially inflated in the textnet_extract network. Recommend keeping this parameter TRUE unless using a separate header/footer removal tool.
+#' @param sentence_shift Boolean. If TRUE, tries to shift a beginning partial sentence to the previous page.
+#' @return If return_to_memory is TRUE, returns a list with a length equal 
 #' to the length of the pdfs parameter. Each element in the list is a character vector
 #' with a length equal to the number of pages in its respective document. If export_paths
 #' is not null, each character vector of text will be saved to a separate RDS file, where the 
 #' number of files is equal to the number of pdfs. 
 #' @importFrom methods is
-#' @importFrom stringr str_split str_detect str_remove
+#' @importFrom stringr str_split str_detect str_remove str_count str_split_i fixed
 #' @export
 #' 
 
-pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=NULL, return_to_memory=T, suppressWarn = F, auto_headfoot_remove = T, sentence_shift = F){
+pdf_clean <- function(pdfs, keep_pages=NULL, ocr=FALSE, maxchar=10000, export_paths=NULL, return_to_memory=TRUE, suppressWarn = FALSE, auto_headfoot_remove = TRUE, sentence_shift = FALSE){
   if(!requireNamespace("pdftools", quietly = TRUE)) {
     stop("Package 'pdftools' is required for pdf_clean(). ",
          "Install it with: pak::pak('pdftools') or install.packages('pdftools')\n",
@@ -85,7 +85,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
     stop("'auto_headfoot_remove' must be a single logical value")
   }
 
-  if(return_to_memory==F & is.null(export_paths)){
+  if(return_to_memory==FALSE & is.null(export_paths)){
     stop("Either return_to_memory must be true or export_paths must be non-null.")
   }
   
@@ -94,7 +94,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
   }
   
   for(k in 1:length(pdfs)){
-    if(suppressWarn==T){
+    if(suppressWarn==TRUE){
       texts <- suppressMessages(pdftools::pdf_text(pdfs[[k]]))
     }else{
       texts <- pdftools::pdf_text(pdfs[[k]])
@@ -110,7 +110,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
         if(any(keep_pages[[k]] > length(texts))){
           stop("page numbers in keep_pages to keep may not exceed the page length of the input document")
         }
-        if(any(keep_pages[[k]] < 1) | any(!keep_pages[[k]]%%1 == F)){
+        if(any(keep_pages[[k]] < 1) | any(!keep_pages[[k]]%%1 == FALSE)){
           stop("keep_pages must only be positive integers")
         }
         #removes duplicated pages and sorts from first to last
@@ -118,7 +118,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
       }
     } 
     
-    if(ocr==T){
+    if(ocr==TRUE){
       for(i in 1:length(texts)){
         if (nchar(texts[i])< 20){
           texts[i] <- pdftools::pdf_ocr_text(pdfs[[k]], pages=i,language = "eng")
@@ -133,7 +133,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
       }
     }
     
-    if(auto_headfoot_remove == T){
+    if(auto_headfoot_remove == TRUE){
       for(pagenum in 1:length(texts)){
         #uses the first element because only splitting one string
         #equivalent to str_split_1
@@ -165,7 +165,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
               #checker to see if a previous line was preserved, which means all 
               #potential header lines afterward should
               #also be preserved.
-              prevlinepreserved = F
+              prevlinepreserved = FALSE
               linegetspreserved <- vector(mode = "logical", length = maxheaderlength)
               for(j in 1:maxheaderlength){
                 #if there are over six lowercase words, it's probably a sentence.
@@ -173,18 +173,18 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
                   #alternatively, if there's at least four long lowercase words, it's probably a sentence
                   #and may have a lot of capitalized entities in it
                   str_count(linebreaks[j], "\\s[a-z]{7,}") > 3
-                if(linegetspreserved[j]==T){
-                  prevlinepreserved = T
+                if(linegetspreserved[j]==TRUE){
+                  prevlinepreserved = TRUE
                   if(j < maxheaderlength){
                     #break out of the loop and preserve later header lines if you find a 
                     #sentence
-                    linegetspreserved[j:maxheaderlength] <- T
+                    linegetspreserved[j:maxheaderlength] <- TRUE
                     break()
                   }
                 }
               }
               #remove the parts of the text that aren't supposed to get preserved
-              if(any(linegetspreserved==F)){
+              if(any(linegetspreserved==FALSE)){
                 linebreaks <- linebreaks[-which(!linegetspreserved)]
               }
             }
@@ -196,7 +196,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
             #checker to see if a previous line was preserved, which means all 
             #potential header lines afterward should
             #also be preserved.
-            prevlinepreserved = F
+            prevlinepreserved = FALSE
             linegetspreserved <- vector(mode = "logical", length = maxheaderlength)
             for(j in 1:maxheaderlength){
               #if there are over eight lowercase words, it's probably a sentence.
@@ -204,19 +204,19 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
                 #alternatively, if there's at least six long lowercase words, it's probably a sentence 
                 #and may have a lot of capitalized entities in it
                 str_count(linebreaks[j], "\\s[a-z]{7,}") > 5
-              if(linegetspreserved[j]==T){
-                prevlinepreserved = T
+              if(linegetspreserved[j]==TRUE){
+                prevlinepreserved = TRUE
                 if(j < maxheaderlength){
                   #break out of the loop and preserve later header lines if you find a 
                   #sentence
-                  linegetspreserved[j:maxheaderlength] <- T
+                  linegetspreserved[j:maxheaderlength] <- TRUE
                   break()
                 }
               }
             }
             
             #remove the parts of the text that aren't supposed to get preserved
-            if(any(linegetspreserved==F)){
+            if(any(linegetspreserved==FALSE)){
               linebreaks <- linebreaks[-which(!linegetspreserved)]
             }
           }
@@ -236,7 +236,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
           #checker to see if a previous line was preserved, which means all 
           #potential header lines afterward should
           #also be preserved.
-          prevlinepreserved = F
+          prevlinepreserved = FALSE
           linegetspreserved <- vector(mode = "logical", length = maxheaderlength)
           if(length(linebreaks)>0){
             for(j in 1:maxheaderlength){
@@ -245,18 +245,18 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
                 #alternatively, if there's at least four long lowercase words, it's probably a sentence 
                 #and may have a lot of capitalized entities in it
                 str_count(linebreaks[j], "\\s[a-z]{7,}") > 3
-              if(linegetspreserved[j]==T){
-                prevlinepreserved = T
+              if(linegetspreserved[j]==TRUE){
+                prevlinepreserved = TRUE
                 if(j < maxheaderlength){
                   #break out of the loop and preserve later header lines if you find a 
                   #sentence
-                  linegetspreserved[j:maxheaderlength] <- T
+                  linegetspreserved[j:maxheaderlength] <- TRUE
                   break()
                 }
               }
             }
             #remove the parts of the text that aren't supposed to get preserved
-            if(any(linegetspreserved==F)){
+            if(any(linegetspreserved==FALSE)){
               linebreaks <- linebreaks[-which(!linegetspreserved)]
             }
           }else{
@@ -303,7 +303,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
           #also be preserved.
           #footer is removing more prose compared to header so we will make the prose
           #criterion looser
-          lowerlinepreserved = F
+          lowerlinepreserved = FALSE
           linegetspreserved <- vector(mode = "logical", length = length(linebreaks))
           #starts check at bottom and goes up
           for(j in length(linebreaks):footercut){
@@ -312,12 +312,12 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
               #alternatively, if there's at least three long lowercase words, it's probably a sentence 
               #and may have a lot of capitalized entities in it
               str_count(linebreaks[j], "\\s[a-z]{7,}") > 2
-            if(linegetspreserved[j]==T){
-              lowerlinepreserved = T
+            if(linegetspreserved[j]==TRUE){
+              lowerlinepreserved = TRUE
               if(j > footercut){
                 #break out of the loop and preserve all earlier lines if you find a 
                 #sentence
-                linegetspreserved[1:j] <- T
+                linegetspreserved[1:j] <- TRUE
                 break()
               }
             }
@@ -325,7 +325,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
           #even if we didn't match, we don't want to remove any lines earlier than 
           #the original footercut
           if(footercut > 1){
-            linegetspreserved[1:(footercut-1)] <- T
+            linegetspreserved[1:(footercut-1)] <- TRUE
           }
           
           #make sure there aren't more than four lines getting removed
@@ -337,7 +337,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
           #to where it was before the for loop
           footercut <- max(which(!linegetspreserved)[1], length(linebreaks) - 6)
           
-          lineswithtext <- which(str_detect(linebreaks,"^\\s*$",negate = T))
+          lineswithtext <- which(str_detect(linebreaks,"^\\s*$",negate = TRUE))
           
           counter = 0
           #counter check should be <=1, to prevent footercut from being NA
@@ -379,7 +379,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
       }   
     }
     
-    if(sentence_shift == T){
+    if(sentence_shift == TRUE){
       if(length(texts) > 1){
         for(q in 2:length(texts)){
           potential_fragment <- str_split_i(texts[q], "\\.( |\n|$)", 1)
@@ -401,13 +401,13 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=F, maxchar=10000, export_paths=
     if(!is.null(export_paths)){
       saveRDS(texts, export_paths[k])
     }
-    if(return_to_memory==T){
+    if(return_to_memory==TRUE){
       
       all_pdfs[[k]] <- texts
       names(all_pdfs[k]) <- pdfs[k]
     }
   }
-  if(return_to_memory==T){
+  if(return_to_memory==TRUE){
     return(all_pdfs)
   }
 }

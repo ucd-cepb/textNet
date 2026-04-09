@@ -2,7 +2,7 @@
 title: "textNet: Directed, Multiplex, Multimodal Event Network Extraction from Textual Data"
 author: Elise Zufall and Tyler Scott
 date: Updated 2 Apr 2026
-bibliography: paper.bib
+bibliography: vignette_references.bib
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{textNet: Directed, Multiplex, Multimodal Event Network Extraction from Textual Data}
@@ -11,8 +11,11 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 #knitr::opts_knit$set(root.dir = "~/Documents")
+has_viz <- requireNamespace("ggraph", quietly = TRUE) &&
+           requireNamespace("ggplot2", quietly = TRUE) &&
+           requireNamespace("gridExtra", quietly = TRUE)
 ```
 
 ## Introduction
@@ -91,14 +94,13 @@ old_new_parsed <- textNet::old_new_parsed
 #initialize empty list of extracts to populate
 extracts <- vector(mode="list",length=length(old_new_parsed))
 #populate each element of list with results of textnet_extract
-#increasing "cl" to 4 for speed
 #keeping four types of entities: organizations, 
 #geopolitical entities, people, and water bodies
 #keep_incomplete_edges is F by default; T keeps
 #'edges' that are missing either a source node
 #or a target node
 for(m in 1:length(old_new_parsed)){
-  extracts[[m]] <- textnet_extract(old_new_parsed[[m]],cl=2,
+  extracts[[m]] <- textnet_extract(old_new_parsed[[m]],
                    keep_entities = c('ORG','GPE','PERSON','WATER'), 
                    keep_incomplete_edges=T)
    }
@@ -220,7 +222,11 @@ print(table)
 ```
 The *ggraph* package [@pedersen_ggraph_2024] has been used to create the two network visualizations seen here, using a weighted version of the igraphs constructed below. We set collapse_edges = T to convert the multiplex graph into its weighted equivalent.
 
-```{r plot, message=F, warning=F}
+```{r viz_note, echo=FALSE, results='asis', eval=!has_viz}
+cat("**Note:** The plots in this vignette require the ggraph, ggplot2, and gridExtra packages. Install them to see the visualizations: `install.packages(c('ggraph', 'ggplot2', 'gridExtra'))`")
+```
+
+```{r plot, message=F, warning=F, eval=has_viz}
 library(ggraph)
 #to plot the networks, the same export_to_network function can be used, 
 #but a weighted version of the graph, such that all edges between 
@@ -293,10 +299,13 @@ The combine_networks function allows a composite network to be generated from mu
 
 For best results, composite network generation should not be done without an adequate disambiguation in Step 4. A function is included that merges the edgelists and nodelists of all documents. If the same node name is mentioned in multiple documents, the node attributes associated with the highest total number of edges for that node name are preserved.
 
-```{r composite, fig.width=5,fig.height=5, fig.retina=2}
+```{r composite_data}
 #we generate a composite network with the function below
-composite_net <- combine_networks(list(old_extract_net[[1]], new_extract_net[[1]]), 
+composite_net <- combine_networks(list(old_extract_net[[1]], new_extract_net[[1]]),
                                      mode = "weighted")
+```
+
+```{r composite_plot, fig.width=5,fig.height=5, fig.retina=2, eval=has_viz}
 set.seed(50000)
 ggraph(composite_net, layout = 'fr')+
       geom_edge_fan(aes(alpha = weight),
@@ -425,7 +434,7 @@ with(combineddf,table(plan_version,num_graphs_in))
 
 We can also investigate differences in network statistics between the two plans. For instance, the distribution of degree does not change much between plan versions. The distribution of betweenness, likewise, is relatively stable except for person nodes, which are the least common nodes in the graph.
 
-```{r step8b4, warning=F, message=F, fig.width=10,fig.height=8, fig.retina=2}
+```{r step8b4, warning=F, message=F, fig.width=10,fig.height=8, fig.retina=2, eval=has_viz}
 library(gridExtra)
 library(ggplot2)
 #summary of differences between the two plans
@@ -479,7 +488,7 @@ This appendix describes the pre-processing tools available through the *textNet*
 
 This is a wrapper for pdftools, which has the option of using pdf_text or OCR. We have also added an optional header/footer removal tool. This optional tool is solely based on carriage returns in the first or last few lines of the document, so may inadvertently remove portions of paragraphs. However, not removing headers or footers can lead to improper inclusion of header and footer material in sentences, artificially inflating the presence of nodes whose entity names are included in the header and footer. Because of the risk of headers and footers to preferentially inflate the presence of a few nodes, the header/footer remover is included by default. It can be turned off if the user has a preferred header/footer removal tool to use instead, or if the input documents lack headers and footers.
 
-```{r pdf_clean, eval = T}
+```{r pdf_clean, eval = FALSE}
 library(textNet)
 library(stringr)
 #download sample pdf data from state website
@@ -488,19 +497,27 @@ library(stringr)
 
 #URL <- "https://sgma.water.ca.gov/portal/service/gspdocument/download/2840"
 #download.file(URL, destfile = "inst/extdata/old.pdf", method="curl")
-   
+
 #URL <- "https://sgma.water.ca.gov/portal/service/gspdocument/download/9625"
 #download.file(URL, destfile = "inst/extdata/new.pdf", method="curl")
- 
-pdfs <- c(system.file("extdata", "old.pdf", package = "textNet"),         
+
+pdfs <- c(system.file("extdata", "old.pdf", package = "textNet"),
             system.file("extdata", "new.pdf", package = "textNet"))
 
 #this is the equivalent of the textNet::old_new_text sample data
 #that travels with the package
-old_new_text <- textNet::pdf_clean(pdfs, ocr=F, maxchar=10000, 
-                     export_paths=NULL, return_to_memory=T, suppressWarn = F, 
+old_new_text <- textNet::pdf_clean(pdfs, ocr=F, maxchar=10000,
+                     export_paths=NULL, return_to_memory=T, suppressWarn = F,
                      auto_headfoot_remove = T)
 names(old_new_text) <- c("old","new")
+```
+
+The above code produces results equivalent to the bundled sample data, which can be loaded directly:
+
+```{r pdf_clean_load, echo = TRUE}
+library(textNet)
+library(stringr)
+old_new_text <- textNet::old_new_text
 ```
 
 ### Pre-Processing Step II: Parse Text
@@ -509,21 +526,21 @@ This is a wrapper for the pre-trained multipurpose NLP model *spaCy* [@honnibal_
 
 The user may also specify "phrases_to_concatenate", an argument representing a set of phrases for spaCy to keep together during its parsing. The example below demonstrates how to use this feature to supplement the NER capabilities of spaCy with a custom list of entities. This supplementation could be used to ensure that specific known entities are recognized; for instance, spaCy might not detect that a consulting firm such as "Schmidt and Associates" is one entity rather than two. Conversely, this capability could be leveraged to create a new category of entities to detect, that a pretrained model is not designed to specifically recognize. For instance, to create a public health network, one might include a known list of contaminants and diseases and designate custom entity type tags for them, such as "CONTAM" and "DISEASE"). In this example, we investigate the connections between the organizations, people, and geopolitical entities discussed in the plan with the flow of water in the basin. To assist with this, we have input a custom list of known water bodies in the region governed by our test document and have given it the entity designation "WATER". This is carried out by setting the variable "phrases_to_concatenate" to a character vector, including all of the custom entities. Then, the entity type can be set to the desired category. Note that this function is case-sensitive.
 
-```{r parse, eval = T}
+```{r parse, eval = FALSE}
 library(findpython)
 #find the version of python that has the required NLP modules
 ret_path <- find_python_cmd(required_modules = c('spacy', 'en_core_web_lg'))
 
 #example of how to define a custom list for a user-defined entity type
-water_bodies <- c("surface water", "Surface water", "groundwater", "Groundwater", 
-                  "San Joaquin River", "Cottonwood Creek", "Chowchilla Canal Bypass", 
-                  "Friant Dam", "Sack Dam", "Friant Canal", "Chowchilla Bypass", 
-                  "Fresno River", "Sacramento River", "Merced River","Chowchilla River", 
-                  "Bass Lake", "Crane Valley Dam", "Willow Creek", "Millerton Lake", 
-                  "Mammoth Pool", "Dam 6 Lake", "Delta","Tulare Lake", 
-                  "Madera-Chowchilla canal", "lower aquifer", "upper aquifer", 
-                  "upper and lower aquifers", "lower and upper aquifers", 
-                  "Lower aquifer", "Upper aquifer", "Upper and lower aquifers", 
+water_bodies <- c("surface water", "Surface water", "groundwater", "Groundwater",
+                  "San Joaquin River", "Cottonwood Creek", "Chowchilla Canal Bypass",
+                  "Friant Dam", "Sack Dam", "Friant Canal", "Chowchilla Bypass",
+                  "Fresno River", "Sacramento River", "Merced River","Chowchilla River",
+                  "Bass Lake", "Crane Valley Dam", "Willow Creek", "Millerton Lake",
+                  "Mammoth Pool", "Dam 6 Lake", "Delta","Tulare Lake",
+                  "Madera-Chowchilla canal", "lower aquifer", "upper aquifer",
+                  "upper and lower aquifers", "lower and upper aquifers",
+                  "Lower aquifer", "Upper aquifer", "Upper and lower aquifers",
                   "Lower and upper aquifers")
 
 if(!requireNamespace("spacyr", quietly = T)){
@@ -533,15 +550,21 @@ if(!requireNamespace("spacyr", quietly = T)){
 #this is the equivalent of the textNet::old_new_parsed sample data
 #that travels with the package
 #it is a thin wrapper for spacyr::spacy_parse
-old_new_parsed <- textNet::parse_text(ret_path, 
-                          keep_hyph_together = F, 
-                          phrases_to_concatenate = water_bodies, 
-                          concatenator = "_", 
-                          text_list = old_new_text, 
-                                 parsed_filenames=c("old_parsed","new_parsed"), 
+old_new_parsed <- textNet::parse_text(ret_path,
+                          keep_hyph_together = F,
+                          phrases_to_concatenate = water_bodies,
+                          concatenator = "_",
+                          text_list = old_new_text,
+                                 parsed_filenames=c("old_parsed","new_parsed"),
                                  overwrite = T,
                           custom_entities = list(WATER = water_bodies))
 
+```
+
+The above code produces results equivalent to the bundled sample data, which can be loaded directly:
+
+```{r parse_load, echo = TRUE}
+old_new_parsed <- textNet::old_new_parsed
 ```
 
 Another NLP tool may be used instead of the built-in *textNet* function at this phase, as long as the output conforms to spaCy tagging standards: Universal Dependencies tags for the "pos" part-of-speech column [@nivre_universal_2017], and Penn Treebank tags for the "tags" column [@marcus_treebank-3_1999]. The textnet_extract function expects the parsed table to follow specific conventions. First, a row must be included for each token. The column names expected by textnet_extract are:

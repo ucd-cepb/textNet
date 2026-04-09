@@ -1,5 +1,5 @@
 # Exported function
-# pdf_clean
+# find_acronyms
 
 #' Take a character vector and detect all parenthetical statements in which an acronym is uniquely defined within the character vector. 
 #'
@@ -26,7 +26,7 @@ find_acronyms <- function(str, table_text = NULL){
   paren_splits2 <- lapply(paren_splits, function (k) k[nchar(k)>0])
   paren_splits3 <- lapply(paren_splits2, function(m) stringr::str_split(m, pattern = "\\("))
   paren_splits4 <- lapply(paren_splits3, function (j) lapply(j, function(m) m[length(m)==2]))
-  paren_splits4 <- unlist(paren_splits4, recursive=F)
+  paren_splits4 <- unlist(paren_splits4, recursive=FALSE)
   paren_splits5 <- do.call(rbind, paren_splits4)
   paren_splits$acr1 <- stri_match_last(str = paren_splits5[,1], regex ="\\b[A-Z]+\\b")
   paren_splits$acr2 <- stri_match_all(str = paren_splits5[,2], regex ="\\b[A-Z]+\\b")

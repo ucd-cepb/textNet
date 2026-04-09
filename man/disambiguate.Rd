@@ -8,9 +8,9 @@ disambiguate(
   textnet_extract,
   from,
   to,
-  match_partial_entity = rep(F, length(from)),
+  match_partial_entity = rep(FALSE, length(from)),
   try_drop = NULL,
-  recursive = T,
+  recursive = TRUE,
   concatenator = "_"
 )
 }
@@ -28,8 +28,8 @@ the relevant edges are duplicated in the edgelist, with one edge for each entity
 These vector entities are disambiguated first, followed by the rest of the strings in order of appearance in 'from' and 'to'.}
 
 \item{match_partial_entity}{A logical vector of the same length as 'from'.
-If match_partial_entity is T for an element, it can match on the 'from' term separated by concatenator.
-Otherwise, the 'from' term must match the whole entity name to be accepted. Defaults to "F" for all elements.}
+If match_partial_entity is TRUE for an element, it can match on the 'from' term separated by concatenator.
+Otherwise, the 'from' term must match the whole entity name to be accepted. Defaults to "FALSE" for all elements.}
 
 \item{try_drop}{A regex expression representing one or more terms to try dropping.
 The usual case for this is country or state names, such as "^US_".
@@ -38,7 +38,7 @@ If not, it determines whether removing try_drop from the remaining elements enab
 If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.'
 The non-matches remains unchanged.}
 
-\item{recursive}{A logical value, defaulting to T. If recursive is T, the function runs multiple times.
+\item{recursive}{A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times.
 The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from',
 which may in turn correspond to a 'to' value that is found in 'from', and so on.}
 

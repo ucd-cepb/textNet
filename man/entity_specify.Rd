@@ -27,7 +27,7 @@ entity_specify(
 \item{file_path}{Optional. Path to a CSV or TXT file containing entity specifications. Supports two formats:
 (1) Standard format with columns: entity_names, entity_label, case_sensitive, whole_word_only, aliases
 (2) Reviewed suggestions format from suggest_entities() with columns: phrase, keep, final_label (or suggested_label).
-Rows with keep=TRUE/T/true/yes/Y/1 are included. Uses final_label if provided, otherwise suggested_label.}
+Rows with keep=TRUE/TRUE/true/yes/Y/1 are included. Uses final_label if provided, otherwise suggested_label.}
 }
 \value{
 A list of pattern dictionaries formatted for spaCy's EntityRuler

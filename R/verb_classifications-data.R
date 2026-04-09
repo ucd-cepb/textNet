@@ -1,6 +1,6 @@
 #' Data downloaded from VerbNet 3.3 and organized by type and class, as in the script "verbnet_port.R". 
 #'
-#' Attributes from this table are bound to the verblist exported by custom_entity_extract.
+#' Attributes from this table are bound to the verblist exported by textnet_extract.
 #'
 #' @docType data
 #'

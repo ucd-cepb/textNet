@@ -8,18 +8,18 @@ Any trailing "'s" at the end of the entity name is removed.
 All non-word characters are removed.
 Consecutive underscores are collapsed to a single underscore.
 Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to T.}
+Entities that have no letters are removed, if remove_nums is set to TRUE.}
 \usage{
 pdf_clean(
   pdfs,
   keep_pages = NULL,
-  ocr = F,
+  ocr = FALSE,
   maxchar = 10000,
   export_paths = NULL,
-  return_to_memory = T,
-  suppressWarn = F,
-  auto_headfoot_remove = T,
-  sentence_shift = F
+  return_to_memory = TRUE,
+  suppressWarn = FALSE,
+  auto_headfoot_remove = TRUE,
+  sentence_shift = FALSE
 )
 }
 \arguments{
@@ -28,12 +28,12 @@ pdf_clean(
 \item{keep_pages}{By default, NULL keeps all pages. Alternatively, the user can specify a list of logical or numeric vectors of pages to keep in the exported file.
 When specified, the length of keep_pages must be equivalent to the length of pdfs.
 Each logical vector in keep_pages must have a length equivalent to the number of pages in the corresponding input pdf.
-All pages with a value of T will be included in the exported file.
+All pages with a value of TRUE will be included in the exported file.
 Each numeric vector in keep_pages enumerates specific page numbers to keep.
 For numeric vectors in keep_pages, duplicate values will be returned only once, and the vector will be sorted before processing.}
 
-\item{ocr}{A logical value: T to run ocr image-to-text detection on pages with fewer than 20 characters;
-F to not run ocr on any pages.}
+\item{ocr}{A logical value: TRUE to run ocr image-to-text detection on pages with fewer than 20 characters;
+FALSE to not run ocr on any pages.}
 
 \item{maxchar}{A numeric value representing the maximum allowable number of characters per page,
 with a default of 10,000. Pages on which the number of characters exceeds maxchar will have the output text
@@ -43,16 +43,16 @@ set to NA.}
 Defaults to NULL, which does not save the output to a file.}
 
 \item{return_to_memory}{A logical value representing whether or not to return
-the output text to memory. Defaults to T.}
+the output text to memory. Defaults to TRUE.}
 
-\item{suppressWarn}{Boolean; F by default. Setting this to T suppresses pdf_text conversion warnings, which can be verbose.}
+\item{suppressWarn}{Boolean; FALSE by default. Setting this to TRUE suppresses pdf_text conversion warnings, which can be verbose.}
 
-\item{auto_headfoot_remove}{Boolean. Tries to remove headers and footers if T. May remove small amounts of paragraph text, especially if there is no header on a page. Defaults to T to avoid having entities that appear consistently in headers be artificially inflated in the textnet_extract network. Recommend keeping this parameter T unless using a separate header/footer removal tool.}
+\item{auto_headfoot_remove}{Boolean. Tries to remove headers and footers if TRUE. May remove small amounts of paragraph text, especially if there is no header on a page. Defaults to TRUE to avoid having entities that appear consistently in headers be artificially inflated in the textnet_extract network. Recommend keeping this parameter TRUE unless using a separate header/footer removal tool.}
 
-\item{sentence_shift}{Boolean. If T, tries to shift a beginning partial sentence to the previous page.}
+\item{sentence_shift}{Boolean. If TRUE, tries to shift a beginning partial sentence to the previous page.}
 }
 \value{
-If return_to_memory is T, returns a list with a length equal
+If return_to_memory is TRUE, returns a list with a length equal
 to the length of the pdfs parameter. Each element in the list is a character vector
 with a length equal to the number of pages in its respective document. If export_paths
 is not null, each character vector of text will be saved to a separate RDS file, where the
@@ -65,5 +65,5 @@ Any trailing "'s" at the end of the entity name is removed.
 All non-word characters are removed.
 Consecutive underscores are collapsed to a single underscore.
 Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to T.
+Entities that have no letters are removed, if remove_nums is set to TRUE.
 }

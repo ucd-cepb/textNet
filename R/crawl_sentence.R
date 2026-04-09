@@ -1,4 +1,4 @@
-# Exported functions 
+# Exported function
 # crawl_sentence 
 
 #' Take a sentence and follow the dependencies
@@ -108,7 +108,7 @@ empty_list$xcomp_verb <- ifelse(sentence$pos=="VERB" & sentence$dep_rel =="xcomp
       empty_list$parent_verb_id[tok_num] <- head_tok_id
       
     }else if(!is.na(empty_list$source_or_target[tok_num]) && empty_list$source_or_target[tok_num]=="source"){
-      current_token_is_verb <- F
+      current_token_is_verb <- FALSE
       source_while_counter <- 0
       while(!current_token_is_verb & source_while_counter < 10){
         current_token_is_verb <- sentence[current_token_id,pos]%in%c("VERB","AUX")

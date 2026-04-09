@@ -14,7 +14,7 @@ Authors@R:
            comment = c(ORCID = "0000-0002-4214-5895"))
 	   )
 Description: 
-    textNet is an R package that provides an interface for using spacyr to generate extract relational data from large policy documents (e.g., plans, rule proposals, impact assessments) and represent these data as a semantic network.
+    textNet is an R package that provides an interface for using spacyr to extract relational data from large policy documents (e.g., plans, rule proposals, impact assessments) and represent these data as a semantic network.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -23,6 +23,7 @@ RoxygenNote: 7.3.3
 Imports:
     magrittr,
     dplyr,
+    rlang,
     stringr,
     stringi,
     network,
@@ -32,9 +33,7 @@ Imports:
     igraph,
     sna,
     ohenery,
-    R.utils,
-    methods,
-    xml2
+    methods
 Suggests:
     reticulate,
     spacyr,
