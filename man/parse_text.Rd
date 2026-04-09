@@ -2,17 +2,17 @@
 % Please edit documentation in R/parse_text.R
 \name{parse_text}
 \alias{parse_text}
-\title{Parse text using spaCy (CPU, en_core_web_lg model)}
+\title{Parse text using spaCy (en_core_web_lg model)}
 \usage{
 parse_text(
   ret_path,
-  keep_hyph_together = F,
+  keep_hyph_together = FALSE,
   phrases_to_concatenate = NA,
   concatenator = "_",
   text_list,
   parsed_filenames,
-  overwrite = T,
-  test = F,
+  overwrite = TRUE,
+  test = FALSE,
   custom_entities = NULL,
   entity_ruler_patterns = NULL,
   ruler_position = c("after", "before"),

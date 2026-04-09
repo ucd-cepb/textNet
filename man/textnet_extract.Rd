@@ -10,9 +10,9 @@ textnet_extract(
   file = NULL,
   cl = 1,
   keep_entities = c("ORG", "GPE", "PERSON"),
-  return_to_memory = T,
-  keep_incomplete_edges = F,
-  remove_neg = T
+  return_to_memory = TRUE,
+  keep_incomplete_edges = FALSE,
+  remove_neg = TRUE
 )
 }
 \arguments{
@@ -28,9 +28,9 @@ textnet_extract(
 
 \item{return_to_memory}{boolean for whether function should return final result as workspace object}
 
-\item{keep_incomplete_edges}{Boolean. If T, keeps edges with only a source or target but not both}
+\item{keep_incomplete_edges}{Boolean. If TRUE, keeps edges with only a source or target but not both}
 
-\item{remove_neg}{Boolean. If T, removes edges whose head token has a negation child}
+\item{remove_neg}{Boolean. If TRUE, removes edges whose head token has a negation child}
 }
 \value{
 A list with four objects:
@@ -53,10 +53,10 @@ A list with four objects:
 \item xcomp_verb -- list of any open causal complements in the verb phrase
 \item xcomp_helper_token -- list of any auxiliary verbs associated with the open causal complements
 \item xcomp_helper_lemma -- list of base forms of any auxiliary verbs associated with the open causal complements
-\item neg -- Boolean: T if there is a negation token present in the verb phrase; F otherwise
-\item edgeiscomplete -- Boolean: T if the edge has both a source and target node; F otherwise
-\item has_hedge -- Boolean: T if the edge contains a verb or auxiliary verb indicating uncertainty, namely "may","might","can","could", "seem","appear","suggest","tend","assume","indicate","doubt", or "believe"; the value is F otherwise
-\item is_future -- Boolean: T if the edge is future tense, as indicated by auxiliary verbs of the form 'is going to' or 'will/shall'; F otherwise
+\item neg -- Boolean: TRUE if there is a negation token present in the verb phrase; FALSE otherwise
+\item edgeiscomplete -- Boolean: TRUE if the edge has both a source and target node; FALSE otherwise
+\item has_hedge -- Boolean: TRUE if the edge contains a verb or auxiliary verb indicating uncertainty, namely "may","might","can","could", "seem","appear","suggest","tend","assume","indicate","doubt", or "believe"; the value is FALSE otherwise
+\item is_future -- Boolean: TRUE if the edge is future tense, as indicated by auxiliary verbs of the form 'is going to' or 'will/shall'; FALSE otherwise
 \item doc_sent_verb -- unique ID for the edge indicating the document, sentence, and edge verb token separated by underscores
 }
 \item verblist -- data.table of verbs and their attributes, imported from VerbNet 3.3
