@@ -77,7 +77,7 @@ and entity relationships in textual data.
 
 ## Example 
 
-The following example uses parsed text from the Gravelly Ford Water District Groundwater Sustainability Plan in the state of California, before and after the plan underwent revisions required by the California Department of Water Resources. Both versions of the plan were pre-processed using the optional pdf_clean() and parse_text() functions, as shown in the appendix below and package repository. *textNet* is designed for modularity with respect to pdf-to-text conversion and NLP engine. The user can derive plain text by any approach, and likewise perform event extraction with any NLP engine or large language model (LLM) (more on LLM extensions below) and bring these data to *textNet*. The textnet_extract() function expects the parsed table to follow specific conventions for column names and speech tagging, so externally produced data must be converted to standards outlined in the package manual.
+The following example uses parsed text from the Gravelly Ford Water District Groundwater Sustainability Plan in the state of California, before and after the plan underwent revisions required by the California Department of Water Resources. Both versions of the plan were pre-processed using the optional pdf_clean() and parse_text() functions, as shown in the appendix below and package repository. *textNet* is designed for modularity with respect to pdf-to-text conversion and NLP engine. The user can derive plain text by any approach, and likewise perform event extraction with any NLP engine or large language model (LLM) and bring these data to *textNet*. The textnet_extract() function expects the parsed table to follow specific conventions for column names and speech tagging, so externally produced data must be converted to standards outlined in the package manual.
 
 ### Extract Networks
 First, we read in the pre-processed data and call textnet_extract() to produce the network object:
@@ -297,7 +297,7 @@ table(igraph::E(old_extract_net[[1]])$head_verb_tense)
 
 The combine_networks function allows a composite network to be generated from multiple export_to_network() outputs. This function is useful for understanding and analyzing the overlaps between the network of multiple documents. In this example, a composite network is not as useful, since these documents are not from two different regions being discussed but rather are two versions of the same document. However, for illustration purposes, the composite network is generated below. 
 
-For best results, composite network generation should not be done without an adequate disambiguation in Step 4. A function is included that merges the edgelists and nodelists of all documents. If the same node name is mentioned in multiple documents, the node attributes associated with the highest total number of edges for that node name are preserved.
+For best results, composite network generation should not be done without an adequate disambiguation. A function is included that merges the edgelists and nodelists of all documents. If the same node name is mentioned in multiple documents, the node attributes associated with the highest total number of edges for that node name are preserved.
 
 ```{r composite_data}
 #we generate a composite network with the function below
@@ -383,8 +383,6 @@ We can now use these data structures to calculate node statistics, as printed be
 #we can now calculate various node-level statistics on the network
 paths2 <- diag(old_mat %*% old_mat)
 recip <- 2*paths2 / sna::degree(old_net)
-totalCC <- as.vector(unname(DirectedClustering::ClustF(old_mat, 
-            type = "directed", isolates="zero")$totalCC))
 closens <- sna::closeness(old_net, gmode = "graph", cmode="suminvundir")
 between <- sna::betweenness(old_net,gmode = "graph",cmode="undirected")
 deg <- sna::degree(old_net, gmode = "graph", cmode = "undirected")
@@ -394,15 +392,12 @@ old_node_df <- dplyr::tibble(name = network::get.vertex.attribute(old_net,
             between, 
             deg,
             recip,
-            totalCC,
             entity_type = network::get.vertex.attribute(old_net,"entity_type"),
             num_graphs_in = network::get.vertex.attribute(old_net, "num_graphs_in"))
     
 #same thing for the new network
 paths2 <- diag(new_mat %*% new_mat)
 recip <- 2*paths2 / sna::degree(new_net)
-totalCC <- as.vector(unname(DirectedClustering::ClustF(new_mat, 
-                 type = "directed", isolates="zero")$totalCC))
 closens <- sna::closeness(new_net, gmode = "graph", cmode="suminvundir")
 between <- sna::betweenness(new_net,gmode = "graph",cmode="undirected")
 deg <- sna::degree(new_net, gmode = "graph", cmode = "undirected")
@@ -412,7 +407,6 @@ new_node_df <- dplyr::tibble(name = network::get.vertex.attribute(new_net,
             between, 
             deg,
             recip,
-            totalCC,
             entity_type = network::get.vertex.attribute(new_net,"entity_type"),
             num_graphs_in = network::get.vertex.attribute(new_net, "num_graphs_in"))
     
@@ -421,7 +415,7 @@ summary(new_node_df)
     
 ```
     
-The 2x2 table below summarizes the rate at which each entity type is found in both plans. Very few nodes in the old version (12 out of 88) are absent from the new version. Conversely, a substantial minority of nodes in the new version (42 out of 118) are absent from the old version. 
+The 2x2 table below summarizes the rate at which each entity type is found in both plans.
 
 ```{r step8b3}
 #summary of which entity types are in each plan
