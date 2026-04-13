@@ -3,7 +3,7 @@ title: "textNet: Directed, Multiplex, Multimodal Event Network Extraction from T
 authors: 
    - name: Elise Zufall
      affiliation: '1'
-   - name: Tyler Scott
+   - name: Tyler A. Scott
      affiliation: '1, 2'
 affiliations:
    - index: 1
