@@ -128,7 +128,7 @@ aggregating multiple document-based graphs based on common nodes.
 
 The figure below summarizes the functionality of *textNet* and the flow of function outputs. Optional data cleaning features are shown with dotted arrows.
 
-![Workflow of *textNet* Functions](vignette_figures/figure-markdown_strict/flowchart.png)
+![Workflow of *textNet* Functions](paper_figures/flowchart.png)
 
 ## Installation
 
@@ -154,7 +154,7 @@ The *ggraph* package has been used to create the network visualization seen here
 using a weighted version of an igraph constructed using the "old_new_parsed" 
 sample data in *textNet*. 
 
-![Representation of the Event Network of the New Plan](vignette_figures/figure-markdown_strict/plot-2.png)
+![Representation of the Event Network of the New Plan](paper_figures/figure2_new_network.png)
 
 The network-level attributes output from export\_to\_network can also be
 analyzed against exogenous metadata that has been collected separately
