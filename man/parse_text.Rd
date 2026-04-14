@@ -5,7 +5,6 @@
 \title{Parse text using spaCy (en_core_web_lg model)}
 \usage{
 parse_text(
-  ret_path,
   keep_hyph_together = FALSE,
   phrases_to_concatenate = NA,
   concatenator = "_",
@@ -20,8 +19,6 @@ parse_text(
 )
 }
 \arguments{
-\item{ret_path}{filepath to use for Sys.setenv reticulate python call. Note: Python and miniconda must already be installed.}
-
 \item{keep_hyph_together}{Set to true to replace hyphens within a single word with underscores. Defaults to false.}
 
 \item{phrases_to_concatenate}{character vector of phrases, in which each element is a string consisting of tokens separated by spaces. These are replaced with their concatenated version in order, from left to right. It is suggested that the most specific phrases, with the most words, are arranged at the left.}

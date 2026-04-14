@@ -52,7 +52,7 @@ pak::local_install()
 ```
 
 # Suggested packages
-The primary function, textnet_extract(), can be used without the use of spaCy, if the user prefers to import compatible data from a separate tool. A wrapper of the spacyr package is included for convenience, to enable preprocessing in-house. Use of this functionality requires installation of the reticulate and spacyr packages, as seen below. Use of the spacyr wrapper 'parse_text' also requires installing spaCy and a language model; the 'en_core_web_lg' model is recommended (see below). 
+The primary function, textnet_extract(), can be used without the use of spaCy, if the user prefers to import compatible data from a separate tool. A wrapper of the spacyr package is included for convenience, to enable preprocessing in-house. Use of this functionality requires installation of the reticulate and spacyr packages, as seen below. Use of the spacyr wrapper 'parse_text' also requires installing spaCy and the 'en_core_web_lg' model (see below). 
 
 ```
 pak::pak(c("reticulate", "spacyr"))
@@ -61,8 +61,6 @@ spacy_install()
 spacy_download_langmodel('en_core_web_lg')
 ```
 Users of spaCy may encounter a variety of unique challenges with this process based on their particular computer setup. For assistance and guidance with common spaCy challenges, please see the spacyr documentation page: https://spacyr.quanteda.io/index.html, the spacy_install documentation page: https://spacyr.quanteda.io/reference/spacy_install.html and the spacyr README: https://cran.r-project.org/web/packages/spacyr/readme/README.html. Windows users experiencing challenges with permissions or access may benefit from this forum post: https://stackoverflow.com/questions/56974927/permission-denied-trying-to-run-python-on-windows-10
-
-Use of the 'parse_text' wrapper requires providing a path to an appropriate python binary with required modules "spacy" and the desired language model. External support tools exist that help the user locate the path once the modules have been installed, such as findpython: https://cran.r-project.org/web/packages/findpython/index.html
 
 A wrapper of pdftools is also included for convenience. Use of this wrapper 'pdf_clean' requires installation of pdftools, which in turn requires the poppler library. 
 On Ubuntu/Debian: sudo apt-get install libpoppler-cpp-dev
