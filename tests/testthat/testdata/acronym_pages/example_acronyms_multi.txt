@@ -1,0 +1,288 @@
+                                                     Aliso Water District Groundwater Sustainability Agency
+                                                                    Aliso Water District Groundwater Sustainability Plan
+
+Figure 6-1: Potential Surface Water Access and Recharge Projects ....................................... 6-7
+Figure 6-2 Limitations of Diversion to Aliso Canal in Low vs High SJR Flow Rates ................. 6-8
+Figure 6-3: Proposed Points of Diversion and Place of Use .................................................. 6-17
+Figure 6-4: Chowchilla Bypass Flow ..................................................................................... 6-18
+Figure 6-5: Chowchilla Bypass Flow Duration ....................................................................... 6-19
+Figure 6-6: Cottonwood Creek Recharge Facility .................................................................. 6-23
+Figure 7-1: Path to Sustainability ............................................................................................ 7-5
+
+Appendices
+
+Appendix A Hydrogeologic Conceptual Model and Groundwater Conditions for the Aliso Water
+           District GSP by Kenneth D. Schmidt & Associates
+Appendix B Common Chapter (with Coordination Agreement)
+Appendix C Seepage Technical Memo
+Appendix D Section 352.4 California Code of Regulations
+Appendix E Monitoring Protocols, Standards, and Sites BMP
+Appendix F Public Noticing, Public Comments, and Adopting Resolution
+Appendix G Elements of the Plan
+
+
+Abbreviations
+
+AF........................................................................................................................ Acre-feet
+af/y ........................................................................................................ acre-feet per year
+Authority .............................................. San Joaquin Valley Water Infrastructure Authority
+AWD ........................................................... Aliso Water District; Aliso Water District GSA
+BGS............................................................................................... Below Ground Surface
+BMP ....................................................................................... Best Management Practice
+Cal-SIMETAW .................... California Simulation of Evapotranspiration of Applied Water
+CASGEM.................................... California Statewide Groundwater Elevation Monitoring
+CBP, Bypass ....................................................................................... Chowchilla Bypass
+CCC .........................................................................................Columbia Canal Company
+CDEC ............................................................................ California Data Exchange Center
+CDFW ............................................................. California Department of Fish and Wildlife
+CERCLA...... Comprehensive Environmental Response, Compensation, and Liability Act
+cfs................................................................................................... Cubic feet per second
+CGPS ................................................................... Continuous Global Positioning System
+CIMIS ............................................. California Irrigation Management Information System
+Coordination Agreement .................................... Delta-Mendota Coordination Agreement
+
+
+Provost & Pritchard Consulting Group • January 2020 Final                                                                        vii
+
+                                                               008
+                                                   Aliso Water District Groundwater Sustainability Agency
+                                                                 Aliso Water District Groundwater Sustainability Plan
+
+Corps................................................................... United States Army Corps of Engineers
+CVRWQCB .................................... Central Valley Regional Water Quality Control Board
+DAC......................................................................................Disadvantaged Communities
+DHS, CDPH ....... Department of Health Services, California Department of Public Health
+District ........................................................ Aliso Water District; Aliso Water District GSA
+DMGB .................................................................. Delta-Mendota Groundwater Subbasin
+dS/m ............................................................................................. DeciSiemens per meter
+DTSC ................................................................ Department of Toxic Substances Control
+DWR............................................................................... Department of Water Resources
+DWSAP ............................................. Drinking Water Source Assessment and Protection
+EPA ........................................................ United States Environmental Protection Agency
+ESJWQC .......................................................... East San Joaquin Water Quality Coalition
+FAO ............................................................................. Food and Agriculture Organization
+FIFRA ............................................... Federal Insecticide, Fungicide, and Rodenticide Act
+GAMA................................................ Groundwater Ambient Monitoring and Assessment
+GDE ......................................................................... Groundwater Dependent Ecosystem
+GMP ................................................................................ Groundwater Management Plan
+GPS..........................................................................................Global Positioning System
+GRF................................................................................... Gravelly Ford Gauging Station
+GSA............................................................................ Groundwater Sustainability Agency
+GSP................................................................................ Groundwater Sustainability Plan
+HCM .............................................................................. Hydrogeologic Conceptual Model
+InSAR ................................................................ Interferometric Synthetic Aperture Radar
+ILRP ......................................................................... Irrigated Lands Regulatory Program
+IRWMP .......................................................Integrated Regional Water Management Plan
+ITRC .................................................................... Irrigation Training & Research Program
+KDSA ....................................................................... Kenneth D. Schmidt and Associates
+MAGSA .............................................. McMullin Area Groundwater Sustainability Agency
+meq/L ............................................................................................. milliequivalent per liter
+mg/L ..................................................................................................... milligrams per liter
+MPG .................................................................................. Mendota Pool Pumpers Group
+
+
+Provost & Pritchard Consulting Group • January 2020 Final                                                                   viii
+
+                                                             009
+                                                  Aliso Water District Groundwater Sustainability Agency
+                                                                Aliso Water District Groundwater Sustainability Plan
+
+MT .................................................................................................... Minimum Thresholds
+NASA ......................................................National Aeronautics and Space Administration
+NAVSTAR .......................................................... Navigation Satellite Timing and Ranging
+NC Dataset Viewer .................................................. Natural Communities Dataset Viewer
+NGS .......................................................................................... National Geodetic Survey
+NRDC ....................................................................... Natural Resources Defense Council
+RCRA .............................................................. Resource Conservation and Recovery Act
+RWQCB ......................................... Central Valley Regional Water Quality Control Board
+SDWA ......................................................................................... Safe Drinking Water Act
+Settlement .......................................................................... San Joaquin River Settlement
+SJB.......................................................................... San Joaquin River Below Bifurcation
+SJR ...................................................................................................... San Joaquin River
+SJR FNF .................................................................. San Joaquin River Full Natural Flow
+SJRECGSA ............................................. San Joaquin River Exchange Contractors GSA
+SJRRP, Restoration Program ............................ San Joaquin River Restoration Program
+SMC ............................................................................. Sustainable Management Criteria
+SWRCB ............................................. State of California Water Resources Control Board
+TFR ........................................................................................ Temperance Flat Reservoir
+TNC ............................................................................................The Nature Conservancy
+TSCA.................................................................................. Toxic Substances Control Act
+UAVSAR ........................................ Uninhabited Aerial Vehicle Synthetic Aperture Radar
+UNAVCO ...................................................................... University NAVSTAR Consortium
+URF ................................................................................... Unreleased Restoration Flows
+USACE ................................................................ United States Army Corps of Engineers
+USBR, Bureau ........................................................ United States Bureau of Reclamation
+USDA ................................................................. United States Department of Agriculture
+USFWS ................................................................ United States Fish and Wildlife Service
+USGS ............................................................................. United States Geological Survey
+USJRBSI ....................................... Upper San Joaquin River Basin Storage Investigation
+WDR................................................................................ Waste Discharge Requirements
+WHPA ....................................................................................... Wellhead Protection Area
+
+
+Provost & Pritchard Consulting Group • January 2020 Final                                                                 ix
+
+                                                           010
+                                             Aliso Water District Groundwater Sustainability Agency
+                                                            Aliso Water District Groundwater Sustainability Plan
+
+WHPP .................................................................................Wellhead Protection Program
+
+
+
+
+Provost & Pritchard Consulting Group • January 2020 Final                                                      x
+
+                                                      011
+Acronyms
+
+AB 3030             1992 California Assembly Bill 3030
+AWMP                Agriculture Water Management Plan
+BMP                 Best Management Practice
+CASGEM              California Statewide Groundwater Elevation Monitoring
+CCC                 Columbia Canal Company
+CCF                 Climate Change Factors
+CCID                Central California Irrigation District
+CDFW                California Department of Fish and Wildlife
+cfs                 cubic feet per second
+CVP                 Central Valley Project
+CVRWQCB             Central Valley Regional Water Quality Control Board
+DAC                 Disadvantaged Community
+DMC                 Delta-Mendota Canal
+DPWD                Del Puerto Water District
+DWR                 California Department of Water Resources
+ET                  Evapotranspiration
+ETc                 Total Crop Evapotranspiration
+ETiw                Crop Evapotranspiration of Irrigation Water
+ETmisc              Miscellaneous Evapotranspiration including; canal evaporation, consumptive use
+                    of phreatophytes, etc.
+FCWD                Firebaugh Canal Water District
+FNF                 Full Natural Flow
+GAMA                Groundwater Ambient Monitoring and Assessment
+gpm                 gallons per minute
+GRCD                Grassland Resource Conservation District
+GSA                 Groundwater Sustainability Agency
+GSP                 Groundwater Sustainability Plan
+GWD                 Grassland Water District
+HCM                 Hydrogeologic Conceptual Model
+HMRD                Henry Miller Reclamation District
+
+Draft Delta-Mendota Subbasin                                                                 CC-vi
+Groundwater Sustainability Plan
+Common Chapter                                                                        August 2019
+                                                 270
+Acronyms
+
+IRWM                Integrated Regional Water Management
+JPA                 Joint Powers Authority
+KDSA                Kenneth D. Schmidt and Associates
+MAF                 million acre-feet
+MSL                 Mean Sea Level
+NASA JPL            National Aeronautics and Space Administration Jet Propulsions Laboratory
+P&P                 Provost and Pritchard Consulting Group
+RCD                 Resource Conservation District
+RWQCB               Regional Water Quality Control Board
+SB 372              2017 California Senate Bill 372
+SGMA                Sustainable Groundwater Management Act
+SGWP                Sustainable Groundwater Planning
+SJREC               San Joaquin River Exchange Contractors
+SJRECWA             San Joaquin River Exchange Contractors Water Authority
+SJRIP               San Joaquin River Improvement Program
+SJRRP               San Joaquin River Restoration Program
+SLDMWA              San Luis & Delta-Mendota Water Authority
+SMC                 Sustainable Management Criteria
+SWP                 State Water Project
+SWRCB               State Water Resources Control Board
+TAF                 thousand acre-feet
+TDS                 Total Dissolved Solids
+TIWD                Turner Island Water District
+TNC                 The Nature Conservancy
+UNAVCO              University NAVSTAR Consortium
+USACE               U.S. Army Corps of Engineers
+USBR                U.S. Bureau of Reclamation
+USF&WS              U.S. Fish & Wildlife Service
+USGS                United States Geological Survey
+
+
+Draft Delta-Mendota Subbasin                                                                   CC-vii
+Groundwater Sustainability Plan
+Common Chapter                                                                       August 2019
+                                               271
+Acronyms
+
+UWMP                Urban Water Management Plan
+WDL                 Water Data Library
+WMP                 Water Management Plan
+WSIP                Water Storage Investment Program
+WWD                 Westlands Water District
+
+
+
+
+Draft Delta-Mendota Subbasin                                CC-viii
+Groundwater Sustainability Plan
+Common Chapter                                         August 2019
+                                               272
+List of Figures
+Figure 1. Stakeholder Engagement Requirements                                                                                             7
+Figure 2. San Joaquin Valley Groundwater Basin                                                                 Error! Bookmark not defined.
+Figure 3. Elements of a Communications Plan                                                                                              11
+Figure 4. Interview and Consultation Quick Facts                                                                                         15
+Figure 5. USGS Illustration of the DMC and Subsidence                                                                                    17
+Figure 6. Integrated Regional Water Management Groups                                                                                    19
+Figure 7. Irrigated Lands Coalitions                                                                                                     19
+Figure 8. CV-Salts Initiative                                                                                                            19
+Figure 9. Two Core Audience Segments                                                                                                     25
+Figure 10. Website Structure                                                                                                             35
+
+
+List of Tables
+Table 1. Revision History ............................................................................................................................. iv
+Table 2. GSP Submittal Requirements .......................................................................................................... 6
+Table 3. Number of Subbasin Public Water Agencies ................................................................................. 18
+Table 4. Sample – Early Phase Message Elements for Subbasin Stakeholders........................................... 26
+Table 5. Communications Planning Questions ........................................................................................... 27
+Table 6. Risk Factors .................................................................................................................................... 31
+Table 7. IAP2 Public Participation Spectrum ............................................................................................... 33
+Table 9. Mandated Outreach ...................................................................................................................... 38
+Table 10. Sample RACI Chart....................................................................................................................... 43
+
+
+List of Acronyms and Abbreviations
+       Item                                                                      Description
+ Basin                  Groundwater Basin or Subbasin
+ Coms Plan              Delta Mendota Subbasin, Sustainable Groundwater Management Act, Working Draft
+                        Communications Plan
+ CSD                    Community Service District(s):
+ CV‐SALTS               Central Valley Salinity Alternatives for Long-Term Sustainability
+ DAC                    Disadvantaged Communities
+ DMC                    Delta-Mendota Canal
+ DWR                    California Department of Water Resources
+ GSA                    Groundwater Sustainability Agency
+ GSP                    Groundwater Sustainability Plan
+ IRWMP                  Integrated Resource Water Management Plan
+ PDF                    Portable Document Format
+ RCD                    Resource Conservation District(s)
+ SGMA                   Sustainable Groundwater Management Act
+ SLDMWA                 San Luis Delta- Mendota Water Authority
+ State Board            State Water Resources Control Board
+
+
+Working Draft                                                                                                                                             iii
+
+                                                                           570
+     Item                                           Description
+ SA             Situation Assessment
+ USGS           United States Geological Survey
+
+Revision History
+Table 1. Revision History
+ Revision History
+ Revision/Dock Title #   Date of Release      Author      Summary of Changes
+
+
+
+
+iv                                                                             Working Draft
+
+                                                  571

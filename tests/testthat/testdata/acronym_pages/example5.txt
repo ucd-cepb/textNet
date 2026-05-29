@@ -1,0 +1,154 @@
+Acronyms and Abbreviations
+
+
+  AB                                                                Assembly Bill
+  Aerojet                                                           Aerojet-General Corporation
+  AF                                                                Acre-feet
+  AF/Year                                                           Acre-Feet per Year
+  AFB                                                               Air Force Base
+  AGLAND                                                            Irrigated Agricultural Land Waiver
+  Ag-Res                                                            Agricultural Residential
+  Alternative                                                       Alternative Submittal for GSP
+  AMSL                                                              Above Mean Sea Level
+  bgs                                                               Below Ground Surface
+  BMO                                                               Basin Management Objective
+  BMP                                                               Best Management Practices
+  Board                                                             Board of Directors for Sacramento Central Groundwater Authority
+  C&E Plan                                                          Communication and Engagement Plan
+  C2VSimCG                                                          California Central Valley Groundwater-Surface Water Simulation
+                                                                    Model Coarse Grid
+  CASGEM                                                            California Statewide Groundwater Elevation Monitoring
+  CCR                                                               California Code of Regulations
+  CDEC                                                              California Data Exchange Center
+
+  cfs                                                               Cubic Feet per Second
+  CGPS                                                              Continuous Global Positioning System
+  CI                                                                Commercial and Industrial
+  CNRA                                                              California Natural Resources Agency
+  COSb                                                              Consumnes Subbasin
+  CoSANA Model                                                      Cosumnes, South American, North American Subbasins Integrated
+                                                                    Hydrological Model
+  CSCGF                                                             Central Sacramento County Groundwater Forum
+  CSCGMP                                                            Central Sacramento County Groundwater Management Plan
+  CVGSM                                                             Central Valley Integrated Groundwater Surface Water Model
+  CVRWQCB, Central                                                  Central Valley Regional Water Quality Control Board
+  Valley Water Board
+  CV-SALTS                                                          Central Valley Salinity Alternatives for Long-Term Sustainability
+  CWC                                                               California Water Code
+  DA                                                                Decline Area
+  DAC                                                               Disadvantaged Communities
+  Delta                                                             Sacramento-San Joaquin Delta
+  DDW                                                               Division of Drinking Water
+  DPR                                                               California Department of Pesticide Regulation
+
+
+
+South American Subbasin Groundwater Sustainability Plan                                                                          Glossary - 4
+j:\2020\2070005.00_scga-soamersubbasingsp\09-reports\9.09-reports\glossary\02_final\sasbgsp_glossary_final_10292021_forwp.docx
+  DTW                                                               Depth to Water
+  DWR                                                               California Department of Water Resources
+  EDF                                                               Electronic Deliverable Format
+  EIR                                                               Environmental Impact Report
+  ELAP                                                              California Environmental Laboratory Accreditation Program
+  EPA                                                               Environmental Protection Agency (United States)
+  ET                                                                Evapotranspiration
+  Flood-MAR                                                         Flood Managed Aquifer Recharge
+  GAMA                                                              Groundwater Ambient Monitoring and Assessment Program
+  GDE                                                               Groundwater Dependent Ecosystems
+  GIS                                                               Geographic Information System
+  GMP                                                               Groundwater Management Plan
+  GSA                                                               Groundwater Sustainability Agency
+  GSP, Plan                                                         Groundwater Sustainability Plan
+  GSPWG                                                             Groundwater Sustainability Plan Working Group
+  GWE                                                               Groundwater Elevation
+  GW-SW                                                             Groundwater-Surface Water
+  HCM                                                               Hydrogeologic Conceptual Model
+  IDW                                                               Inverse Distance Weighted
+  IM                                                                Interim Milestone
+  InSAR                                                             Interferometric Synthetic Aperture Radar (USGS)
+  IRCT                                                              McDonnell Douglas (Boeing) Inactive Rancho Cordova Test Site
+  ISW                                                               Interconnected Surface Water
+  JPA                                                               Joint Powers Authority
+  LFG                                                               Landfill gas
+  LCRS                                                              Leachate collections and removal systems
+  m                                                                 Meter
+  Mather AFB                                                        Mather Air Force Base
+  McClellan AFB                                                     McClellan Air Force Base
+  MCL                                                               Maximum Contaminant Level
+  µg/L                                                              Micrograms per Liter
+  mg/L                                                              Milligrams per Liter
+  MGD                                                               Million Gallons per Day
+  MO                                                                Measurable Objective
+  MOA                                                               Memorandum of Agreement
+  MOU                                                               Memorandum of Understanding
+  MT                                                                Minimum Threshold
+  NASb                                                              North American Subbasin
+  NDGSA                                                             Northern Delta Groundwater Sustainability Agency
+  NDMA                                                              Nitrosodimethylamine
+  NDWI                                                              Normalized Difference Water Index
+  NGVD 29                                                           National Geodetic Vertical Datum of 1929
+
+
+
+South American Subbasin Groundwater Sustainability Plan                                                                          Glossary - 5
+j:\2020\2070005.00_scga-soamersubbasingsp\09-reports\9.09-reports\glossary\02_final\sasbgsp_glossary_final_10292021_forwp.docx
+  NRCS                                                              Natural Resources Conservation Service
+  NSSDA                                                             National Standard for Spatial Data Accuracy
+  OHWD                                                              Omochumne-Hartnell Water District
+  PDF                                                               Portable Document Format
+  PFAS                                                              Polyfluoroalkyl Substances
+  PMA                                                               Potential Management Actions
+  PWS                                                               Public Water Supply
+  RA                                                                Recharge Area
+  RD                                                                Reclamation District
+  RMP                                                               Representative Monitoring Point
+  RP                                                                Reference Point
+  RPE                                                               Reference Point Elevation
+  RWA                                                               Regional Water Authority
+  SacIGSM                                                           Sacramento Integrated Groundwater Surface Water Model
+  SAFCA                                                             Sacramento Area Flood Control Agency
+  SAGBI                                                             Soil Agricultural Banking Index
+
+  SASb, Basin                                                       South American Subbasin
+  SB                                                                Senate Bill
+  SCADA                                                             Supervisory control and data acquisition
+  SCGA                                                              Sacramento Central Groundwater Authority
+  SCWA                                                              Sacramento County Water Agency
+  SGMA                                                              Sustainable Groundwater Management Act
+  SMC                                                               Sustainable Management Criteria
+  SMCL                                                              Secondary Maximum Contaminant Level
+  SMWP                                                              State Monitoring Well Program
+  SRCD                                                              Sloughhouse Resource Conservation District
+  CSUS                                                              California State University - Sacramento
+  Staff Report                                                      Sustainable Groundwater Management Program Alternative
+                                                                    Assessment Staff Report – South American Subbasin
+  State Water Board                                                 State Water Resources Control Board
+  SWP                                                               State Water Project
+
+  TCE                                                               Trichloroethylene
+  TDS                                                               Total dissolved solids
+  TFT                                                               The Freshwater Trust
+  UCD                                                               University of California, Davis
+  UNAVCO                                                            University NAVSTAR Consortium
+  UR                                                                Undesirable Result
+  USGS                                                              United States Geological Survey
+  UST                                                               Underground Storage Tanks
+  VOC                                                               Volatile Organic Chemical
+  VSWTP                                                             Vineyard Surface Water Treatment Plant
+
+
+South American Subbasin Groundwater Sustainability Plan                                                                          Glossary - 6
+j:\2020\2070005.00_scga-soamersubbasingsp\09-reports\9.09-reports\glossary\02_final\sasbgsp_glossary_final_10292021_forwp.docx
+  Water Forum                                                       Sacramento Area Water Forum Successor Effort
+  Water Forum                                                       Sacramento Area Water Forum Successor Effort Agreement
+  Agreement, WFA
+  WG                                                                Working Group
+  WQO                                                               Water Quality Objectives
+  WQPS                                                              Water Quality Protection Standards
+
+
+
+
+South American Subbasin Groundwater Sustainability Plan                                                                          Glossary - 7
+j:\2020\2070005.00_scga-soamersubbasingsp\09-reports\9.09-reports\glossary\02_final\sasbgsp_glossary_final_10292021_forwp.docx
+
