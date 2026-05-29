@@ -137,8 +137,8 @@ for(m in 1:length(old_new_parsed)){
 
 ```{r acronyms}
 
-old_acronyms <- find_acronyms(old_new_text[[1]])
-new_acronyms <- find_acronyms(old_new_text[[2]])
+old_acronyms <- find_intext_acronyms(old_new_text[[1]])
+new_acronyms <- find_intext_acronyms(old_new_text[[2]])
    
 print(head(old_acronyms))
    

@@ -19,11 +19,11 @@ disambiguate(
 
 \item{from}{A list of character vectors representing terms to look for, the same length as 'to'.
 If a term in this list is found, this function replaces it with its corresponding match in 'to'.
-The "acronyms" column from the find_acronyms output could be used here.}
+The "acronym" column from the find_intext_acronyms() or extract_front_matter_acronyms() output could be used here.}
 
 \item{to}{A list of character vectors representing replacement terms, the same length as 'from'.
 If a term in the 'from' list is found, it is replaced with the corresponding term in this list.
-The "names" column in the find_acronyms output could be used here. If an element consists of multiple entities in a vector,
+The "name" column from the find_intext_acronyms() or extract_front_matter_acronyms() output could be used here. If an element consists of multiple entities in a vector,
 the relevant edges are duplicated in the edgelist, with one edge for each entity in the vector.
 These vector entities are disambiguated first, followed by the rest of the strings in order of appearance in 'from' and 'to'.}
 
