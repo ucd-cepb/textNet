@@ -1,6 +1,52 @@
 # Exported function
 # extract_front_matter_acronyms
 
+# ---- internal regex / filter constants -------------------------------------
+
+# Heading patterns.
+# Accepts Title Case or ALL CAPS, with `and` or `&` as the connector word,
+# and an optional `List of` / `Glossary of` prefix. Section numbers and
+# leading dashes are tolerated. Anchored to a full line (multiline mode).
+.heading_re <- paste0(
+  "(?im)^[\\s\\d\\.\\-]*",
+  "(?:list\\s+of\\s+|glossary\\s+of\\s+)?",
+  "(?:",
+    "acronyms?(?:\\s+(?:and|&)\\s+abbreviations?)?",
+    "|abbreviations?(?:\\s+(?:and|&)\\s+acronyms?)?",
+  ")\\s*$"
+)
+
+# Row pattern.
+# Acronym: starts with a capital letter, ≤20 chars total of [A-Za-z0-9&/-];
+#   optionally followed by a tab/space-separated second capital-start word
+#   (handles "NASA InSAR", "Mather AFB", "C&E Plan", "Coordination Agreement").
+#   IMPORTANT: the inner whitespace MUST be [ \t]+, not \s+, otherwise the
+#   group can swallow a newline and capture a heading line into the acronym.
+# Separator: 3+ dots, tabs, or 5+ spaces. Five spaces is the cutoff because
+#   real tables are visually columnar; narrative prose has single spaces.
+# Expansion: starts with a letter, 4-120 chars total (paragraph-leak guard).
+.row_re <- paste0(
+  "(?m)^[ \\t]*",
+  "([A-Z][A-Za-z0-9&/\\-]{0,19}(?:[ \\t]+[A-Z][A-Za-z0-9&/\\-]*)?)",
+  "[ \\t]*(?:\\.{3,}|\\t+|[ \\t]{5,})[ \\t]*",
+  "([A-Za-z][^\\n]{3,118})",
+  "\\s*$"
+)
+
+# Post-match expansion blacklist (applied to RAW expansion, before any
+# stripping). Catches three observed footer / TOC residue shapes.
+.expansion_reject <- c(
+  "(?i)^[ivxlcdm]+$",       # roman numeral page numbers (page 'xii' footers)
+  "^\\d+(-\\d+)?$",         # bare page numbers ("14", "B-3")
+  "^[A-Z][a-z]+ \\d{4}$"    # Month YYYY date footers
+)
+
+# Acronym blacklist. "Item" is the column header in a glossary-style table
+# layout (multi-section documents sometimes use Item | Description headers).
+.acronym_reject <- c("Item")
+
+# ---- main function ---------------------------------------------------------
+
 #' Extract acronym definitions from a front-matter acronym table.
 #'
 #' Scans a character vector (typically one element per page, as returned by
@@ -67,53 +113,6 @@
 #' all_acronyms <- unique(rbind(fm, inline), by = "acronym")
 #'
 #' @export
-
-# ---- internal regex / filter constants -------------------------------------
-
-# Heading patterns.
-# Accepts Title Case or ALL CAPS, with `and` or `&` as the connector word,
-# and an optional `List of` / `Glossary of` prefix. Section numbers and
-# leading dashes are tolerated. Anchored to a full line (multiline mode).
-.heading_re <- paste0(
-  "(?im)^[\\s\\d\\.\\-]*",
-  "(?:list\\s+of\\s+|glossary\\s+of\\s+)?",
-  "(?:",
-    "acronyms?(?:\\s+(?:and|&)\\s+abbreviations?)?",
-    "|abbreviations?(?:\\s+(?:and|&)\\s+acronyms?)?",
-  ")\\s*$"
-)
-
-# Row pattern.
-# Acronym: starts with a capital letter, ≤20 chars total of [A-Za-z0-9&/-];
-#   optionally followed by a tab/space-separated second capital-start word
-#   (handles "NASA InSAR", "Mather AFB", "C&E Plan", "Coordination Agreement").
-#   IMPORTANT: the inner whitespace MUST be [ \t]+, not \s+, otherwise the
-#   group can swallow a newline and capture a heading line into the acronym.
-# Separator: 3+ dots, tabs, or 5+ spaces. Five spaces is the cutoff because
-#   real tables are visually columnar; narrative prose has single spaces.
-# Expansion: starts with a letter, 4-120 chars total (paragraph-leak guard).
-.row_re <- paste0(
-  "(?m)^[ \\t]*",
-  "([A-Z][A-Za-z0-9&/\\-]{0,19}(?:[ \\t]+[A-Z][A-Za-z0-9&/\\-]*)?)",
-  "[ \\t]*(?:\\.{3,}|\\t+|[ \\t]{5,})[ \\t]*",
-  "([A-Za-z][^\\n]{3,118})",
-  "\\s*$"
-)
-
-# Post-match expansion blacklist (applied to RAW expansion, before any
-# stripping). Catches three observed footer / TOC residue shapes.
-.expansion_reject <- c(
-  "(?i)^[ivxlcdm]+$",       # roman numeral page numbers (page 'xii' footers)
-  "^\\d+(-\\d+)?$",         # bare page numbers ("14", "B-3")
-  "^[A-Z][a-z]+ \\d{4}$"    # Month YYYY date footers
-)
-
-# Acronym blacklist. "Item" is the column header in a glossary-style table
-# layout (multi-section documents sometimes use Item | Description headers).
-.acronym_reject <- c("Item")
-
-# ---- main function ---------------------------------------------------------
-
 extract_front_matter_acronyms <- function(str, max_window_pages = 10L) {
   if (!is.character(str)) {
     stop("'str' must be a character vector")

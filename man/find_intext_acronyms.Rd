@@ -14,12 +14,12 @@ find_acronyms(str)
 }
 \value{
 A \code{data.table} with columns \code{name} (full expansion,
-  spaces and hyphens replaced with underscores so the name matches
-  spaCy's concatenated entity tokens) and \code{acronym}. Each row is a
-  unique acronym; rows where the same acronym appears with multiple
-  inline expansions are dropped to avoid ambiguous downstream
-  replacements. Rows are sorted shortest to longest acronym so
-  replacements in \code{\link{disambiguate}} apply in the right order.
+spaces and hyphens replaced with underscores so the name matches
+spaCy's concatenated entity tokens) and \code{acronym}. Each row is a
+unique acronym; rows where the same acronym appears with multiple
+inline expansions are dropped to avoid ambiguous downstream
+replacements. Rows are sorted shortest to longest acronym so
+replacements in \code{\link{disambiguate}} apply in the right order.
 }
 \description{
 Scans a character vector for inline parenthetical patterns of the form
@@ -47,4 +47,5 @@ text <- c(
   "Groundwater Sustainability Plans (GSPs) are submitted annually."
 )
 find_intext_acronyms(text)
+
 }

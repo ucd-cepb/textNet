@@ -17,10 +17,10 @@ if the next heading page is reached.}
 }
 \value{
 A \code{data.table} with columns \code{name} (full expansion,
-  spaces and hyphens replaced with underscores to match spaCy's
-  concatenated entity tokens) and \code{acronym}. Returns an empty
-  \code{data.table} (zero rows, both columns) when no front-matter
-  acronym table is detected.
+spaces and hyphens replaced with underscores to match spaCy's
+concatenated entity tokens) and \code{acronym}. Returns an empty
+\code{data.table} (zero rows, both columns) when no front-matter
+acronym table is detected.
 }
 \description{
 Scans a character vector (typically one element per page, as returned by
@@ -70,4 +70,5 @@ extract_front_matter_acronyms(pages)
 fm <- extract_front_matter_acronyms(pages)
 inline <- find_intext_acronyms(pages)
 all_acronyms <- unique(rbind(fm, inline), by = "acronym")
+
 }
