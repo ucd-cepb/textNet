@@ -1,7 +1,11 @@
 # Exported functions 
 # disambiguate 
 
-#' Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.
+#' @title Rename entities in a textnet_extract object
+#' @description
+#' Replaces entity names supplied in \code{from} with the corresponding names
+#' in \code{to} throughout a [textnet_extract()] output. Supports partial
+#' matching, prefix removal, and recursive chaining of replacements.
 #'
 #' @param from A list of character vectors representing terms to look for, the same length as 'to'. 
 #' If a term in this list is found, this function replaces it with its corresponding match in 'to'. 

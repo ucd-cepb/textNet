@@ -1,13 +1,11 @@
 # Exported function
 # pdf_clean
 
-#' Take a vector and clean the strings using regex. 
-#' Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-#' Any trailing "'s" at the end of the entity name is removed. 
-#' All non-word characters are removed.
-#' Consecutive underscores are collapsed to a single underscore.
-#' Leading and trailing underscores are removed.
-#' Entities that have no letters are removed, if remove_nums is set to TRUE.
+#' @title Extract and clean text from PDF files
+#' @description
+#' Wraps [pdftools::pdf_text()] to read one or more PDF files into R, with
+#' optional header and footer removal, page filtering, OCR support, and
+#' sentence-boundary shifting.
 #'
 #' @param pdfs a vector of file names
 #' @param keep_pages By default, NULL keeps all pages. Alternatively, the user can specify a list of logical or numeric vectors of pages to keep in the exported file. 

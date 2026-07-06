@@ -2,7 +2,7 @@
 % Please edit documentation in R/top_features.R
 \name{top_features}
 \alias{top_features}
-\title{Finds the highest degree entities and most common lemmas in the network}
+\title{Identify top entities and verbs across documents}
 \usage{
 top_features(files, from_file = FALSE)
 }
@@ -15,5 +15,6 @@ top_features(files, from_file = FALSE)
 list of all entities and lemmas in the corpus, along with their average normalized prevalence as a fraction of a plan. For entities, this is the entity degree over the sum of all entity degrees in the plan, averaged across all plans
 }
 \description{
-Finds the highest degree entities and most common lemmas in the network
+Returns the highest-degree entities and most frequent verb lemmas across a
+set of documents, normalised by each document's overall degree distribution.
 }

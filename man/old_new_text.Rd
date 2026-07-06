@@ -3,21 +3,28 @@
 \docType{data}
 \name{old_new_text}
 \alias{old_new_text}
-\title{A sample of text data extracted from pdfs representing two versions of a publicly available groundwater plan,
-stored as a named list. Each element in the list represents a different document,
-and each string represents the text of one page. Equivalent data format to the output of pdf_clean}
+\title{Raw text from two versions of a groundwater plan}
 \format{
-An object of class \code{"list"}.
+A named list of two character vectors, one per plan version. Each
+vector element contains the extracted text of a single PDF page.
 }
 \usage{
-data(old_new_text)
+old_new_text
 }
 \description{
-A sample of text data extracted from pdfs representing two versions of a publicly available groundwater plan,
-stored as a named list. Each element in the list represents a different document,
-and each string represents the text of one page. Equivalent data format to the output of pdf_clean
+Page-level text extracted from two versions of a publicly available
+groundwater plan.
+}
+\details{
+The list is named, with one element per document. Each element is a
+character vector in which each string corresponds to one page of the PDF.
+The data format matches the output of \code{\link[=pdf_clean]{pdf_clean()}}.
 }
 \examples{
-data(old_new_text)
+# number of pages in each plan version
+lengths(old_new_text)
+
+# preview the first page of the earlier version
+substr(old_new_text[[1]][1], 1, 200)
 }
 \keyword{datasets}

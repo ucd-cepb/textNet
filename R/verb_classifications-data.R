@@ -1,19 +1,32 @@
-#' Data downloaded from VerbNet 3.3 and organized by type and class, as in the script "verbnet_port.R". 
+#' @title VerbNet 3.3 verb classifications
+#' @description
+#' Verb class and type assignments from VerbNet 3.3, used to annotate the
+#' verblist returned by [textnet_extract()].
 #'
-#' Attributes from this table are bound to the verblist exported by textnet_extract.
+#' @details
+#' Each row corresponds to a verb lemma and its associated VerbNet class and
+#' type. These attributes are joined to the verblist by \code{head_verb_lemma}.
+#' The data were processed from the VerbNet 3.3 source files using
+#' \code{data-raw/verbnet_port.R}.
 #'
-#' @docType data
+#' @format A \code{data.table} with columns:
+#' \describe{
+#'   \item{head_verb_lemma}{Base form of the verb.}
+#'   \item{classes}{VerbNet 3.3 class membership string.}
+#'   \item{type_name}{VerbNet 3.3 type label.}
+#'   \item{type_id}{Integer identifier for \code{type_name}.}
+#' }
 #'
-#' @usage data(verb_classifications)
-#'
-#' @format An object of class "data.table"
-#'
-#' @keywords verbnet
-#'
-#' @references Schuler, Karin Kipper. 2005. VerbNet: A Broad-Coverage, Comprehensive Verb Lexicon. University of Pennsylvania.
+#' @references
+#' Schuler, Karin Kipper (2005). \emph{VerbNet: A Broad-Coverage, Comprehensive
+#' Verb Lexicon}. University of Pennsylvania.
 #'
 #' @source \href{https://verbs.colorado.edu/verb-index/vn3.3/}{VerbNet 3.3}
 #'
 #' @examples
-#' data(verb_classifications)
+#' # number of verb entries
+#' nrow(verb_classifications)
+#'
+#' # VerbNet types present in the data
+#' unique(verb_classifications$type_name)
 "verb_classifications"

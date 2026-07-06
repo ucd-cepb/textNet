@@ -1,8 +1,11 @@
 # Exported functions
 # combine_networks
 
-#' Superimposes multiple textNet igraphs into a single igraph. 
-#' 
+#' @title Combine multiple textNet igraphs into one
+#' @description
+#' Superimposes multiple igraph objects produced by [export_to_network()] into
+#' a single igraph, merging nodes with the same name and consolidating edges.
+#'
 #' @param textnet_igraphs List of textNet igraphs, the outputs of export_to_network(export_format = "igraph)
 #' @param mode Either "multiplex" or "weighted" depending on the desired exported network format. If "weighted", collapses multiplex edges into a single weighted edge
 #' 

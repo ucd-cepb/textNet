@@ -1,7 +1,11 @@
 # Exported function
 # textnet_extract 
 
-#' Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and appositive list
+#' @title Extract an event network from parsed text
+#' @description
+#' Crawls the dependency-parse tree of each sentence to identify
+#' subject-verb-object triples, and returns an edgelist, nodelist, verblist,
+#' and appositive list.
 #'
 #' @param x parsed spacy document
 #' @param concatenator how entity parts are concatenated (defaults to "_")

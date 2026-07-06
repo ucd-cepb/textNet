@@ -1,7 +1,11 @@
 # Exported function
 # find_acronyms
 
-#' Take a character vector and detect all parenthetical statements in which an acronym is uniquely defined within the character vector. 
+#' @title Detect parenthetically defined acronyms
+#' @description
+#' Scans a character vector for parenthetical acronym definitions
+#' (e.g., "River Basin Authority (RBA)") and, optionally, two-column tabular
+#' definitions. Returns a table of unique name-acronym pairs.
 #'
 #' @param str A character vector
 #' @param table_text Optional; used to detect acronyms from tables. A character vector representing the contents of a unique text file, such as the output of pdftools::pdf_text. Each element of the vector corresponds to a page of a pdf. It is recommended to use raw text output, rather than the results of textNet::pdf_clean, as the cleaning process removes white spaces that could hinder the detection of acronym tables. Single-letter acronyms are excluded. Parenthetically defined acronyms take precedence over table-defined acronyms. 

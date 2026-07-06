@@ -1,8 +1,11 @@
 # Exported functions
 # top_features
 
-#' Finds the highest degree entities and most common lemmas in the network
-#' 
+#' @title Identify top entities and verbs across documents
+#' @description
+#' Returns the highest-degree entities and most frequent verb lemmas across a
+#' set of documents, normalised by each document's overall degree distribution.
+#'
 #' @param files vector of filepaths to igraph objects or list of igraph objects
 #' @param from_file boolean whether files represent filepaths (TRUE) or igraph objects (FALSE)
 #' 

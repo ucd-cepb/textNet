@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_acronyms.R
 \name{find_acronyms}
 \alias{find_acronyms}
-\title{Take a character vector and detect all parenthetical statements in which an acronym is uniquely defined within the character vector.}
+\title{Detect parenthetically defined acronyms}
 \usage{
 find_acronyms(str, table_text = NULL)
 }
@@ -16,5 +16,7 @@ a data table with a "name" column and an "acronym" column representing its assoc
 Each row corresponds to a unique match in the document.
 }
 \description{
-Take a character vector and detect all parenthetical statements in which an acronym is uniquely defined within the character vector.
+Scans a character vector for parenthetical acronym definitions
+(e.g., "River Basin Authority (RBA)") and, optionally, two-column tabular
+definitions. Returns a table of unique name-acronym pairs.
 }

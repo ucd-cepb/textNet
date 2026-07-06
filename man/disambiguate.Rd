@@ -2,7 +2,7 @@
 % Please edit documentation in R/disambiguate.R
 \name{disambiguate}
 \alias{disambiguate}
-\title{Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.}
+\title{Rename entities in a textnet_extract object}
 \usage{
 disambiguate(
   textnet_extract,
@@ -48,5 +48,7 @@ which may in turn correspond to a 'to' value that is found in 'from', and so on.
 a cleaned textNet extract. See textnet_extract help file for structure.
 }
 \description{
-Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.
+Replaces entity names supplied in \code{from} with the corresponding names
+in \code{to} throughout a \code{\link[=textnet_extract]{textnet_extract()}} output. Supports partial
+matching, prefix removal, and recursive chaining of replacements.
 }

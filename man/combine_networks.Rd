@@ -2,7 +2,7 @@
 % Please edit documentation in R/combine_networks.R
 \name{combine_networks}
 \alias{combine_networks}
-\title{Superimposes multiple textNet igraphs into a single igraph.}
+\title{Combine multiple textNet igraphs into one}
 \usage{
 combine_networks(textnet_igraphs, mode = c("multiplex", "weighted"))
 }
@@ -15,5 +15,6 @@ combine_networks(textnet_igraphs, mode = c("multiplex", "weighted"))
 Single igraph object that consolidates nodes and edges from input graphs. If there are multiple nodes with the same name and different attributes originating from different graphs, this function preserves the node attributes associated with the version that appears most commonly. Adds a node attribute num_graphs_in, which denotes the number of input graphs each node was found in. For a weighted graph, the weight is equal to the original number of edges between the respective source and target nodes. Edge attributes for a multiplex graph are described in the help file of textnet_extract.
 }
 \description{
-Superimposes multiple textNet igraphs into a single igraph.
+Superimposes multiple igraph objects produced by \code{\link[=export_to_network]{export_to_network()}} into
+a single igraph, merging nodes with the same name and consolidating edges.
 }

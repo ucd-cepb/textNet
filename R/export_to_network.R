@@ -1,7 +1,11 @@
 # Exported function
 # export_to_network
 
-#' Takes a textnet_extract output and converts it into an "igraph" or "network" object, then calculates network summary statistics. Note, this function does not preserve incomplete edges. The verblist and appositivelist are not used.
+#' @title Export a textnet_extract to a network object
+#' @description
+#' Converts the output of [textnet_extract()] into an [igraph::igraph] or
+#' [network::network] object and computes network summary statistics.
+#' Incomplete edges are dropped; the verblist and appositivelist are not used.
 #'
 #' @param textnet_extract An object output from textnet_extract
 #' @param keep_isolates A boolean, where TRUE means to keep nodes from the nodelist that are not included in the edgelist, and FALSE otherwise.

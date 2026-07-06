@@ -2,7 +2,7 @@
 % Please edit documentation in R/entity_specify.R
 \name{entity_specify}
 \alias{entity_specify}
-\title{Creates EntityRuler patterns from entity names}
+\title{Create EntityRuler patterns from entity names}
 \usage{
 entity_specify(
   entity_names = NULL,
@@ -33,5 +33,6 @@ Rows with keep=TRUE/TRUE/true/yes/Y/1 are included. Uses final_label if provided
 A list of pattern dictionaries formatted for spaCy's EntityRuler
 }
 \description{
-Creates EntityRuler patterns from entity names
+Converts a list of entity names and labels into pattern dictionaries
+suitable for spaCy's EntityRuler, for use with \code{\link[=parse_text]{parse_text()}}.
 }

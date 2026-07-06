@@ -2,7 +2,7 @@
 % Please edit documentation in R/suggest_entities.R
 \name{suggest_entities}
 \alias{suggest_entities}
-\title{Suggests potential missed entities from parsed text output}
+\title{Suggest potential missed entities}
 \usage{
 suggest_entities(
   parsed_output,
@@ -30,8 +30,7 @@ suggest_entities(
 A dataframe of suggested entities with columns: phrase, frequency, pos_tags, suggested_label, context_examples, keep, final_label. Also exports to CSV if export_path is provided.
 }
 \description{
-Analyzes parsed output from parse_text() to identify tokens and phrases that
-may be entities but were not tagged by spaCy's NER. Exports suggestions to a
-CSV file for user review. After review, the CSV can be used with entity_specify()
-to create EntityRuler patterns.
+Analyses parsed output from \code{\link[=parse_text]{parse_text()}} to identify tokens and phrases
+that may represent entities not tagged by spaCy's NER. Optionally exports
+suggestions to a CSV file for manual review with \code{\link[=entity_specify]{entity_specify()}}.
 }

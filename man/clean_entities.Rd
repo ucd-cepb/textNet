@@ -2,13 +2,7 @@
 % Please edit documentation in R/clean_entities.R
 \name{clean_entities}
 \alias{clean_entities}
-\title{Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to TRUE.}
+\title{Clean entity name strings}
 \usage{
 clean_entities(
   v,
@@ -30,11 +24,8 @@ clean_entities(
 a cleaned vector of entity names
 }
 \description{
-Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to TRUE.
+Normalises a character vector of entity names by converting mathematical
+Unicode characters to ASCII letters, removing non-word characters,
+collapsing consecutive concatenators, and stripping leading/trailing
+concatenators.
 }
