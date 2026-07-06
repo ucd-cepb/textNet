@@ -3,7 +3,7 @@
 
 #' @title Clean entity name strings
 #' @description
-#' Normalises a character vector of entity names by converting mathematical
+#' Normalizes a character vector of entity names by converting mathematical
 #' Unicode characters to ASCII letters, removing non-word characters,
 #' collapsing consecutive concatenators, and stripping leading/trailing
 #' concatenators.
