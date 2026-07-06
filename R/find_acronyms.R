@@ -52,8 +52,7 @@ find_acronyms <- function(str, table_text = NULL){
                                )
   
   paren_splits$acr1 <- as.vector(paren_splits$acr1)
-  paren_splits$name2
-  
+
   paren_splits$acr2 <- unlist(paren_splits$acr2)
   paren_splits$name1 <- unlist(paren_splits$name1)
   
@@ -79,7 +78,7 @@ find_acronyms <- function(str, table_text = NULL){
   
   if(!is.null(table_text)){
     if(!is.character(table_text)){
-      stop("All elements in rawtexts must be character vectors.")
+      stop("'table_text' must be a character vector.")
     }
     shorts <- vector(mode = "character", length = 0)
     longs <- vector(mode = "character", length = 0)

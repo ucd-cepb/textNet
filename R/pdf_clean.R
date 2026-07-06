@@ -385,7 +385,7 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=FALSE, maxchar=10000, export_pa
     if(return_to_memory==TRUE){
       
       all_pdfs[[k]] <- texts
-      names(all_pdfs[k]) <- pdfs[k]
+      names(all_pdfs)[k] <- pdfs[k]
     }
   }
   if(return_to_memory==TRUE){

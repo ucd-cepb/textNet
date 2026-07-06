@@ -72,7 +72,6 @@ A list with four objects:
 \item fullname -- entity that is a head token of the corresponding appositive
 }
 }
-data frame with original parsed sentence + added dependency parsing
 }
 \description{
 Crawls the dependency-parse tree of each sentence to identify

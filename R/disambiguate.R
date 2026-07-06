@@ -42,6 +42,7 @@
 #'
 
 # Helper: compute how many recursive passes are needed and whether a chain is infinite
+#' @keywords internal
 count_chain_length <- function(to, from) {
   vectto <- unlist(to)
   vectfrom <- unlist(from)

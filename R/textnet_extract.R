@@ -54,8 +54,6 @@
 #'      \item fullname -- entity that is a head token of the corresponding appositive
 #'    }
 #' }
-#' data frame with original parsed sentence + added dependency parsing
-#' 
 #' @import data.table
 #' @importFrom magrittr %>%
 #' @importFrom dplyr group_by filter

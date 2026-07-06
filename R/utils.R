@@ -1,6 +1,5 @@
-# Exported functions 
+# Internal functions
 # create_empty_sentence_parse_list
-# generate_proper_name
 
 #' Create a list to iterate over a sentence and store items
 #'

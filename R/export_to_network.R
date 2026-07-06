@@ -33,7 +33,7 @@
 #'For multiplex graphs, if collapse_edges == FALSE:
 #'    \item modularity -- calculates igraph::modularity on a weighted, undirected, non-multiplex version of the network.
 #'    \item num_communities -- number of communities using louvain cluster algorithm on a weighted, undirected, non-multiplex version of the network
-#'    \item percent_vbn, percent_vbg, percent_vpb, percent_vbd, percent_vb, percent_vbz -- percent of edges in the graph that are of the respective verb tense
+#'    \item percent_vbn, percent_vbg, percent_vbp, percent_vbd, percent_vb, percent_vbz -- percent of edges in the graph that are of the respective verb tense
 #' }
 #' @importFrom igraph delete_edge_attr
 #' @importFrom igraph delete.edges
