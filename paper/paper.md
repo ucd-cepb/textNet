@@ -151,8 +151,8 @@ not depend on *spacyr* or Python integration.
 and analysis packages can be used to further explore the extracted networks. 
 
 The *ggraph* package has been used to create the network visualization seen here, 
-using a weighted version of an igraph constructed using the "old_new_parsed" 
-sample data in *textNet*. 
+using a weighted version of an igraph constructed using the "example_plan_v2_parsed"
+sample data in *textNet*.
 
 ![Representation of the Event Network of the New Plan](paper_figures/figure2_new_network.png)
 

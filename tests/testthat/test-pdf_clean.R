@@ -3,11 +3,11 @@ library(textNet)
 library(testthat)
 
 pdfs <- c(
-  system.file("extdata", "old.pdf", package = "textNet"),
-  system.file("extdata", "new.pdf", package = "textNet")
+  system.file("extdata", "example_plan_v1.pdf", package = "textNet"),
+  system.file("extdata", "example_plan_v2.pdf", package = "textNet")
 )
 
-old_new_text <- textNet::pdf_clean(
+plan_texts <- textNet::pdf_clean(
   pdfs,
   ocr = FALSE,
   maxchar = 10000,
@@ -16,18 +16,18 @@ old_new_text <- textNet::pdf_clean(
   suppressWarn = FALSE,
   auto_headfoot_remove = TRUE
 )
-names(old_new_text) <- c("old", "new")
+names(plan_texts) <- c("v1", "v2")
 
 test_that("output has one element per input PDF", {
-  expect_equal(length(old_new_text), length(pdfs))
+  expect_equal(length(plan_texts), length(pdfs))
 })
 
 test_that("output is a named list of character vectors", {
-  expect_type(old_new_text, "list")
-  expect_named(old_new_text, c("old", "new"))
-  expect_true(all(sapply(old_new_text, is.character)))
+  expect_type(plan_texts, "list")
+  expect_named(plan_texts, c("v1", "v2"))
+  expect_true(all(sapply(plan_texts, is.character)))
 })
 
 test_that("each document has at least one page of text", {
-  expect_true(all(sapply(old_new_text, function(x) length(x) > 0)))
+  expect_true(all(sapply(plan_texts, function(x) length(x) > 0)))
 })
