@@ -41,7 +41,25 @@
 #' @export
 #'
 
-#if recursive is true, runs it multiple times to reach the end of the chain.
+# Helper: compute how many recursive passes are needed and whether a chain is infinite
+count_chain_length <- function(to, from) {
+  vectto <- unlist(to)
+  vectfrom <- unlist(from)
+  to0 <- vectto[which(vectto %in% vectfrom)]
+  carryovers <- to0[which(to0 %in% vectfrom)]
+  times_to_repeat <- 1
+  is_inf_loop <- FALSE
+  to_nmin1 <- to0
+  while(length(carryovers) > 0 & !is_inf_loop) {
+    from_n <- vectfrom[which(vectfrom %in% carryovers)]
+    to_n <- unlist(to[sapply(from, function(s) sum(s %in% from_n) > 0)])
+    carryovers <- to_n[which(to_n %in% vectfrom)]
+    is_inf_loop <- !(length(to_n) < length(to_nmin1)) & length(carryovers) > 0
+    to_nmin1 <- to_n
+    times_to_repeat <- times_to_repeat + 1
+  }
+  list(times_to_repeat = times_to_repeat, is_inf_loop = is_inf_loop, carryovers = carryovers)
+}
 
 disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FALSE, length(from)), try_drop=NULL, recursive=TRUE, concatenator="_"){
   # Input validation
@@ -118,26 +136,10 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   }
   
   #Section0: Determine num of recursive ####
-  vectto <- unlist(to)
-  vectfrom <- unlist(from)
-  step0 <- which(vectto %in% vectfrom)
-  to0 <- vectto[step0]
-  carryovers <- to0[which(to0 %in% vectfrom)]
-  previous_carryover_length <- length(carryovers)
-  times_to_repeat <- 1
-  is_inf_loop <- FALSE
-  to_nmin1 <- to0
-  while(length(carryovers)>0 & !is_inf_loop){
-    from_n <- vectfrom[which(vectfrom %in% carryovers)]
-    to_n <- unlist(to[
-      sapply(from, function(s) sum(s %in% from_n)>0)])
-    carryovers <- to_n[which(to_n %in% vectfrom)]
-    is_inf_loop <- !(length(to_n) <length(to_nmin1)) & length(carryovers)>0 &
-      length(carryovers) == previous_carryover_length
-    to_nmin1 <- to_n
-    times_to_repeat <- times_to_repeat + 1
-    previous_carryover_length <- length(carryovers)
-  }
+  chain <- count_chain_length(to, from)
+  times_to_repeat <- chain$times_to_repeat
+  is_inf_loop <- chain$is_inf_loop
+  carryovers <- chain$carryovers
   b <- 1
   removedelements <- NULL
   viewedelements <- NULL
@@ -180,24 +182,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   if(is_inf_loop==TRUE){
     warning(paste0("The following to/from terms were in an infinite loop: ", paste0(carryovers, collapse = ", "), ". ",
                    "Resolved by removing 'from' elements ",paste0(removedelements, collapse=", ")))
-    #rerun the bit of code that finds the number of times to repeat now that the loop is resolved  
-    vectto <- unlist(to)
-    vectfrom <- unlist(from)
-    step0 <- which(vectto %in% vectfrom)
-    to0 <- vectto[step0]
-    carryovers <- to0[which(to0 %in% vectfrom)]
-    times_to_repeat <- 1
-    is_inf_loop <- FALSE
-    to_nmin1 <- to0
-    while(length(carryovers)>0 & !is_inf_loop){
-      from_n <- vectfrom[which(vectfrom %in% carryovers)]
-      to_n <- unlist(to[
-        sapply(from, function(s) sum(s %in% from_n)>0)])
-      carryovers <- to_n[which(to_n %in% vectfrom)]
-      is_inf_loop <- !(length(to_n) <length(to_nmin1)) & length(carryovers)>0
-      to_nmin1 <- to_n
-      times_to_repeat <- times_to_repeat + 1
-    }
+    #rerun now that the loop is resolved
+    times_to_repeat <- count_chain_length(to, from)$times_to_repeat
   }
   
   #Section0.5: Resolve partial match infinite loops ####
@@ -427,31 +413,18 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
       return(terms)
     }
     
-    index <- which(stringr::str_detect(textnet_extract$edgelist$source,paste(fromregex,collapse='|')))
-    notindex <- 1:length(textnet_extract$edgelist$source) %in% index
-    textnet_extract$edgelist$source[index] <- stringr::str_replace_all(textnet_extract$edgelist$source[index],
-                                                              namedvect)
-    if(!is.null(try_drop)){
-      textnet_extract$edgelist$source <- sub_try_drop(try_drop, textnet_extract$edgelist$source, notindex)
+    apply_replacements <- function(terms) {
+      index <- which(stringr::str_detect(terms, paste(fromregex, collapse='|')))
+      matched <- seq_along(terms) %in% index
+      terms[index] <- stringr::str_replace_all(terms[index], namedvect)
+      if(!is.null(try_drop)) terms <- sub_try_drop(try_drop, terms, matched)
+      terms
     }
-    
-    index <- which(stringr::str_detect(textnet_extract$edgelist$target,paste(fromregex,collapse='|')))
-    notindex <- 1:length(textnet_extract$edgelist$target) %in% index
-    textnet_extract$edgelist$target[index] <- stringr::str_replace_all(textnet_extract$edgelist$target[index],
-                                                              namedvect)
-    if(!is.null(try_drop)){
-      textnet_extract$edgelist$target <- sub_try_drop(try_drop, textnet_extract$edgelist$target, notindex)
-    }
-    
-    index <- which(stringr::str_detect(textnet_extract$nodelist$entity_name,paste(fromregex,collapse='|')))
-    notindex <- 1:length(textnet_extract$nodelist$entity_name) %in% index
-    textnet_extract$nodelist$entity_name <- stringr::str_replace_all(textnet_extract$nodelist$entity_name,
-                                                                  namedvect)
-    if(!is.null(try_drop)){
-      textnet_extract$nodelist$entity_name <- sub_try_drop(try_drop, textnet_extract$nodelist$entity_name, notindex)
-    }
-    
-    
+
+    textnet_extract$edgelist$source <- apply_replacements(textnet_extract$edgelist$source)
+    textnet_extract$edgelist$target <- apply_replacements(textnet_extract$edgelist$target)
+    textnet_extract$nodelist$entity_name <- apply_replacements(textnet_extract$nodelist$entity_name)
+
   }
   #Subsection 2.5: Try-drop node collapsing####
   #this collapses nodes in textnet_extract that would be identical if try_drop were removed

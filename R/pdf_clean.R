@@ -160,19 +160,17 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=FALSE, maxchar=10000, export_pa
             #this condition makes sure the last empty line isn't on line one
             if(emptylinegroups[length(emptylinegroups)] > 1){
               maxheaderlength <- emptylinegroups[length(emptylinegroups)] - 1
-              #checker to see if a previous line was preserved, which means all 
+              #checker to see if a previous line was preserved, which means all
               #potential header lines afterward should
               #also be preserved.
-              prevlinepreserved = FALSE
               linegetspreserved <- vector(mode = "logical", length = maxheaderlength)
               for(j in 1:maxheaderlength){
                 #if there are over six lowercase words, it's probably a sentence.
-                linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 6 | 
+                linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 6 |
                   #alternatively, if there's at least four long lowercase words, it's probably a sentence
                   #and may have a lot of capitalized entities in it
                   str_count(linebreaks[j], "\\s[a-z]{7,}") > 3
                 if(linegetspreserved[j]==TRUE){
-                  prevlinepreserved = TRUE
                   if(j < maxheaderlength){
                     #break out of the loop and preserve later header lines if you find a 
                     #sentence
@@ -191,19 +189,14 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=FALSE, maxchar=10000, export_pa
             #we will bias toward removing more liberally in this case
             #only search top three rows in this case
             maxheaderlength <- 3
-            #checker to see if a previous line was preserved, which means all 
-            #potential header lines afterward should
-            #also be preserved.
-            prevlinepreserved = FALSE
             linegetspreserved <- vector(mode = "logical", length = maxheaderlength)
             for(j in 1:maxheaderlength){
               #if there are over eight lowercase words, it's probably a sentence.
-              linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 8 | 
-                #alternatively, if there's at least six long lowercase words, it's probably a sentence 
+              linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 8 |
+                #alternatively, if there's at least six long lowercase words, it's probably a sentence
                 #and may have a lot of capitalized entities in it
                 str_count(linebreaks[j], "\\s[a-z]{7,}") > 5
               if(linegetspreserved[j]==TRUE){
-                prevlinepreserved = TRUE
                 if(j < maxheaderlength){
                   #break out of the loop and preserve later header lines if you find a 
                   #sentence
@@ -231,20 +224,15 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=FALSE, maxchar=10000, export_pa
             maxheaderlength <- length(linebreaks)
           }
           
-          #checker to see if a previous line was preserved, which means all 
-          #potential header lines afterward should
-          #also be preserved.
-          prevlinepreserved = FALSE
           linegetspreserved <- vector(mode = "logical", length = maxheaderlength)
           if(length(linebreaks)>0){
             for(j in 1:maxheaderlength){
               #if there are over six lowercase words, it's probably a sentence.
-              linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 6 | 
-                #alternatively, if there's at least four long lowercase words, it's probably a sentence 
+              linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 6 |
+                #alternatively, if there's at least four long lowercase words, it's probably a sentence
                 #and may have a lot of capitalized entities in it
                 str_count(linebreaks[j], "\\s[a-z]{7,}") > 3
               if(linegetspreserved[j]==TRUE){
-                prevlinepreserved = TRUE
                 if(j < maxheaderlength){
                   #break out of the loop and preserve later header lines if you find a 
                   #sentence
@@ -296,22 +284,17 @@ pdf_clean <- function(pdfs, keep_pages=NULL, ocr=FALSE, maxchar=10000, export_pa
             footercut <- length(linebreaks) - 6
           }
           
-          #checker to see if a lower line was preserved, which means all 
-          #potential footer lines upward should
-          #also be preserved.
           #footer is removing more prose compared to header so we will make the prose
           #criterion looser
-          lowerlinepreserved = FALSE
           linegetspreserved <- vector(mode = "logical", length = length(linebreaks))
           #starts check at bottom and goes up
           for(j in length(linebreaks):footercut){
             #if there are over five lowercase words, it's probably a sentence.
-            linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 5 | 
-              #alternatively, if there's at least three long lowercase words, it's probably a sentence 
+            linegetspreserved[j] <- str_count(linebreaks[j], "\\s[a-z]") > 5 |
+              #alternatively, if there's at least three long lowercase words, it's probably a sentence
               #and may have a lot of capitalized entities in it
               str_count(linebreaks[j], "\\s[a-z]{7,}") > 2
             if(linegetspreserved[j]==TRUE){
-              lowerlinepreserved = TRUE
               if(j > footercut){
                 #break out of the loop and preserve all earlier lines if you find a 
                 #sentence

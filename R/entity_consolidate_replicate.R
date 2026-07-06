@@ -44,15 +44,6 @@ entity_consolidate_replicate <- function(x, concatenator = "_", remove = NULL) {
   }
   spacy_result[, entity_type := sub("_.+", "", entity)]
   spacy_result[, iob := sub(".+_", "", entity)]
-  extended_list <- c("DATE", "TIME", "PERCENT", "MONEY", "QUANTITY",
-                     "ORDINAL", "CARDINAL")
-  # if (type == 'extended'){
-  #     spacy_result[entity_type != ""  & !(entity_type %in% extended_list),
-  #                  c("entity_type", "iob") := ""]
-  # } else if (type == 'named') {
-  #     spacy_result[entity_type != ""  & (entity_type %in% extended_list),
-  #                  c("entity_type", "iob") := ""]
-  # }
   spacy_result[, entity_count := ifelse(iob == "B" | iob == "", 1, 0)]
   spacy_result[, entity_id := cumsum(entity_count), by = c("doc_id", "sentence_id")]
   #added source_or_target to by = c(...) so that appositives do not get concatenated together with the main entity
