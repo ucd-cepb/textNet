@@ -1,27 +1,6 @@
 # Exported functions
 # disambiguate
 
-# Helper: compute how many recursive passes are needed and whether a chain is infinite
-#' @keywords internal
-count_chain_length <- function(to, from) {
-  vectto <- unlist(to)
-  vectfrom <- unlist(from)
-  to0 <- vectto[which(vectto %in% vectfrom)]
-  carryovers <- to0[which(to0 %in% vectfrom)]
-  times_to_repeat <- 1
-  is_inf_loop <- FALSE
-  to_nmin1 <- to0
-  while(length(carryovers) > 0 & !is_inf_loop) {
-    from_n <- vectfrom[which(vectfrom %in% carryovers)]
-    to_n <- unlist(to[sapply(from, function(s) sum(s %in% from_n) > 0)])
-    carryovers <- to_n[which(to_n %in% vectfrom)]
-    is_inf_loop <- !(length(to_n) < length(to_nmin1)) & length(carryovers) > 0
-    to_nmin1 <- to_n
-    times_to_repeat <- times_to_repeat + 1
-  }
-  list(times_to_repeat = times_to_repeat, is_inf_loop = is_inf_loop, carryovers = carryovers)
-}
-
 #' @title Rename entities in a textnet_extract object
 #' @description
 #' Replaces entity names supplied in \code{from} with the corresponding names
@@ -46,7 +25,7 @@ count_chain_length <- function(to, from) {
 #' If try_drop is supplied, the function first tries to determine whether each element in the textnet_extract matches a term in 'from.'
 #' If not, it determines whether removing try_drop from the remaining elements enables them to match a term in 'from'.
 #' If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.'
-#' The non-matches remains unchanged.
+#' The non-matches remain unchanged.
 #' @param recursive A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times.
 #' The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from',
 #' which may in turn correspond to a 'to' value that is found in 'from', and so on.
@@ -135,10 +114,29 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   }
   
   #Section0: Determine num of recursive ####
-  chain <- count_chain_length(to, from)
-  times_to_repeat <- chain$times_to_repeat
-  is_inf_loop <- chain$is_inf_loop
-  carryovers <- chain$carryovers
+  
+  #this version of the while loop has an additional condition when checking for presence of infinite loop, to account for partial matches
+  vectto <- unlist(to)
+  vectfrom <- unlist(from)
+  step0 <- which(vectto %in% vectfrom)
+  to0 <- vectto[step0]
+  carryovers <- to0[which(to0 %in% vectfrom)]
+  previous_carryover_length <- length(carryovers)
+  times_to_repeat <- 1
+  is_inf_loop <- FALSE
+  to_nmin1 <- to0
+  while(length(carryovers)>0 & !is_inf_loop){
+    from_n <- vectfrom[which(vectfrom %in% carryovers)]
+    to_n <- unlist(to[
+      sapply(from, function(s) sum(s %in% from_n)>0)])
+    carryovers <- to_n[which(to_n %in% vectfrom)]
+    is_inf_loop <- !(length(to_n) <length(to_nmin1)) & length(carryovers)>0 &
+      length(carryovers) == previous_carryover_length
+    to_nmin1 <- to_n
+    times_to_repeat <- times_to_repeat + 1
+    previous_carryover_length <- length(carryovers)
+  }
+  
   b <- 1
   removedelements <- NULL
   viewedelements <- NULL
@@ -181,8 +179,24 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   if(is_inf_loop==TRUE){
     warning(paste0("The following to/from terms were in an infinite loop: ", paste0(carryovers, collapse = ", "), ". ",
                    "Resolved by removing 'from' elements ",paste0(removedelements, collapse=", ")))
-    #rerun now that the loop is resolved
-    times_to_repeat <- count_chain_length(to, from)$times_to_repeat
+    #now run a similar while loop that finds the number of times to repeat now that the infinite loop is resolved. Since there are no longer any partial matches, the extra inf_loop check condition is not necessary.
+    vectto <- unlist(to)
+    vectfrom <- unlist(from)
+    step0 <- which(vectto %in% vectfrom)
+    to0 <- vectto[step0]
+    carryovers <- to0[which(to0 %in% vectfrom)]
+    times_to_repeat <- 1
+    is_inf_loop <- FALSE
+    to_nmin1 <- to0
+    while(length(carryovers)>0 & !is_inf_loop){
+      from_n <- vectfrom[which(vectfrom %in% carryovers)]
+      to_n <- unlist(to[
+        sapply(from, function(s) sum(s %in% from_n)>0)])
+      carryovers <- to_n[which(to_n %in% vectfrom)]
+      is_inf_loop <- !(length(to_n) <length(to_nmin1)) & length(carryovers)>0
+      to_nmin1 <- to_n
+      times_to_repeat <- times_to_repeat + 1
+    }
   }
   
   #Section0.5: Resolve partial match infinite loops ####
