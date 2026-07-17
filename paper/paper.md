@@ -40,7 +40,7 @@ and other long-form textual data containing events and entity relationships.
 
 Network measurement in social science typically relies on data collected
 through surveys and interviews. Document-based measurement can be automated and scaled, providing opportunities for large-N or
-longitudinal research that are unfeasible through traditional methods.
+longitudinal research that are infeasible through traditional methods.
 A number of tools exist to generate networks based on co-occurrence of
 words within documents (such as the
 [Nocodefunctions](https://nocodefunctions.com/cowo/semantic_networks_tool.html)
@@ -97,7 +97,7 @@ entity type tags for an NLP engine such as *spaCy* [@honnibal_spacy_2021]),
 customized using a dictionary, or based on a hybrid scheme of
 default and custom labels. Any node type is possible (e.g., species,
 places, people, concepts, etc.) so this can be adapted to domain-specific
-research applications by applying dictionaries or using a
+research applications by applying dictionaries, as was used to define the "WATER" entity type in Figure 2 (see package vignette for details), or using a
 custom NER model.
 
 ## Overview and Main Functions
@@ -105,25 +105,25 @@ custom NER model.
 The package architecture relies on four sets of functions around core
 tasks:
 
-- \[OPTIONAL\] Pre-processing: pdf\_clean(), a wrapper for the
-pdftools::pdf\_text() function which includes a custom header/footer
-text removal feature; and parse\_text(), which is a wrapper for the
+- \[OPTIONAL\] Pre-processing: `pdf_clean()`, a wrapper for the
+`pdftools::pdf_text()` function which includes a custom header/footer
+text removal feature; and `parse_text()`, which is a wrapper for the
 *spacyr* package and uses the *spaCy* natural language processing engine
 [@honnibal_spacy_2021] to parse text and perform part of speech tagging, dependency
 parsing, and named entity recognition (NER). Alternatively, the user can 
 skip this step and load parsed text directly into the package. Externally produced data must be converted to the format requirements
 outlined in the package manual.
-- Network extraction: textnet\_extract(), which generates a graph
+- Network extraction: `textnet_extract()`, which generates a graph
 database from parsed text based upon tags and dependency relations. The object returned
-from textnet\_extract() consists of a nodelist, an edgelist with a rich set of
+from `textnet_extract()` consists of a nodelist, an edgelist with a rich set of
 edge attributes, a verblist, and an appositivelist (containing potential coreferences such as acronyms and their full forms for disambiguation).
 - Disambiguation: tools for cleaning, recoding, and aggregating node and
-edge attributes, such as the find\_acronyms() function, which can be
-paired with the disambiguation() function to identify acronyms in the
+edge attributes, such as the `find_acronyms()` function, which can be
+paired with the `disambiguation()` function to identify acronyms in the
 text and replace them with the full entity name.
-- Exploration: the export\_to\_network() function for exporting the
-graph database to igraph and network objects, top\_features() for
-viewing node and edge attributes, and combine\_networks() for
+- Exploration: the `export_to_network()` function for exporting the
+graph database to igraph and network objects, `top_features()` for
+viewing node and edge attributes, and `combine_networks()` for
 aggregating multiple document-based graphs based on common nodes. 
 
 The figure below summarizes the functionality of *textNet* and the flow of function outputs. Optional data cleaning features are shown with dotted arrows.
@@ -143,7 +143,7 @@ To use the full functionality of *textNet*, such as pre-processing tools
 and post-processing analysis tools, we recommend installing these
 packages, which for *spacyr* requires integration with Python. However,
 the user may wish to preprocess and parse data using their own NLP
-engine, and skip directly to the textnet\_extract() function, which does
+engine, and skip directly to the `textnet_extract()` function, which does
 not depend on *spacyr* or Python integration.
 
 ## Downstream Analysis
@@ -151,12 +151,12 @@ not depend on *spacyr* or Python integration.
 and analysis packages can be used to further explore the extracted networks. 
 
 The *ggraph* package has been used to create the network visualization seen here, 
-using a weighted version of an igraph constructed using the "old_new_parsed" 
-sample data in *textNet*. 
+using a weighted version of an igraph constructed using the "example_plan_v2_parsed"
+sample data in *textNet*.
 
 ![Representation of the Event Network of the New Plan](paper_figures/figure2_new_network.png)
 
-The network-level attributes output from export\_to\_network can also be
+The network-level attributes output from `export_to_network()` can also be
 analyzed against exogenous metadata that has been collected separately
 by the researcher regarding the different documents and their real-world
 context. The extracted networks can

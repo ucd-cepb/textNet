@@ -1,9 +1,11 @@
 # Exported function
 #parse_text
 
-#' Parse text using spaCy (en_core_web_lg model)
-#'
-#' Creates an edgelist and nodelist for each document using spaCy's en_core_web_lg model.
+#' @title Parse text using spaCy
+#' @description
+#' Passes text through spaCy's \code{en_core_web_lg} model to produce
+#' token-level annotations including part-of-speech tags, lemmas, dependency
+#' relations, and named entity labels.
 #'
 #' @param keep_hyph_together Set to true to replace hyphens within a single word with underscores. Defaults to false.
 #' @param phrases_to_concatenate character vector of phrases, in which each element is a string consisting of tokens separated by spaces. These are replaced with their concatenated version in order, from left to right. It is suggested that the most specific phrases, with the most words, are arranged at the left.

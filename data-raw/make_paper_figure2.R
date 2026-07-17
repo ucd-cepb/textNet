@@ -3,19 +3,13 @@ library(ggraph)
 library(ggplot2)
 library(data.table)
 
-# Load sample data
-old_new_parsed <- textNet::old_new_parsed
-old_new_text   <- textNet::old_new_text
-
-# 2nd list item is the new network
-extracts <- vector(mode = "list", length = length(old_new_parsed))
-m <- 2
-extracts <- textnet_extract(old_new_parsed[[m]],
-                                   keep_entities = c("ORG", "GPE", "PERSON", "WATER"),
-                                   keep_incomplete_edges = TRUE)
+# Use version 2 (the newer plan) for the paper figure
+extracts <- textnet_extract(textNet::example_plan_v2_parsed,
+                            keep_entities = c("ORG", "GPE", "PERSON", "WATER"),
+                            keep_incomplete_edges = TRUE)
 
 # Acronym-based disambiguation
-new_acronyms <- find_acronyms(old_new_text[[m]])
+new_acronyms <- find_acronyms(textNet::example_plan_v2_text)
 
 tofrom_new <- data.table::data.table(
   from = c(as.list(new_acronyms$acronym),

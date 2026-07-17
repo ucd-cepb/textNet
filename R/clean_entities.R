@@ -1,13 +1,12 @@
 # Exported functions 
 # clean_entities 
 
-#' Take a vector and clean the strings using regex. 
-#' Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-#' Any trailing "'s" at the end of the entity name is removed. 
-#' All non-word characters are removed.
-#' Consecutive underscores are collapsed to a single underscore.
-#' Leading and trailing underscores are removed.
-#' Entities that have no letters are removed, if remove_nums is set to TRUE.
+#' @title Clean entity name strings
+#' @description
+#' Normalizes a character vector of entity names by converting mathematical
+#' Unicode characters to ASCII letters, removing non-word characters,
+#' collapsing consecutive concatenators, and stripping leading/trailing
+#' concatenators.
 #'
 #' @param v a vector of entity names
 #' @param remove_nums A boolean. If TRUE, sets entities that contain no letters to an empty string. If FALSE, sets entities that contain no letters or numbers to an empty string.

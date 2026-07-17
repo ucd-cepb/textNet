@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse_text.R
 \name{parse_text}
 \alias{parse_text}
-\title{Parse text using spaCy (en_core_web_lg model)}
+\title{Parse text using spaCy}
 \usage{
 parse_text(
   keep_hyph_together = FALSE,
@@ -46,5 +46,7 @@ The parsed data will be exported to these files.}
 A data.frame of tokens. For more information on the format, see the spacyr::spacy_parse help file
 }
 \description{
-Creates an edgelist and nodelist for each document using spaCy's en_core_web_lg model.
+Passes text through spaCy's \code{en_core_web_lg} model to produce
+token-level annotations including part-of-speech tags, lemmas, dependency
+relations, and named entity labels.
 }

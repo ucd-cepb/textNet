@@ -1,8 +1,8 @@
 # Exported functions 
 # filter_sentences
 
-#' Filter sentences from parsed text based on dictionary coverage
-#'
+#' @title Filter sentences by dictionary coverage
+#' @description
 #' Removes sentences from a spaCy-parsed data frame whose tokens fall below a
 #' minimum dictionary-match threshold.
 #'

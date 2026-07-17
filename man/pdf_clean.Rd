@@ -2,13 +2,7 @@
 % Please edit documentation in R/pdf_clean.R
 \name{pdf_clean}
 \alias{pdf_clean}
-\title{Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to TRUE.}
+\title{Extract and clean text from PDF files}
 \usage{
 pdf_clean(
   pdfs,
@@ -59,11 +53,7 @@ is not null, each character vector of text will be saved to a separate RDS file,
 number of files is equal to the number of pdfs.
 }
 \description{
-Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to TRUE.
+Wraps \code{\link[pdftools:pdf_text]{pdftools::pdf_text()}} to read one or more PDF files into R, with
+optional header and footer removal, page filtering, OCR support, and
+sentence-boundary shifting.
 }

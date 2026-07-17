@@ -84,27 +84,27 @@ First, we read in the pre-processed data and call textnet_extract() to produce t
 
 ```{r readpreprocessed, message=F, warning=F}
 library(textNet)
-#load sample tabular data, in which 
-#each row is a single token
-old_new_parsed <- textNet::old_new_parsed
+# example_plan_v1_parsed and example_plan_v2_parsed are available automatically
+# after library(textNet) via LazyData
 
 ```
 
 ```{r extract, results = 'hide'}
-#initialize empty list of extracts to populate
-extracts <- vector(mode="list",length=length(old_new_parsed))
-#populate each element of list with results of textnet_extract
-#keeping four types of entities: organizations, 
+#extract entity networks from each plan version
+#keeping four types of entities: organizations,
 #geopolitical entities, people, and water bodies
 #keep_incomplete_edges is F by default; T keeps
 #'edges' that are missing either a source node
 #or a target node
-for(m in 1:length(old_new_parsed)){
-  extracts[[m]] <- textnet_extract(old_new_parsed[[m]],
-                   keep_entities = c('ORG','GPE','PERSON','WATER'), 
-                   keep_incomplete_edges=T)
-   }
-   
+extracts <- lapply(
+  list(example_plan_v1_parsed, example_plan_v2_parsed),
+  function(parsed) {
+    textnet_extract(parsed,
+                    keep_entities = c('ORG','GPE','PERSON','WATER'),
+                    keep_incomplete_edges=T)
+  }
+)
+
 ```
 
  
@@ -118,12 +118,10 @@ The resulting object consists of a nodelist, an edgelist, a verblist, and a list
 In a document, the same real-world entity may be referenced in multiple ways. For instance, the document may introduce an organization using its full name, then use an acronym for the remainder of the document. To have more reliable network results, it is important to consolidate nodes that represent different naming conventions into a single node. The *textNet* package comes with a built-in tool for finding acronyms defined parenthetically within the text. This can be run on the result of pdf_clean() to generate a table with one column for acronyms and another for the corresponding full names, such that each row is a different instance of a phrase for which an acronym was detected. The use of find_acronyms() is demonstrated below.
 
 ```{r acronyms}
-#reading in sample text data
-old_new_text <- textNet::old_new_text
 #use find_acronyms feature to find and tabulate
 #parenthetically defined acronyms within the text
-old_acronyms <- find_acronyms(old_new_text[[1]])
-new_acronyms <- find_acronyms(old_new_text[[2]])
+old_acronyms <- find_acronyms(example_plan_v1_text)
+new_acronyms <- find_acronyms(example_plan_v2_text)
    
 print(head(old_acronyms))
    
@@ -486,24 +484,25 @@ This is a wrapper for pdftools, which has the option of using pdf_text or OCR. W
 library(textNet)
 library(stringr)
 #download sample pdf data from state website
-#this is the same as vignettes/old.pdf and vignettes/new.pdf
+#this is the same as inst/extdata/example_plan_v1.pdf and inst/extdata/example_plan_v2.pdf
 #that are included in the package, EXCEPT the package versions have pages that are maps or figures removed to shrink file size.
 
 #URL <- "https://sgma.water.ca.gov/portal/service/gspdocument/download/2840"
-#download.file(URL, destfile = "inst/extdata/old.pdf", method="curl")
+#download.file(URL, destfile = "inst/extdata/example_plan_v1.pdf", method="curl")
 
 #URL <- "https://sgma.water.ca.gov/portal/service/gspdocument/download/9625"
-#download.file(URL, destfile = "inst/extdata/new.pdf", method="curl")
+#download.file(URL, destfile = "inst/extdata/example_plan_v2.pdf", method="curl")
 
-pdfs <- c(system.file("extdata", "old.pdf", package = "textNet"),
-            system.file("extdata", "new.pdf", package = "textNet"))
+pdfs <- c(system.file("extdata", "example_plan_v1.pdf", package = "textNet"),
+            system.file("extdata", "example_plan_v2.pdf", package = "textNet"))
 
-#this is the equivalent of the textNet::old_new_text sample data
-#that travels with the package
-old_new_text <- textNet::pdf_clean(pdfs, ocr=F, maxchar=10000,
+#this is the equivalent of the textNet::example_plan_v1_text and
+#textNet::example_plan_v2_text sample data that travels with the package
+plan_texts <- textNet::pdf_clean(pdfs, ocr=F, maxchar=10000,
                      export_paths=NULL, return_to_memory=T, suppressWarn = F,
                      auto_headfoot_remove = T)
-names(old_new_text) <- c("old","new")
+example_plan_v1_text <- plan_texts[[1]]
+example_plan_v2_text <- plan_texts[[2]]
 ```
 
 The above code produces results equivalent to the bundled sample data, which can be loaded directly:
@@ -511,7 +510,6 @@ The above code produces results equivalent to the bundled sample data, which can
 ```{r pdf_clean_load, echo = TRUE}
 library(textNet)
 library(stringr)
-old_new_text <- textNet::old_new_text
 ```
 
 ### Pre-Processing Step II: Parse Text
@@ -538,25 +536,25 @@ if(!requireNamespace("spacyr", quietly = T)){
     stop("Package 'spacyr' must be installed to use this function.",
          call.=F)
 }
-#this is the equivalent of the textNet::old_new_parsed sample data
-#that travels with the package
+#this is the equivalent of the textNet::example_plan_v1_parsed and
+#textNet::example_plan_v2_parsed sample data that travels with the package
 #it is a thin wrapper for spacyr::spacy_parse
-old_new_parsed <- textNet::parse_text(
+plan_parsed <- textNet::parse_text(
                           keep_hyph_together = F,
                           phrases_to_concatenate = water_bodies,
                           concatenator = "_",
-                          text_list = old_new_text,
+                          text_list = list(example_plan_v1_text, example_plan_v2_text),
                                  parsed_filenames=c("old_parsed","new_parsed"),
                                  overwrite = T,
                           custom_entities = list(WATER = water_bodies))
+example_plan_v1_parsed <- plan_parsed[[1]]
+example_plan_v2_parsed <- plan_parsed[[2]]
 
 ```
 
-The above code produces results equivalent to the bundled sample data, which can be loaded directly:
-
-```{r parse_load, echo = TRUE}
-old_new_parsed <- textNet::old_new_parsed
-```
+The above code produces results equivalent to the bundled sample data objects
+(`example_plan_v1_parsed`, `example_plan_v2_parsed`), which are available
+automatically after `library(textNet)` via LazyData.
 
 Another NLP tool may be used instead of the built-in *textNet* function at this phase, as long as the output conforms to spaCy tagging standards: Universal Dependencies tags for the "pos" part-of-speech column [@nivre_universal_2017], and Penn Treebank tags for the "tags" column [@marcus_treebank-3_1999]. The textnet_extract function expects the parsed table to follow specific conventions. First, a row must be included for each token. The column names expected by textnet_extract are:
 

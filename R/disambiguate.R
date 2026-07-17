@@ -1,33 +1,37 @@
-# Exported functions 
-# disambiguate 
+# Exported functions
+# disambiguate
 
-#' Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.
+#' @title Rename entities in a textnet_extract object
+#' @description
+#' Replaces entity names supplied in \code{from} with the corresponding names
+#' in \code{to} throughout a [textnet_extract()] output. Supports partial
+#' matching, prefix removal, and recursive chaining of replacements.
 #'
-#' @param from A list of character vectors representing terms to look for, the same length as 'to'. 
-#' If a term in this list is found, this function replaces it with its corresponding match in 'to'. 
-#' The "acronyms" column from the find_acronyms output could be used here. 
-#' @param to A list of character vectors representing replacement terms, the same length as 'from'. 
-#' If a term in the 'from' list is found, it is replaced with the corresponding term in this list. 
-#' The "names" column in the find_acronyms output could be used here. If an element consists of multiple entities in a vector, 
-#' the relevant edges are duplicated in the edgelist, with one edge for each entity in the vector. 
+#' @param from A list of character vectors representing terms to look for, the same length as 'to'.
+#' If a term in this list is found, this function replaces it with its corresponding match in 'to'.
+#' The "acronyms" column from the find_acronyms output could be used here.
+#' @param to A list of character vectors representing replacement terms, the same length as 'from'.
+#' If a term in the 'from' list is found, it is replaced with the corresponding term in this list.
+#' The "names" column in the find_acronyms output could be used here. If an element consists of multiple entities in a vector,
+#' the relevant edges are duplicated in the edgelist, with one edge for each entity in the vector.
 #' These vector entities are disambiguated first, followed by the rest of the strings in order of appearance in 'from' and 'to'.
-#rows such that there is an edge for each of the entities in the "to" cell. 
-#' @param match_partial_entity A logical vector of the same length as 'from'. 
-#' If match_partial_entity is TRUE for an element, it can match on the 'from' term separated by concatenator. 
+#rows such that there is an edge for each of the entities in the "to" cell.
+#' @param match_partial_entity A logical vector of the same length as 'from'.
+#' If match_partial_entity is TRUE for an element, it can match on the 'from' term separated by concatenator.
 #' Otherwise, the 'from' term must match the whole entity name to be accepted. Defaults to "FALSE" for all elements.
 #' @param textnet_extract An output of the function textnet_extract
-#' @param try_drop A regex expression representing one or more terms to try dropping. 
-#' The usual case for this is country or state names, such as "^US_". 
+#' @param try_drop A regex expression representing one or more terms to try dropping.
+#' The usual case for this is country or state names, such as "^US_".
 #' If try_drop is supplied, the function first tries to determine whether each element in the textnet_extract matches a term in 'from.'
-#' If not, it determines whether removing try_drop from the remaining elements enables them to match a term in 'from'. 
-#' If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.' 
-#' The non-matches remains unchanged.
-#' @param recursive A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times. 
-#' The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from', 
-#' which may in turn correspond to a 'to' value that is found in 'from', and so on. 
-#' @param concatenator The word boundary to look for when match_partial_entity is true. Defaults to "_". 
+#' If not, it determines whether removing try_drop from the remaining elements enables them to match a term in 'from'.
+#' If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.'
+#' The non-matches remain unchanged.
+#' @param recursive A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times.
+#' The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from',
+#' which may in turn correspond to a 'to' value that is found in 'from', and so on.
+#' @param concatenator The word boundary to look for when match_partial_entity is true. Defaults to "_".
 #' @return a cleaned textNet extract. See textnet_extract help file for structure.
-#' 
+#'
 #' @import data.table
 #' @importFrom stringr str_detect str_remove_all str_replace_all
 #' @importFrom dplyr arrange desc filter
@@ -35,10 +39,6 @@
 #' @importFrom magrittr %>%
 #' @importFrom methods is
 #' @export
-#'
-
-#if recursive is true, runs it multiple times to reach the end of the chain.
-
 disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FALSE, length(from)), try_drop=NULL, recursive=TRUE, concatenator="_"){
   # Input validation
   if(!is.list(from)) {
@@ -114,6 +114,8 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   }
   
   #Section0: Determine num of recursive ####
+  
+  #this version of the while loop has an additional condition when checking for presence of infinite loop, to account for partial matches
   vectto <- unlist(to)
   vectfrom <- unlist(from)
   step0 <- which(vectto %in% vectfrom)
@@ -134,6 +136,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
     times_to_repeat <- times_to_repeat + 1
     previous_carryover_length <- length(carryovers)
   }
+  
   b <- 1
   removedelements <- NULL
   viewedelements <- NULL
@@ -176,7 +179,7 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
   if(is_inf_loop==TRUE){
     warning(paste0("The following to/from terms were in an infinite loop: ", paste0(carryovers, collapse = ", "), ". ",
                    "Resolved by removing 'from' elements ",paste0(removedelements, collapse=", ")))
-    #rerun the bit of code that finds the number of times to repeat now that the loop is resolved  
+    #now run a similar while loop that finds the number of times to repeat now that the infinite loop is resolved. Since there are no longer any partial matches, the extra inf_loop check condition is not necessary.
     vectto <- unlist(to)
     vectfrom <- unlist(from)
     step0 <- which(vectto %in% vectfrom)
@@ -423,31 +426,18 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
       return(terms)
     }
     
-    index <- which(stringr::str_detect(textnet_extract$edgelist$source,paste(fromregex,collapse='|')))
-    notindex <- 1:length(textnet_extract$edgelist$source) %in% index
-    textnet_extract$edgelist$source[index] <- stringr::str_replace_all(textnet_extract$edgelist$source[index],
-                                                              namedvect)
-    if(!is.null(try_drop)){
-      textnet_extract$edgelist$source <- sub_try_drop(try_drop, textnet_extract$edgelist$source, notindex)
+    apply_replacements <- function(terms) {
+      index <- which(stringr::str_detect(terms, paste(fromregex, collapse='|')))
+      matched <- seq_along(terms) %in% index
+      terms[index] <- stringr::str_replace_all(terms[index], namedvect)
+      if(!is.null(try_drop)) terms <- sub_try_drop(try_drop, terms, matched)
+      terms
     }
-    
-    index <- which(stringr::str_detect(textnet_extract$edgelist$target,paste(fromregex,collapse='|')))
-    notindex <- 1:length(textnet_extract$edgelist$target) %in% index
-    textnet_extract$edgelist$target[index] <- stringr::str_replace_all(textnet_extract$edgelist$target[index],
-                                                              namedvect)
-    if(!is.null(try_drop)){
-      textnet_extract$edgelist$target <- sub_try_drop(try_drop, textnet_extract$edgelist$target, notindex)
-    }
-    
-    index <- which(stringr::str_detect(textnet_extract$nodelist$entity_name,paste(fromregex,collapse='|')))
-    notindex <- 1:length(textnet_extract$nodelist$entity_name) %in% index
-    textnet_extract$nodelist$entity_name <- stringr::str_replace_all(textnet_extract$nodelist$entity_name,
-                                                                  namedvect)
-    if(!is.null(try_drop)){
-      textnet_extract$nodelist$entity_name <- sub_try_drop(try_drop, textnet_extract$nodelist$entity_name, notindex)
-    }
-    
-    
+
+    textnet_extract$edgelist$source <- apply_replacements(textnet_extract$edgelist$source)
+    textnet_extract$edgelist$target <- apply_replacements(textnet_extract$edgelist$target)
+    textnet_extract$nodelist$entity_name <- apply_replacements(textnet_extract$nodelist$entity_name)
+
   }
   #Subsection 2.5: Try-drop node collapsing####
   #this collapses nodes in textnet_extract that would be identical if try_drop were removed

@@ -2,7 +2,7 @@
 % Please edit documentation in R/disambiguate.R
 \name{disambiguate}
 \alias{disambiguate}
-\title{Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.}
+\title{Rename entities in a textnet_extract object}
 \usage{
 disambiguate(
   textnet_extract,
@@ -36,7 +36,7 @@ The usual case for this is country or state names, such as "^US_".
 If try_drop is supplied, the function first tries to determine whether each element in the textnet_extract matches a term in 'from.'
 If not, it determines whether removing try_drop from the remaining elements enables them to match a term in 'from'.
 If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.'
-The non-matches remains unchanged.}
+The non-matches remain unchanged.}
 
 \item{recursive}{A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times.
 The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from',
@@ -48,5 +48,7 @@ which may in turn correspond to a 'to' value that is found in 'from', and so on.
 a cleaned textNet extract. See textnet_extract help file for structure.
 }
 \description{
-Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.
+Replaces entity names supplied in \code{from} with the corresponding names
+in \code{to} throughout a \code{\link[=textnet_extract]{textnet_extract()}} output. Supports partial
+matching, prefix removal, and recursive chaining of replacements.
 }

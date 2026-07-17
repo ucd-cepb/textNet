@@ -1,8 +1,11 @@
 # Exported functions
 # combine_networks
 
-#' Superimposes multiple textNet igraphs into a single igraph. 
-#' 
+#' @title Combine multiple textNet igraphs into one
+#' @description
+#' Superimposes multiple igraph objects produced by [export_to_network()] into
+#' a single igraph, merging nodes with the same name and consolidating edges.
+#'
 #' @param textnet_igraphs List of textNet igraphs, the outputs of export_to_network(export_format = "igraph)
 #' @param mode Either "multiplex" or "weighted" depending on the desired exported network format. If "weighted", collapses multiplex edges into a single weighted edge
 #' 
@@ -39,25 +42,7 @@ combine_networks <- function(textnet_igraphs, mode = c('multiplex','weighted')){
     stop("All elements in 'textnet_igraphs' must be igraph objects.")
   }
 
-  # Check if mode is missing
-  if(missing(mode)) {
-    stop("Argument 'mode' is missing. Must be either 'multiplex' or 'weighted'.")
-  }
-  
-  # Check if mode is character
-  if(!is.character(mode)) {
-    stop("Argument 'mode' must be a character string ('multiplex' or 'weighted').")
-  }
-  
-  # Check if mode is length 1
-  if(length(mode) != 1) {
-    stop("Argument 'mode' must be a single value ('multiplex' or 'weighted').")
-  }
-  
-  # Check if mode has valid value
-  if(!mode %in% c("multiplex","weighted")){
-    stop("Argument 'mode' must be either 'multiplex' or 'weighted'.")
-  }
+  mode <- match.arg(mode)
 
   num_graphs <- length(textnet_igraphs)
   supernodes <- vector(mode = "list", length = length(num_graphs))

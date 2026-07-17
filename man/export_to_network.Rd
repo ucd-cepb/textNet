@@ -2,7 +2,7 @@
 % Please edit documentation in R/export_to_network.R
 \name{export_to_network}
 \alias{export_to_network}
-\title{Takes a textnet_extract output and converts it into an "igraph" or "network" object, then calculates network summary statistics. Note, this function does not preserve incomplete edges. The verblist and appositivelist are not used.}
+\title{Export a textnet_extract to a network object}
 \usage{
 export_to_network(
   textnet_extract,
@@ -45,9 +45,11 @@ For weighted graphs, if collapse_edges == TRUE:
 For multiplex graphs, if collapse_edges == FALSE:
 \item modularity -- calculates igraph::modularity on a weighted, undirected, non-multiplex version of the network.
 \item num_communities -- number of communities using louvain cluster algorithm on a weighted, undirected, non-multiplex version of the network
-\item percent_vbn, percent_vbg, percent_vpb, percent_vbd, percent_vb, percent_vbz -- percent of edges in the graph that are of the respective verb tense
+\item percent_vbn, percent_vbg, percent_vbp, percent_vbd, percent_vb, percent_vbz -- percent of edges in the graph that are of the respective verb tense
 }
 }
 \description{
-Takes a textnet_extract output and converts it into an "igraph" or "network" object, then calculates network summary statistics. Note, this function does not preserve incomplete edges. The verblist and appositivelist are not used.
+Converts the output of \code{\link[=textnet_extract]{textnet_extract()}} into an \link[igraph:igraph]{igraph::igraph} or
+\link[network:network]{network::network} object and computes network summary statistics.
+Incomplete edges are dropped; the verblist and appositivelist are not used.
 }

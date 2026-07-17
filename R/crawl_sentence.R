@@ -1,7 +1,7 @@
 # Exported function
 # crawl_sentence 
 
-#' Take a sentence and follow the dependencies
+#' @title Take a sentence and follow the dependencies
 #'
 #' @param s a data.frame containing the results of one (1) parsed spacy sentence
 #' @return list with original parsed sentence + added dependency parsing

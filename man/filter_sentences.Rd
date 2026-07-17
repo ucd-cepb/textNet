@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_sentences.R
 \name{filter_sentences}
 \alias{filter_sentences}
-\title{Filter sentences from parsed text based on dictionary coverage}
+\title{Filter sentences by dictionary coverage}
 \usage{
 filter_sentences(
   file,

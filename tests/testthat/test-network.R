@@ -4,18 +4,19 @@ library(testthat)
 library(stringr)
 
 # Use bundled data; no spaCy needed
-old_new_parsed <- textNet::old_new_parsed
-old_new_text   <- textNet::old_new_text
 
 # water_bodies and ent_types come from helper-fixtures.R
 
 # --- Setup: extraction + disambiguation (mirrors test-disambiguate.R setup) ---
 
-extracts <- lapply(old_new_parsed, function(parsed) {
-  textnet_extract(parsed, cl = 2,
-                  keep_entities = ent_types,
-                  keep_incomplete_edges = TRUE)
-})
+extracts <- lapply(
+  list(textNet::example_plan_v1_parsed, textNet::example_plan_v2_parsed),
+  function(parsed) {
+    textnet_extract(parsed, cl = 2,
+                    keep_entities = ent_types,
+                    keep_incomplete_edges = TRUE)
+  }
+)
 
 build_tofrom <- function(acronyms) {
   data.table::data.table(
@@ -36,8 +37,8 @@ build_tofrom <- function(acronyms) {
   )
 }
 
-old_acronyms      <- find_acronyms(old_new_text[[1]])
-new_acronyms      <- find_acronyms(old_new_text[[2]])
+old_acronyms      <- find_acronyms(textNet::example_plan_v1_text)
+new_acronyms      <- find_acronyms(textNet::example_plan_v2_text)
 
 old_extract_clean <- disambiguate(
   textnet_extract      = extracts[[1]],

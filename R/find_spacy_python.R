@@ -1,5 +1,5 @@
-#' Find a Python installation with spaCy and a spaCy model installed
-#'
+#' @title Find a Python installation with spaCy and a spaCy model installed
+#' @description
 #' Searches conda environments and then PATH-accessible Python installations
 #' for one that has spaCy and the specified model installed. Conda environments
 #' are searched regardless of activation status.

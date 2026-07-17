@@ -1,9 +1,8 @@
-# Exported functions 
+# Internal functions
 # create_empty_sentence_parse_list
-# generate_proper_name
 
-#' Create a list to iterate over a sentence and store items
-#'
+#' @title Create a list to iterate over a sentence and store items
+#' @description
 #' Takes an integer value equivalent to token length of sentence and generates named list
 #' @param N integer value that sets vector length
 #' @return list with named empty vectors
