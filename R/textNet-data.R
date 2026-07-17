@@ -59,7 +59,7 @@
 #' nrow(verb_classifications)
 #'
 #' # VerbNet types present in the data
-#' unique(verb_classifications$type_name)
+#' unique(unlist(verb_classifications$type_name))
 "verb_classifications"
 
 # ---- Example corpus --------------------------------------------------------
@@ -85,8 +85,8 @@
 #' # inspect token, lemma, and part-of-speech annotations
 #' head(sample_20p[, c("token", "lemma", "pos")])
 #'
-#' # most frequent named entity types
-#' head(sort(table(sample_20p$entity_type), decreasing = TRUE), 5)
+#' # most frequent dependency relationship tags by token 
+#' head(sort(table(sample_20p$dep_rel), decreasing = TRUE), 5)
 "sample_20p"
 
 #' @title Raw text from version 1 of a groundwater plan
