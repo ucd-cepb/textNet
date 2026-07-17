@@ -34,7 +34,7 @@ The data were processed from the VerbNet 3.3 source files using
 nrow(verb_classifications)
 
 # VerbNet types present in the data
-unique(verb_classifications$type_name)
+unique(unlist(verb_classifications$type_name))
 }
 \references{
 Schuler, Karin Kipper (2005). \emph{VerbNet: A Broad-Coverage, Comprehensive

@@ -16,5 +16,5 @@ list of all entities and lemmas in the corpus, along with their average normaliz
 }
 \description{
 Returns the highest-degree entities and most frequent verb lemmas across a
-set of documents, normalised by each document's overall degree distribution.
+set of documents, normalized by each document's overall degree distribution or edge distribution, respectively.
 }

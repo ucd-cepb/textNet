@@ -4,7 +4,7 @@
 #' @title Identify top entities and verbs across documents
 #' @description
 #' Returns the highest-degree entities and most frequent verb lemmas across a
-#' set of documents, normalised by each document's overall degree distribution.
+#' set of documents, normalized by each document's overall degree distribution or edge distribution, respectively.
 #'
 #' @param files vector of filepaths to igraph objects or list of igraph objects
 #' @param from_file boolean whether files represent filepaths (TRUE) or igraph objects (FALSE)

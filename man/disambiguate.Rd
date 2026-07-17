@@ -36,7 +36,7 @@ The usual case for this is country or state names, such as "^US_".
 If try_drop is supplied, the function first tries to determine whether each element in the textnet_extract matches a term in 'from.'
 If not, it determines whether removing try_drop from the remaining elements enables them to match a term in 'from'.
 If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.'
-The non-matches remains unchanged.}
+The non-matches remain unchanged.}
 
 \item{recursive}{A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times.
 The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from',

@@ -28,7 +28,7 @@ nrow(sample_20p)
 # inspect token, lemma, and part-of-speech annotations
 head(sample_20p[, c("token", "lemma", "pos")])
 
-# most frequent named entity types
-head(sort(table(sample_20p$entity_type), decreasing = TRUE), 5)
+# most frequent dependency relationship tags by token 
+head(sort(table(sample_20p$dep_rel), decreasing = TRUE), 5)
 }
 \keyword{datasets}
