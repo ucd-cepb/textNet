@@ -97,7 +97,7 @@ entity type tags for an NLP engine such as *spaCy* [@honnibal_spacy_2021]),
 customized using a dictionary, or based on a hybrid scheme of
 default and custom labels. Any node type is possible (e.g., species,
 places, people, concepts, etc.) so this can be adapted to domain-specific
-research applications by applying dictionaries or using a
+research applications by applying dictionaries, as was used to define the "WATER" entity type in Figure 2 (see package vignette for details), or using a
 custom NER model.
 
 ## Overview and Main Functions
