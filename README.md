@@ -74,7 +74,7 @@ See CONTRIBUTING.md for guidelines for working on this package. Note: testing of
 
 # Contact
 
-Elise Zufall ezufall at ucdavis dot edu
+Elise Zufall elisezufall at boisestate dot edu
 
 Tyler Scott tascott at ucdavis dot edu
 

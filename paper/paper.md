@@ -4,13 +4,15 @@ authors:
    - name: Elise Zufall
      affiliation: '1'
    - name: Tyler A. Scott
-     affiliation: '1, 2'
+     affiliation: '2, 3'
 affiliations:
    - index: 1
-     name: Center for Environmental Policy & Behavior, UC Davis
+     name: College of Education and Public Service, Boise State University
    - index: 2
+     name: Center for Environmental Policy & Behavior, UC Davis
+   - index: 3
      name: Department of Environmental Science & Policy, UC Davis
-date: 24 October 2024
+date: 24 July 2026
 bibliography: paper.bib
 output: pdf_document
 ---
