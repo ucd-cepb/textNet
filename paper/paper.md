@@ -24,11 +24,11 @@ PDF documents and create directed, multiplex, and
 multimodal network graphs. This enables analysis of the relationships between
 verb attributes and tenses, entity types, structural motifs, and other network 
 characteristics. Entities mentioned within the input text become nodes, and the 
-verbs connecting them in the sentences of the text become directed edges. [Zufall and Scott](https://onlinelibrary.wiley.com/doi/full/10.1111/psj.12556)
+verbs connecting them in the sentences of the text become directed edges. [Zufall and Scott](https://onlinelibrary.wiley.com/doi/full/10.1111/psj.12556) [-@zufall_syntactic_2024] 
 demonstrate the use of *textNet* to identify which actors are involved in start-up
 versus ongoing management tasks, characterize patterns of information 
 and funding flows, and compare the distribution of management tasks in networks from
-regions known to have contrasting characteristics [-@zufall_syntactic_2024]. 
+regions known to have contrasting characteristics. 
 
 *textNet* has applications in social science research, including governance network scholarship, as demonstrated by
 [Zufall and Scott](https://onlinelibrary.wiley.com/doi/full/10.1111/psj.12556) 
@@ -107,7 +107,7 @@ custom NER model.
 The package architecture relies on four sets of functions around core
 tasks:
 
-- \[OPTIONAL\] Pre-processing: `pdf_clean()`, a wrapper for the
+- \[OPTIONAL\] Preprocessing: `pdf_clean()`, a wrapper for the
 `pdftools::pdf_text()` function which includes a custom header/footer
 text removal feature; and `parse_text()`, which is a wrapper for the
 *spacyr* package and uses the *spaCy* natural language processing engine
@@ -134,14 +134,14 @@ The figure below summarizes the functionality of *textNet* and the flow of funct
 
 ## Installation
 
-The stable version of this package can be installed from Github, using
-the *pak* package [@csardi_pak_2024]:
+The stable version of this package can be installed from GitHub, using
+the *pak* package [@csardi_pak_2026]:
 
     pak::pak("ucd-cepb/textNet")
 
 The *textNet* package suggests several convenience wrappers of packages
 such as *spacyr* [@benoit_spacyr_2023], *pdftools* [@ooms__aut_pdftools_2024], *igraph* [@csardi_igraph_2024], and *network* [@butts_network_2023].
-To use the full functionality of *textNet*, such as pre-processing tools
+To use the full functionality of *textNet*, such as preprocessing tools
 and post-processing analysis tools, we recommend installing these
 packages, which for *spacyr* requires integration with Python. However,
 the user may wish to preprocess and parse data using their own NLP
