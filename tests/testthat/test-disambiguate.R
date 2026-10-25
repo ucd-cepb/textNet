@@ -72,3 +72,23 @@ test_that("no acronyms remain in new node list after disambiguation", {
   acronym_pattern <- paste0("^", paste0(new_acronyms$acronym, collapse = "$|^"), "$")
   expect_false(any(str_detect(new_extract_clean$nodelist$entity_name, acronym_pattern)))
 })
+
+test_that("partial matches stop at a concatenator boundary", {
+  ext <- extracts[[1]]
+  names_in <- c("California_Department_of_Water_Resources", "Kaweah_Delta",
+                "De_staff", "Kaweah_De", "North_De_Ditch")
+  ext$nodelist$entity_name[seq_along(names_in)] <- names_in
+  ext$edgelist$source[1] <- "California_Department_of_Water_Resources"
+  ext$edgelist$target[1] <- "Kaweah_De"
+  out <- disambiguate(ext, from = list("De"), to = list("Davids_Engineering"),
+                      match_partial_entity = TRUE)
+  nodes <- out$nodelist$entity_name
+  # names that merely contain the 'from' as a prefix of a longer word are untouched
+  expect_true(all(c("california_department_of_water_resources", "kaweah_delta") %in% nodes))
+  expect_false(any(str_detect(nodes, "engineeringpartment|engineeringlta")))
+  # beginning, end, and middle matches still disambiguate
+  expect_true(all(c("davids_engineering_staff", "kaweah_davids_engineering",
+                    "north_davids_engineering_ditch") %in% nodes))
+  expect_equal(out$edgelist$source[1], "california_department_of_water_resources")
+  expect_equal(out$edgelist$target[1], "kaweah_davids_engineering")
+})

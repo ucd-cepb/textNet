@@ -298,8 +298,9 @@ disambiguate <- function(textnet_extract, from, to, match_partial_entity=rep(FAL
       #beginning of word
       begf <- paste0("^",frompartial,concatenator)
       begt <- paste0(topartial,concatenator)
-      #middle or end of word
-      midf <- paste0(concatenator,frompartial)
+      #middle or end of word; the lookahead requires a concatenator or the end
+      #of the entity after the match, so "De" cannot rewrite "_Department"
+      midf <- paste0(concatenator,frompartial,"(?=",concatenator,"|$)")
       midt <- paste0(concatenator,topartial)
       #entire word
       wholef <- paste0("^",frompartial,"$")
