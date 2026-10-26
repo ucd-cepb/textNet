@@ -1,5 +1,8 @@
-#' Build structural patterns for government organization names
-#'
+# Exported function
+# build_structural_org_patterns
+
+#' @title Build structural patterns for government organization names
+#' @description
 #' Creates spaCy EntityRuler patterns that match the grammatical shape of
 #' government organization names (e.g., "California Department of Fish &
 #' Wildlife") rather than enumerating exact strings. Designed to complement
@@ -42,15 +45,15 @@
 #'
 #' @return A list of three pattern dictionaries formatted for spaCy's
 #'   EntityRuler, suitable for appending to the output of [entity_specify()]
-#'   and passing to [parse_text_trf()] via `entity_ruler_patterns`.
+#'   and passing to [parse_text()] or [parse_text_trf()] via
+#'   `entity_ruler_patterns`.
 #'
-#' @seealso [entity_specify()], [parse_text_trf()]
+#' @seealso [entity_specify()], [parse_text()], [parse_text_trf()]
 #'
 #' @examples
-#' \dontrun{
 #' # Default: up to 2 preceding, unlimited trailing
 #' pats <- build_structural_org_patterns()
-#' str(pats)
+#' length(pats)
 #'
 #' # Tighter matching: 2 preceding, at most 3 trailing
 #' pats2 <- build_structural_org_patterns(max_trailing = 3L)
@@ -62,10 +65,10 @@
 #'   max_trailing  = 2L
 #' )
 #'
-#' # Combine with dictionary patterns from entity_specify()
-#' dict_pats <- entity_specify(my_names, entity_label = "DICT")
+#' # Combine with exact dictionary patterns from entity_specify()
+#' dict_pats <- entity_specify(c("Friant Water Authority", "Madera County"),
+#'                             entity_label = "DICT")
 #' all_pats  <- c(dict_pats, build_structural_org_patterns())
-#' }
 #'
 #' @export
 build_structural_org_patterns <- function(

@@ -69,8 +69,6 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
                                     return_to_memory = TRUE, keep_incomplete_edges=FALSE,
                                     remove_neg = TRUE, progress = TRUE) {
 
-  doc_sent_parent.y <- NULL # silence R CMD check NOTE
-
   # Input validation
   if(!is.data.frame(x) && !is.data.table(x)) {
     stop("'x' must be a data.frame or data.table")
@@ -118,7 +116,6 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   x <- x[,keep:=any(dep_rel %in% dep_rels_subj_keep) & any(dep_rel %in% dep_rels_obj_keep) & any(pos%in%c('VERB','AUX')),by=.(doc_id,sentence_id)]
   x <- x[keep==TRUE,]
   x$doc_sent <- paste0(x$doc_id, "_", x$sentence_id)
-
 
   #entity_type <- entity <- iob <- entity_id <- .SD <- `:=` <- sentence_id <- doc_id <- NULL
   if (!"entity" %in% names(x)) {

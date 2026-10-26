@@ -45,15 +45,15 @@ multi-word suffixes such as "Board of Supervisors".}
 \value{
 A list of three pattern dictionaries formatted for spaCy's
 EntityRuler, suitable for appending to the output of \code{\link[=entity_specify]{entity_specify()}}
-and passing to \code{\link[=parse_text_trf]{parse_text_trf()}} via \code{entity_ruler_patterns}.
+and passing to \code{\link[=parse_text]{parse_text()}} or \code{\link[=parse_text_trf]{parse_text_trf()}} via
+\code{entity_ruler_patterns}.
 }
 \description{
 Creates spaCy EntityRuler patterns that match the grammatical shape of
 government organization names (e.g., "California Department of Fish &
 Wildlife") rather than enumerating exact strings. Designed to complement
 \code{\link[=entity_specify]{entity_specify()}}, which matches exact dictionary entries.
-}
-\details{
+
 Patterns anchor on a set of organizational keywords (e.g., "department",
 "bureau") and require title-case tokens on either side. Three pattern
 templates are generated:
@@ -69,10 +69,9 @@ consumed on each side of the org keyword, letting you trade recall for
 precision.
 }
 \examples{
-\dontrun{
 # Default: up to 2 preceding, unlimited trailing
 pats <- build_structural_org_patterns()
-str(pats)
+length(pats)
 
 # Tighter matching: 2 preceding, at most 3 trailing
 pats2 <- build_structural_org_patterns(max_trailing = 3L)
@@ -84,12 +83,12 @@ pats3 <- build_structural_org_patterns(
   max_trailing  = 2L
 )
 
-# Combine with dictionary patterns from entity_specify()
-dict_pats <- entity_specify(my_names, entity_label = "DICT")
+# Combine with exact dictionary patterns from entity_specify()
+dict_pats <- entity_specify(c("Friant Water Authority", "Madera County"),
+                            entity_label = "DICT")
 all_pats  <- c(dict_pats, build_structural_org_patterns())
-}
 
 }
 \seealso{
-\code{\link[=entity_specify]{entity_specify()}}, \code{\link[=parse_text_trf]{parse_text_trf()}}
+\code{\link[=entity_specify]{entity_specify()}}, \code{\link[=parse_text]{parse_text()}}, \code{\link[=parse_text_trf]{parse_text_trf()}}
 }

@@ -96,7 +96,6 @@ importFrom(tidyr,
   tibble
 )
 importFrom(utils,
-  data,
   read.csv,
   read.table
 )

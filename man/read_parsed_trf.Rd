@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse_text_trf.R
 \name{read_parsed_trf}
 \alias{read_parsed_trf}
-\title{Read parsed text from Parquet file}
+\title{Read parsed text from a Parquet file}
 \usage{
 read_parsed_trf(filepath)
 }
@@ -10,8 +10,12 @@ read_parsed_trf(filepath)
 \item{filepath}{Path to the .parquet file}
 }
 \value{
-A data.frame with parsed tokens
+A data.frame of parsed tokens, in the same format as
+\code{\link[=parse_text]{parse_text()}} output.
 }
 \description{
-Helper function to read Parquet files created by parse_text_trf().
+Reads a Parquet file written by \code{\link[=parse_text_trf]{parse_text_trf()}} back into R.
+}
+\seealso{
+\code{\link[=parse_text_trf]{parse_text_trf()}}
 }

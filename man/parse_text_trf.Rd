@@ -2,17 +2,16 @@
 % Please edit documentation in R/parse_text_trf.R
 \name{parse_text_trf}
 \alias{parse_text_trf}
-\title{Parse text using spaCy transformer model}
+\title{Parse text using the spaCy transformer model}
 \usage{
 parse_text_trf(
-  ret_path,
-  keep_hyph_together = F,
+  keep_hyph_together = FALSE,
   phrases_to_concatenate = NA,
   concatenator = "_",
   text_list,
   parsed_filenames,
-  overwrite = T,
-  test = F,
+  overwrite = TRUE,
+  test = FALSE,
   custom_entities = NULL,
   entity_ruler_patterns = NULL,
   ruler_position = c("after", "before"),
@@ -22,8 +21,6 @@ parse_text_trf(
 )
 }
 \arguments{
-\item{ret_path}{filepath to use for Sys.setenv reticulate python call. Note: Python and miniconda must already be installed.}
-
 \item{keep_hyph_together}{Set to true to replace hyphens within a single word with underscores. Defaults to false.}
 
 \item{phrases_to_concatenate}{character vector of phrases, in which each element is a string consisting of tokens separated by spaces. These are replaced with their concatenated version in order, from left to right. It is suggested that the most specific phrases, with the most words, are arranged at the left.}
@@ -52,10 +49,22 @@ The parsed data will be exported to these files (as .parquet files for efficienc
 \item{progress}{logical; whether to show a progress bar during text preprocessing (default TRUE)}
 }
 \value{
-A list of data.frames of tokens, one per document. Format matches spacyr::spacy_parse output.
+A named list of data.frames of tokens, one per document, in the
+same format as \code{\link[=parse_text]{parse_text()}} output.
 }
 \description{
-This function parses text using spaCy's en_core_web_trf transformer model.
-Unlike the CPU version (parse_text()), this function uses a pure Python
-implementation that allows PyTorch to handle GPU acceleration automatically.
+Passes text through spaCy's \code{en_core_web_trf} transformer model to
+produce the same token-level annotations as \code{\link[=parse_text]{parse_text()}}. Unlike
+\code{\link[=parse_text]{parse_text()}}, which goes through \pkg{spacyr}, this function calls a
+bundled Python module directly, so PyTorch can use a GPU when one is
+available. Parsed output is saved as Parquet files via \pkg{duckdb};
+read them back with \code{\link[=read_parsed_trf]{read_parsed_trf()}}.
+
+Python is located with the same rules as \code{\link[=parse_text]{parse_text()}}: the
+\code{RETICULATE_PYTHON} environment variable if set, then conda
+environments, then Python installations on the PATH, choosing the first
+that has spaCy and \code{en_core_web_trf} installed.
+}
+\seealso{
+\code{\link[=parse_text]{parse_text()}} for the CPU \pkg{spacyr} pipeline.
 }

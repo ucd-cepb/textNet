@@ -1,10 +1,20 @@
-#' Parse text using spaCy transformer model
+# Exported functions
+# parse_text_trf, read_parsed_trf
+
+#' @title Parse text using the spaCy transformer model
+#' @description
+#' Passes text through spaCy's \code{en_core_web_trf} transformer model to
+#' produce the same token-level annotations as [parse_text()]. Unlike
+#' [parse_text()], which goes through \pkg{spacyr}, this function calls a
+#' bundled Python module directly, so PyTorch can use a GPU when one is
+#' available. Parsed output is saved as Parquet files via \pkg{duckdb};
+#' read them back with [read_parsed_trf()].
 #'
-#' This function parses text using spaCy's en_core_web_trf transformer model.
-#' Unlike the CPU version (parse_text()), this function uses a pure Python
-#' implementation that allows PyTorch to handle GPU acceleration automatically.
+#' Python is located with the same rules as [parse_text()]: the
+#' \code{RETICULATE_PYTHON} environment variable if set, then conda
+#' environments, then Python installations on the PATH, choosing the first
+#' that has spaCy and \code{en_core_web_trf} installed.
 #'
-#' @param ret_path filepath to use for Sys.setenv reticulate python call. Note: Python and miniconda must already be installed.
 #' @param keep_hyph_together Set to true to replace hyphens within a single word with underscores. Defaults to false.
 #' @param phrases_to_concatenate character vector of phrases, in which each element is a string consisting of tokens separated by spaces. These are replaced with their concatenated version in order, from left to right. It is suggested that the most specific phrases, with the most words, are arranged at the left.
 #' @param concatenator This is a character or string that will be used to replace the spaces in the phrases_to_concatenate.
@@ -19,24 +29,21 @@
 #' @param overwrite_ents A boolean. If TRUE (default), EntityRuler patterns override NER's entity assignments for overlapping spans. If FALSE, EntityRuler only fills gaps where NER found nothing.
 #' @param batch_size Integer. Batch size for spaCy's nlp.pipe() processing. Default 50.
 #' @param progress logical; whether to show a progress bar during text preprocessing (default TRUE)
-#' @return A list of data.frames of tokens, one per document. Format matches spacyr::spacy_parse output.
+#' @return A named list of data.frames of tokens, one per document, in the
+#'   same format as [parse_text()] output.
+#' @seealso [parse_text()] for the CPU \pkg{spacyr} pipeline.
 #' @importFrom stringr str_detect str_replace_all
 #' @importFrom stringi stri_replace_all_regex stri_escape_unicode
 #' @importFrom pbapply pblapply
-#' @importFrom utils data
 #' @export
 
-parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenate=NA,
+parse_text_trf <- function(keep_hyph_together=FALSE, phrases_to_concatenate=NA,
                            concatenator="_", text_list, parsed_filenames,
-                           overwrite=T, test=F, custom_entities = NULL, entity_ruler_patterns = NULL,
+                           overwrite=TRUE, test=FALSE, custom_entities = NULL, entity_ruler_patterns = NULL,
                            ruler_position = c("after", "before"), overwrite_ents = TRUE,
                            batch_size = 50L, progress = TRUE){
 
   # Input validation
-  if(!is.character(ret_path) || length(ret_path) != 1) {
-    stop("'ret_path' must be a single character string")
-  }
-
   if(!is.logical(keep_hyph_together) || length(keep_hyph_together) != 1) {
     stop("'keep_hyph_together' must be a single logical value")
   }
@@ -94,10 +101,10 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
     stop("text_list must be a named list")
   }
 
-  # Check for duckdb package (needed for Parquet I/O)
-  if(!requireNamespace("duckdb", quietly = T)){
-    stop("Package 'duckdb' must be installed to use this function (for Parquet file I/O).",
-         call.=F)
+  # Check for duckdb and DBI (needed for Parquet I/O)
+  if(!requireNamespace("duckdb", quietly = TRUE) || !requireNamespace("DBI", quietly = TRUE)){
+    stop("Packages 'duckdb' and 'DBI' must be installed to use this function (for Parquet file I/O).",
+         call.=FALSE)
   }
 
   # Fix OpenMP library conflict (common on macOS with conda)
@@ -108,12 +115,15 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
   message("Note: Setting OMP_NUM_THREADS=1 to prevent OpenMP conflicts with transformer model.")
 
   # Set up Python environment
-  Sys.setenv(RETICULATE_PYTHON=ret_path)
-  if(!requireNamespace("reticulate", quietly = T)){
+  if(!requireNamespace("reticulate", quietly = TRUE)){
     stop("Package 'reticulate' must be installed to use this function.",
-         call.=F)
+         call.=FALSE)
   }
-  reticulate::py_config()
+  # Once reticulate has started Python it cannot switch interpreters, so only
+  # search for one if Python is not already running in this session
+  if(!reticulate::py_available(initialize = FALSE)){
+    Sys.setenv(RETICULATE_PYTHON = find_spacy_python(model = "en_core_web_trf"))
+  }
 
   # Load the Python parsing module
   python_module_path <- system.file("python", "parse_text_trf.py", package = "textNet")
@@ -121,13 +131,15 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
     stop("Could not find parse_text_trf.py in textNet package. Please reinstall the package.")
   }
 
-  # Source the Python module (convert=FALSE to handle conversion explicitly)
-  reticulate::source_python(python_module_path, convert = FALSE)
+  # Import the Python module (convert=FALSE to handle conversion explicitly)
+  trf <- reticulate::import_from_path("parse_text_trf",
+                                      path = dirname(python_module_path),
+                                      convert = FALSE)
 
   # Initialize the parser
   message("Initializing spaCy transformer model...")
   tryCatch({
-    initialize(
+    trf$initialize(
       model = "en_core_web_trf",
       entity_ruler_patterns = entity_ruler_patterns,
       ruler_position = ruler_position,
@@ -193,9 +205,6 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
   all_parsed <- vector(mode="list", length=length(unique_files))
   names(all_parsed) <- unique_files
 
-  # Load English words data for validation
-  utils::data(eng_words, envir = environment())
-
   for (m in 1:length(unique_files)){
     # Determine output filename - convert .rds to .parquet if needed
     output_file <- parsed_filenames[m]
@@ -220,7 +229,7 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
       message(paste0("Parsing: ", unique_files[m], " (", length(file_texts), " pages)"))
 
       parsedtxt <- tryCatch({
-        py_result <- parse_to_dataframe(
+        py_result <- trf$parse_to_dataframe(
           texts = as.list(file_texts),
           doc_ids = as.list(page_doc_ids),
           batch_size = as.integer(batch_size)
@@ -247,7 +256,7 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
       # English word validation
       lettertokens <- parsedtxt$token[stringr::str_detect(parsedtxt$token, "[a-zA-Z]")]
       lettertokensunicodeescaped <- stringi::stri_escape_unicode(tolower(lettertokens))
-      pctlettersineng <- sum(lettertokensunicodeescaped %in% eng_words)/length(lettertokensunicodeescaped)
+      pctlettersineng <- sum(lettertokensunicodeescaped %in% textNet::eng_words)/length(lettertokensunicodeescaped)
 
       if(pctlettersineng < 0.5){
         warning(paste0("Fewer than 50% of letter-containing tokens in the document ", unique_files[m] ," are English words."))
@@ -273,7 +282,7 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
         # Write parquet using duckdb
         con <- DBI::dbConnect(duckdb::duckdb())
         duckdb::duckdb_register(con, "parsed_data", parsedtxt)
-        DBI::dbExecute(con, sprintf("COPY parsed_data TO '%s' (FORMAT PARQUET)", output_file))
+        DBI::dbExecute(con, sprintf("COPY parsed_data TO '%s' (FORMAT PARQUET)", .sql_quote_path(output_file)))
         DBI::dbDisconnect(con, shutdown = TRUE)
         message(paste0("Saved: ", output_file))
       } else if(test){
@@ -284,14 +293,14 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
       message(paste0("Skipping ", unique_files[m], " - ", output_file, " already exists (set overwrite=TRUE to reparse)"))
       # Load existing file using duckdb
       con <- DBI::dbConnect(duckdb::duckdb())
-      all_parsed[[m]] <- DBI::dbGetQuery(con, sprintf("SELECT * FROM '%s'", output_file))
+      all_parsed[[m]] <- DBI::dbGetQuery(con, sprintf("SELECT * FROM '%s'", .sql_quote_path(output_file)))
       DBI::dbDisconnect(con, shutdown = TRUE)
     }
   }
 
   # Clean up Python resources
   tryCatch({
-    finalize()
+    trf$finalize()
   }, error = function(e){
     warning(paste0("Error during cleanup: ", e$message))
   })
@@ -300,18 +309,29 @@ parse_text_trf <- function(ret_path, keep_hyph_together=F, phrases_to_concatenat
 }
 
 
-#' Read parsed text from Parquet file
-#'
-#' Helper function to read Parquet files created by parse_text_trf().
+#' @title Read parsed text from a Parquet file
+#' @description
+#' Reads a Parquet file written by [parse_text_trf()] back into R.
 #'
 #' @param filepath Path to the .parquet file
-#' @return A data.frame with parsed tokens
+#' @return A data.frame of parsed tokens, in the same format as
+#'   [parse_text()] output.
+#' @seealso [parse_text_trf()]
 #' @export
 read_parsed_trf <- function(filepath){
-  if(!requireNamespace("duckdb", quietly = T)){
-    stop("Package 'duckdb' must be installed to read Parquet files.", call.=F)
+  if(!requireNamespace("duckdb", quietly = TRUE) || !requireNamespace("DBI", quietly = TRUE)){
+    stop("Packages 'duckdb' and 'DBI' must be installed to read Parquet files.", call.=FALSE)
+  }
+  if(!is.character(filepath) || length(filepath) != 1) {
+    stop("'filepath' must be a single character string")
+  }
+  if(!file.exists(filepath)) {
+    stop("File not found: ", filepath)
   }
   con <- DBI::dbConnect(duckdb::duckdb())
   on.exit(DBI::dbDisconnect(con, shutdown = TRUE))
-  DBI::dbGetQuery(con, sprintf("SELECT * FROM '%s'", filepath))
+  DBI::dbGetQuery(con, sprintf("SELECT * FROM '%s'", .sql_quote_path(filepath)))
 }
+
+# Escape single quotes so a file path can sit inside a SQL string literal
+.sql_quote_path <- function(path) gsub("'", "''", path, fixed = TRUE)
