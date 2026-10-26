@@ -4,11 +4,17 @@
 
 * New `parse_text_trf()` parses text with spaCy's `en_core_web_trf` transformer model through a bundled Python module (`inst/python/parse_text_trf.py`) instead of spacyr, so PyTorch can use a GPU when one is available. It takes the same preprocessing and EntityRuler arguments as `parse_text()`, plus `batch_size`, and finds Python the same way. Parsed output is saved as Parquet files via duckdb; the new `read_parsed_trf()` reads them back.
 
-* New `extract_front_matter_acronyms()` extracts acronym definitions from explicit "Acronyms and Abbreviations" / "List of Acronyms" tables near the front of a document. It handles dot-leader and wide-whitespace layouts and harvests every acronym table in a document, including per-chapter ones. Title Case nicknames (`District`, `Mather AFB`) are kept when each word containing lowercase letters also appears in the expansion. Mixed-case technical terms (`InSAR`), geologic map symbols (`Qya`), two-letter `[A-Z][a-z]` short forms and units of measurement (`AFY`, `mg/L`) are dropped. The output has the same columns as `find_acronyms()`, so the two can be `rbind()`'d before `disambiguate()`.
+* New `find_intext_acronyms()` detects parenthetically defined acronyms ("Department of Water Resources (DWR)"). It replaces the in-text part of `find_acronyms()`, and its name makes clear how it differs from `extract_front_matter_acronyms()`. Text with no parentheses now returns an empty table instead of an error.
+
+* New `extract_front_matter_acronyms()` extracts acronym definitions from explicit "Acronyms and Abbreviations" / "List of Acronyms" tables near the front of a document. It handles dot-leader and wide-whitespace layouts and harvests every acronym table in a document, including per-chapter ones. Title Case nicknames (`District`, `Mather AFB`) are kept when each word containing lowercase letters also appears in the expansion. Mixed-case technical terms (`InSAR`), geologic map symbols (`Qya`), two-letter `[A-Z][a-z]` short forms and units of measurement (`AFY`, `mg/L`) are dropped. The output has the same columns as `find_intext_acronyms()`, so the two can be `rbind()`'d before `disambiguate()`.
 
 * New `build_structural_org_patterns()` builds spaCy EntityRuler patterns that match the grammatical shape of government organization names (e.g., "California Department of Fish & Wildlife") rather than exact strings. Combine its output with `entity_specify()` patterns and pass both to `parse_text()` or `parse_text_trf()`.
 
 * `parse_text()` and `textnet_extract()` gain a `progress` argument to turn off progress bars.
+
+## Deprecations
+
+* `find_acronyms()` is deprecated. Use `find_intext_acronyms()` for parenthetically defined acronyms and `extract_front_matter_acronyms()` for acronym tables. `find_acronyms()`, including its `table_text` argument, still returns the same result as in 1.1.1 but now emits a deprecation warning.
 
 ## Behavior changes
 

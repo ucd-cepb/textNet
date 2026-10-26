@@ -54,7 +54,7 @@ The package architecture relies on four sets of functions around core tasks:
 
 - [OPTIONAL] Pre-processing: pdf_clean(), a wrapper for the pdftools::pdf_text() function which includes a custom header/footer text removal feature; and parse_text(), which is a wrapper for the *spacyr* package and uses the *spaCy* natural language processing engine [@honnibal_spacy_2021] to parse text and perform part of speech tagging, dependency parsing, and named entity recognition (NER). Alternatively, as described below, the user can skip this step and load parsed text directly into the package.
 - Network extraction: textnet_extract(), which generates a graph database from parsed text based upon tags and dependency relations
-- Disambiguation: tools for cleaning, recoding, and aggregating node and edge attributes, such as the find_acronyms() function, which can be paired with the disambiguation() function to identify acronyms in the text and replace them with the full entity name.
+- Disambiguation: tools for cleaning, recoding, and aggregating node and edge attributes, such as the find_intext_acronyms() function, which can be paired with the disambiguation() function to identify acronyms in the text and replace them with the full entity name.
 - Exploration: the export_to_network() function for exporting the graph database to igraph and network objects, top_features() for viewing node and edge attributes, and combine_networks() for aggregating multiple document-based graphs based on common nodes.
 
 The figure below summarizes the functionality of *textNet* and the flow of function outputs. 
@@ -115,13 +115,13 @@ The file is saved to the provided filename, if provided. It is returned to memor
 The resulting object consists of a nodelist, an edgelist, a verblist, and a list of appositives. The nodelist variables are entity_name, the concatenated name of the entity; entity_type, which is a preservation from the entity_type attribute from the output of textNet::parse_text(); and num_appearances, which is the number of times the entity appears in the PDF text. The default entity types are based on *spaCy*’s NER tags, but entity types can be customized as desired. In this example, we only keep entity types in the nodelist, edgelist, and appositivelist that are listed under keep_entities; namely, “ORG”, “GPE”, “PERSON”, and “WATER”.
 
 ### Consolidate Entity Synonyms
-In a document, the same real-world entity may be referenced in multiple ways. For instance, the document may introduce an organization using its full name, then use an acronym for the remainder of the document. To have more reliable network results, it is important to consolidate nodes that represent different naming conventions into a single node. The *textNet* package comes with a built-in tool for finding acronyms defined parenthetically within the text. This can be run on the result of pdf_clean() to generate a table with one column for acronyms and another for the corresponding full names, such that each row is a different instance of a phrase for which an acronym was detected. The use of find_acronyms() is demonstrated below. Many plans also include an "Acronyms and Abbreviations" table in their front matter; extract_front_matter_acronyms() reads such tables and returns the same two columns, so its output can be combined with the find_acronyms() result using rbind(). (The trimmed example plans bundled with the package do not include an acronym table, so it is not demonstrated here.)
+In a document, the same real-world entity may be referenced in multiple ways. For instance, the document may introduce an organization using its full name, then use an acronym for the remainder of the document. To have more reliable network results, it is important to consolidate nodes that represent different naming conventions into a single node. The *textNet* package comes with a built-in tool for finding acronyms defined parenthetically within the text. This can be run on the result of pdf_clean() to generate a table with one column for acronyms and another for the corresponding full names, such that each row is a different instance of a phrase for which an acronym was detected. The use of find_intext_acronyms() is demonstrated below. Many plans also include an "Acronyms and Abbreviations" table in their front matter; extract_front_matter_acronyms() reads such tables and returns the same two columns, so its output can be combined with the find_intext_acronyms() result using rbind(). (The trimmed example plans bundled with the package do not include an acronym table, so it is not demonstrated here.)
 
 ```{r acronyms}
-#use find_acronyms feature to find and tabulate
+#use find_intext_acronyms feature to find and tabulate
 #parenthetically defined acronyms within the text
-old_acronyms <- find_acronyms(example_plan_v1_text)
-new_acronyms <- find_acronyms(example_plan_v2_text)
+old_acronyms <- find_intext_acronyms(example_plan_v1_text)
+new_acronyms <- find_intext_acronyms(example_plan_v2_text)
    
 print(head(old_acronyms))
    
@@ -129,7 +129,7 @@ print(head(old_acronyms))
 
 The resulting table of acronyms can then be fed into a disambiguation tool, the *textNet* function disambiguate(). This tool is very flexible, allowing a user-defined custom vector or list of strings representing the original entity name to search for in the textnet_extract object, and another user-defined custom vector or list of strings representing the entity name to which to convert those instances. Additional inputs that may be useful here are names and abbreviations of known federal and state or regional agencies, or other entities that are likely to be discussed in the particular type of document being analyzed. There may also be topic-specific words or phrases that are likely to be discussed in the document. For instance, in Groundwater Sustainability Plans, it is common to discuss entities that involve the term "subbasin," but the spelling of this is not always consistent. 
 
-In the example below, we define a "from" vector that includes the acronyms found through the previous step, as well as non-standard spellings of "subbasin." This function is case sensitive, so we have included two alternate cases that are likely to appear in the dataset. The "to" vector includes the full names from the find_acronyms result, along with the standard spelling of "subbasin". 
+In the example below, we define a "from" vector that includes the acronyms found through the previous step, as well as non-standard spellings of "subbasin." This function is case sensitive, so we have included two alternate cases that are likely to appear in the dataset. The "to" vector includes the full names from the find_intext_acronyms result, along with the standard spelling of "subbasin". 
 
 There are a few rules about defining the "from" and "to" columns. First, the length of "from" and "to" must be identical, since from[[i]] is replaced with to[[i]]. Second, there may not be any duplicated terms in the "from" list, since each string must be matched to a single replacement without ambiguity. It is acceptable to have duplicated terms in the "to" list. 
 
