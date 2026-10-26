@@ -81,3 +81,22 @@ test_that("extract_front_matter_acronyms returns identical-shape data.table to f
   expect_type(res$name, "character")
   expect_type(res$acronym, "character")
 })
+
+test_that("extract_front_matter_acronyms drops mixed-case, two-letter and unit short forms", {
+  pages <- paste(
+    "Acronyms and Abbreviations",
+    "",
+    "De            Davids Engineering",
+    "Qt            Terrace Deposits",
+    "InSAR         Interferometric Synthetic Aperture Radar",
+    "AFY           Acre-Feet per Year",
+    "mg/L          Milligrams per Liter",
+    "GPD/FT        Gallons Per Day Per Foot",
+    "DWR           Department of Water Resources",
+    "District      Farmers Water District",
+    "Mather AFB       Mather Air Force Base",
+    sep = "\n"
+  )
+  res <- extract_front_matter_acronyms(pages)
+  expect_setequal(res$acronym, c("DWR", "District", "Mather AFB"))
+})

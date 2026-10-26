@@ -45,6 +45,27 @@
 # layout (multi-section documents sometimes use Item | Description headers).
 .acronym_reject <- c("Item")
 
+# Units of measurement are not entities. Matched against the short form
+# (any "/" as in mg/L, AF/Year, GPD/FT) or the RAW expansion (AF, TAF,
+# AFY, GPM, MGD, ...).
+.unit_acronym_re  <- "/"
+.unit_expansion_re <- paste0(
+  "(?i)^(?:thousand|million|billion)?[ _\\-]*",
+  "(?:acre[ _\\-]?f(?:ee|oo)t|gallons?|milligrams?|micrograms?|cubic[ _\\-]feet)\\b"
+)
+
+# Keep a short form only if every space-separated token is either free of
+# lowercase letters (EPA, C&E, AFB) or a whole word of its own expansion
+# (District, Mather, McClellan). This drops mixed-case technical terms
+# (InSAR, LiDAR, ETaw), geologic map symbols (Qya, QTc) and two-letter
+# [A-Z][a-z] forms (Qt, Ti, De), none of which become useful entity nodes.
+.keep_short_form <- function(acronym, expansion) {
+  if (grepl("^[A-Z][a-z]$", acronym)) return(FALSE)
+  words  <- tolower(strsplit(expansion, "[^A-Za-z0-9&]+", perl = TRUE)[[1]])
+  tokens <- strsplit(acronym, "[ \\t]+", perl = TRUE)[[1]]
+  all(!grepl("[a-z]", tokens) | tolower(tokens) %in% words)
+}
+
 # ---- main function ---------------------------------------------------------
 
 #' Extract acronym definitions from a front-matter acronym table.
@@ -72,7 +93,12 @@
 #' because they rarely correspond to entity nodes and admitting them
 #' substantially increases the false-positive surface in justified-column
 #' PDFs. Title Case "nickname" acronyms (\code{District}, \code{Authority},
-#' \code{Mather AFB}) \emph{are} captured.
+#' \code{Mather AFB}) \emph{are} captured, provided each word containing
+#' lowercase letters also appears in the expansion. Mixed-case technical
+#' terms (\code{InSAR}, \code{LiDAR}), geologic map symbols (\code{Qya},
+#' \code{Qt}), any two-letter \code{[A-Z][a-z]} short form, and units of
+#' measurement (\code{AFY}, \code{mg/L}, \code{GPM}) are dropped. Add
+#' project-specific terms like these to the dictionary manually if needed.
 #'
 #' @param str A character vector, typically one element per page of the
 #'   document (as returned by \code{\link{pdf_clean}}).
@@ -166,6 +192,12 @@ extract_front_matter_acronyms <- function(str, max_window_pages = 10L) {
     drop <- grepl(re, expansions, perl = TRUE)
     acronyms <- acronyms[!drop]; expansions <- expansions[!drop]
   }
+
+  # Units of measurement and mixed-case / map-symbol short forms.
+  keep <- !grepl(.unit_acronym_re, acronyms, perl = TRUE) &
+    !grepl(.unit_expansion_re, expansions, perl = TRUE) &
+    mapply(.keep_short_form, acronyms, expansions, USE.NAMES = FALSE)
+  acronyms <- acronyms[keep]; expansions <- expansions[keep]
   if (length(acronyms) == 0L) return(empty)
 
   # Spaces and hyphens -> underscores to match spaCy entity tokens.

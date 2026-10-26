@@ -1,7 +1,4 @@
 name,acronym
-Acre_Foot,AF
-Acre_Feet_Per_Acre_Per_Day,AFAD
-Acre_Foot_Per_Year,AFY
 California_Statewide_Groundwater_Elevation_Monitoring,CASGEM
 California_Code_of_Regulations,CCR
 California_Environmental_Quality_Act,CEQA
@@ -18,7 +15,6 @@ Del_Rey_Community_Service_District,Del Rey
 Data_Management_System,DMS
 Data_Quality_Objective,DQO
 Department_of_Toxic_Substance_Control,DTSC
-Corcoran_Clay,E-Clay
 Ethylene_Dibromide,EDB
 Environmental_Protection_Agency,EPA
 Evapotranspiration,ET
@@ -30,13 +26,11 @@ Granular_Activated_Carbon,GAC
 Groundwater_Ambient_Monitoring_and_Assessment,GAMA
 Government_Code,GC
 Groundwater_Dependent_Ecosystem,GDE
-Gallons_Per_Day_Per_Foot,GPD/FT
 Global_Positioning_System,GPS
 Groundwater_Sustainability_Agency,GSA
 Groundwater_Sustainability_Plan,GSP
 Hydrogeological_Conceptual_Model,HCM
 Irrigated_Lands_Regulatory_Program,ILRP
-Interferometric_Synthetic_Aperture_Radar,InSAR
 Integrated_Regional_Water_Management_Plan,IRWMP
 Joint_Powers_Agreement,JPA
 Kenneth_D._Schmitt_&_Associates,KDSA
@@ -48,7 +42,6 @@ Kings_River_Water_Association,KRWA
 Lake_and_Streambed_Alteration,LSA
 Municipal_&_Industrial,M&I
 Maximum_Contaminant_Level,MCL
-Million_Gallon_Per_Day,MGD
 Mean_Sea_Level,MSL
 Methyl_Tert_Butyl_Ether,MTBE
 National_Aeronautics_and_Space_Administration,NASA
@@ -57,11 +50,6 @@ Natural_Resource_Conservation_Service,NRCS
 City_of_Parlier,Parlier
 Pacific_Gas_&_Electric_Company,PG&E
 Kings_River_Fisheries_Management_Program,Program
-Quaternary_Flood_Basin_Deposits,Qb
-Quaternary_Older_Alluvium,Qoao
-Quaternary_Sand_Dunes,Qsd
-Quaternary_and_Tertiary_Age_Continental_Deposits,QTc
-Quaternary_Younger_Alluvium,Qya
 Regional_Water_Quality_Control_Board,RWQCB
 Soil_Agricultural_Groundwater_Banking_Index,SAGBI
 City_of_Sanger,Sanger
