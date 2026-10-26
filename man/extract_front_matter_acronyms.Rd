@@ -47,7 +47,12 @@ technical units (e.g., \code{bgs}, \code{cfs}, \code{mg/L}) are skipped
 because they rarely correspond to entity nodes and admitting them
 substantially increases the false-positive surface in justified-column
 PDFs. Title Case "nickname" acronyms (\code{District}, \code{Authority},
-\code{Mather AFB}) \emph{are} captured.
+\code{Mather AFB}) \emph{are} captured, provided each word containing
+lowercase letters also appears in the expansion. Mixed-case technical
+terms (\code{InSAR}, \code{LiDAR}), geologic map symbols (\code{Qya},
+\code{Qt}), any two-letter \code{[A-Z][a-z]} short form, and units of
+measurement (\code{AFY}, \code{mg/L}, \code{GPM}) are dropped. Add
+project-specific terms like these to the dictionary manually if needed.
 }
 \examples{
 # Input is a character vector with one element per page, as returned by
