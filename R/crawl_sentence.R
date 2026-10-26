@@ -1,7 +1,7 @@
-# Exported functions
+# Exported function
 # crawl_sentence
 
-#' Take a sentence and follow the dependencies
+#' @title Take a sentence and follow the dependencies
 #'
 #' @param s a data.frame containing the results of one (1) parsed spacy sentence
 #' @return list with original parsed sentence + added dependency parsing
@@ -84,7 +84,12 @@ crawl_sentence_r <- function(s) {
       empty_list$source_or_target[tok_num] <- case_when(
         sentence[current_token_id,dep_rel] %in% c("appos") ~ "appos",
         sentence[current_token_id,pos] %in% c("VERB","AUX") ~ "target",
-        sentence[current_token_id,dep_rel] %in% c("nsubj","nsubjpass","csubj","csubjpass","agent","expl") ~ "source",
+        
+        #if you find a subject, stop
+        #If head_token_id trail traces back to a subject before hitting a verb, --> source
+        sentence[current_token_id,dep_rel] %in% c("nsubj","nsubjpass","csubj","csubjpass","expl") ~ "source",
+        
+        #If head_token_id trail traces back to root that is not a verb, --> "root_not_verb"
         sentence[current_token_id,dep_rel] == "ROOT" ~ "root_not_verb",
         head_tok_id == current_token_id ~ "broken_dep_rel",
         head_tok_id == initial_token_id ~ "inf_loop",
@@ -105,7 +110,7 @@ crawl_sentence_r <- function(s) {
       empty_list$head_verb_dep_rel[tok_num] <-sentence[current_token_id, dep_rel]
       empty_list$parent_verb_id[tok_num] <- head_tok_id
     }else if(!is.na(empty_list$source_or_target[tok_num]) && empty_list$source_or_target[tok_num]=="source"){
-      current_token_is_verb <- F
+      current_token_is_verb <- FALSE
       source_while_counter <- 0
       while(!current_token_is_verb & source_while_counter < 10){
         current_token_is_verb <- sentence[current_token_id,pos]%in%c("VERB","AUX")

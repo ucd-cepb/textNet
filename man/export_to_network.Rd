@@ -2,12 +2,12 @@
 % Please edit documentation in R/export_to_network.R
 \name{export_to_network}
 \alias{export_to_network}
-\title{Takes a textnet_extract output and converts it into an "igraph" or "network" object, then calculates network summary statistics. Note, this function does not preserve incomplete edges. The verblist and appositivelist are not used.}
+\title{Export a textnet_extract to a network object}
 \usage{
 export_to_network(
   textnet_extract,
   export_format,
-  keep_isolates = T,
+  keep_isolates = TRUE,
   collapse_edges,
   self_loops
 )
@@ -17,11 +17,11 @@ export_to_network(
 
 \item{export_format}{A string, either "igraph" for an igraph object, or "network" for a network object}
 
-\item{keep_isolates}{A boolean, where T means to keep nodes from the nodelist that are not included in the edgelist, and F otherwise.}
+\item{keep_isolates}{A boolean, where TRUE means to keep nodes from the nodelist that are not included in the edgelist, and FALSE otherwise.}
 
-\item{collapse_edges}{A boolean, where T removes edge attributes and collapses edges into a single weighted edge, and where F preserves all edges and edge attributes}
+\item{collapse_edges}{A boolean, where TRUE removes edge attributes and collapses edges into a single weighted edge, and where FALSE preserves all edges and edge attributes}
 
-\item{self_loops}{A boolean, where T allows self-loops, and F removes them}
+\item{self_loops}{A boolean, where TRUE allows self-loops, and FALSE removes them}
 }
 \value{
 Returns the "igraph" or "network" object as the first element and the network statistics as the second element. For a weighted graph, the weight is equal to the original number of edges between the respective source and target nodes. Edge attributes for a multiplex graph are described in the help file of textnet_extract. Network statistics are as described below.
@@ -35,19 +35,21 @@ Returns the "igraph" or "network" object as the first element and the network st
 \item reciprocity -- reciprocity of the graph
 \item median_in_degree, median_out_degree, mean_in_degree, mean_out_degree -- the median, or mean in-degree or out-degree of all nodes in the network object, respectively
 
-For weighted graphs, if collapse_edges == T:
+For weighted graphs, if collapse_edges == TRUE:
 \item modularity -- calculates igraph::modularity on a weighted, undirected, non-multiplex version of the network.
 \item num_communities -- number of communities using louvain cluster algorithm on a weighted, undirected, non-multiplex version of the network
 \item density -- density of the graph
 \item mean_edge_weight -- mean weight of all edges in the graph
 \item mean_in_strength, mean_out_strength, median_in_strength, median_out_strength -- the mean or median strength -- weighted in-degree or weighted out-degree, respectively -- of a node in the network
 
-For multiplex graphs, if collapse_edges == F:
+For multiplex graphs, if collapse_edges == FALSE:
 \item modularity -- calculates igraph::modularity on a weighted, undirected, non-multiplex version of the network.
 \item num_communities -- number of communities using louvain cluster algorithm on a weighted, undirected, non-multiplex version of the network
-\item percent_vbn, percent_vbg, percent_vpb, percent_vbd, percent_vb, percent_vbz -- percent of edges in the graph that are of the respective verb tense
+\item percent_vbn, percent_vbg, percent_vbp, percent_vbd, percent_vb, percent_vbz -- percent of edges in the graph that are of the respective verb tense
 }
 }
 \description{
-Takes a textnet_extract output and converts it into an "igraph" or "network" object, then calculates network summary statistics. Note, this function does not preserve incomplete edges. The verblist and appositivelist are not used.
+Converts the output of \code{\link[=textnet_extract]{textnet_extract()}} into an \link[igraph:igraph]{igraph::igraph} or
+\link[network:network]{network::network} object and computes network summary statistics.
+Incomplete edges are dropped; the verblist and appositivelist are not used.
 }

@@ -41,3 +41,10 @@ Temporary Items
 
 # Claude Code
 .claude
+/doc/
+/Meta/
+
+# compiled code
+src/*.o
+src/*.so
+src/*.dll

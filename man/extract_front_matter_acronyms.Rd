@@ -37,7 +37,7 @@ with separate "Abbreviations" and "Acronyms" sections (or per-chapter
 acronym tables) is fully harvested. Conflicting acronym definitions are
 resolved by keeping the first occurrence.
 
-The output has the same column shape as \code{\link{find_intext_acronyms}},
+The output has the same column shape as \code{\link{find_acronyms}},
 so the two can be \code{rbind()}'d (front-matter rows first, so
 front-matter wins on conflict after \code{unique(by = "acronym")}) and the
 combined table fed into \code{\link{disambiguate}}.
@@ -71,9 +71,9 @@ pages <- c(
 )
 extract_front_matter_acronyms(pages)
 
-# Combine with find_intext_acronyms() so front-matter rows win on conflict.
+# Combine with find_acronyms() so front-matter rows win on conflict.
 fm <- extract_front_matter_acronyms(pages)
-inline <- find_intext_acronyms(pages)
+inline <- find_acronyms(pages)
 all_acronyms <- unique(rbind(fm, inline), by = "acronym")
 
 }

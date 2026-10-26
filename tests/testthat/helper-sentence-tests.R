@@ -12,17 +12,19 @@ parse_expected_output <- function(str) {
   })
 }
 
-#' Build display verb from an edgelist row (helper + head, or head + xcomp, else head)
-.display_verb <- function(helper_token, head_verb_name, xcomp_verb) {
+#' Build display verb from an edgelist row (helper + head, or head + xcomp,
+#' else head), with " NEG" appended for negated edges
+.display_verb <- function(helper_token, head_verb_name, xcomp_verb, neg = FALSE) {
   helper <- unlist(helper_token)
   xcomp  <- unlist(xcomp_verb)
-  if (length(helper) > 0) {
+  verb <- if (length(helper) > 0) {
     paste(c(helper, head_verb_name), collapse = " ")
   } else if (length(xcomp) > 0) {
     paste(c(head_verb_name, xcomp), collapse = " ")
   } else {
     head_verb_name
   }
+  if (isTRUE(neg)) paste(verb, "NEG") else verb
 }
 
 #' Check whether an edgelist contains a specific (source, verb, target) edge
@@ -32,7 +34,8 @@ has_edge <- function(edgelist, source, verb, target) {
     dv <- .display_verb(
       edgelist$helper_token[[i]],
       edgelist$head_verb_name[[i]],
-      edgelist$xcomp_verb[[i]]
+      edgelist$xcomp_verb[[i]],
+      edgelist$neg[[i]]
     )
     if (identical(edgelist$source[[i]], source) &&
         identical(dv, verb) &&
@@ -44,11 +47,10 @@ has_edge <- function(edgelist, source, verb, target) {
 }
 
 #' Run parse_text + textnet_extract on a single sentence
-run_sentence <- function(sentence, python_path, custom_entities = NULL) {
+run_sentence <- function(sentence, custom_entities = NULL, remove_neg = TRUE) {
   text_list <- list(doc = sentence)
   ce <- if (!is.null(custom_entities)) list(CUSTOM = custom_entities) else NULL
   parsed <- suppressWarnings(textNet::parse_text(
-    python_path,
     text_list          = text_list,
     parsed_filenames   = tempfile(),
     custom_entities    = ce,
@@ -60,6 +62,7 @@ run_sentence <- function(sentence, python_path, custom_entities = NULL) {
     keep_entities        = c("ORG", "GPE", "PERSON", "NORP", "CUSTOM", "QUANTITY",
                              "EVENT", "DATE", "LOC", "PRODUCT"),
     keep_incomplete_edges = TRUE,
+    remove_neg           = remove_neg,
     cl                   = 1,
     progress             = FALSE
   )

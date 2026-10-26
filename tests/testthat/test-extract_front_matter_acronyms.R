@@ -73,7 +73,7 @@ test_that("extract_front_matter_acronyms validates inputs", {
                "single positive integer")
 })
 
-test_that("extract_front_matter_acronyms returns identical-shape data.table to find_intext_acronyms", {
+test_that("extract_front_matter_acronyms returns identical-shape data.table to find_acronyms", {
   fx <- .load_fixture("example3")
   res <- extract_front_matter_acronyms(fx$pages)
   expect_s3_class(res, "data.table")

@@ -1,12 +1,12 @@
 # Exported function
 #parse_text
 
-#' Parse text using spaCy (CPU, en_core_web_lg model)
+#' @title Parse text using spaCy
+#' @description
+#' Passes text through spaCy's \code{en_core_web_lg} model to produce
+#' token-level annotations including part-of-speech tags, lemmas, dependency
+#' relations, and named entity labels.
 #'
-#' Creates an edgelist and nodelist for each document using spaCy's en_core_web_lg model.
-#' For GPU-accelerated processing with the transformer model, use parse_text_trf().
-#'
-#' @param ret_path filepath to use for Sys.setenv reticulate python call. Note: Python and miniconda must already be installed.
 #' @param keep_hyph_together Set to true to replace hyphens within a single word with underscores. Defaults to false.
 #' @param phrases_to_concatenate character vector of phrases, in which each element is a string consisting of tokens separated by spaces. These are replaced with their concatenated version in order, from left to right. It is suggested that the most specific phrases, with the most words, are arranged at the left.
 #' @param concatenator This is a character or string that will be used to replace the spaces in the phrases_to_concatenate.
@@ -25,22 +25,16 @@
 #' @importFrom stringr str_detect str_replace_all
 #' @importFrom stringi stri_replace_all_regex stri_escape_unicode
 #' @importFrom pbapply pblapply
-#' @importFrom utils data
 #' @export
 
-parse_text <- function(ret_path, keep_hyph_together=F, phrases_to_concatenate=NA,
+parse_text <- function(keep_hyph_together=FALSE, phrases_to_concatenate=NA,
                        concatenator="_", text_list, parsed_filenames,
-                       overwrite=T, test=F, custom_entities = NULL, entity_ruler_patterns = NULL,
+                       overwrite=TRUE, test=FALSE, custom_entities = NULL, entity_ruler_patterns = NULL,
                        ruler_position = c("after", "before"), overwrite_ents = TRUE,
                        progress = TRUE){
-  if(!requireNamespace("spacyr", quietly = T)){
+  if(!requireNamespace("spacyr", quietly = TRUE)){
     stop("Package 'spacyr' must be installed to use this function.",
-         call.=F)
-  }
-
-  # Input validation
-  if(!is.character(ret_path) || length(ret_path) != 1) {
-    stop("'ret_path' must be a single character string")
+         call.=FALSE)
   }
 
   if(!is.logical(keep_hyph_together) || length(keep_hyph_together) != 1) {
@@ -99,19 +93,11 @@ parse_text <- function(ret_path, keep_hyph_together=F, phrases_to_concatenate=NA
   # Fix OpenMP library conflict (common on macOS with conda)
   Sys.setenv(KMP_DUPLICATE_LIB_OK = "TRUE")
 
-  # Set up Python environment
-  Sys.setenv(RETICULATE_PYTHON=ret_path)
-  if(!requireNamespace("reticulate", quietly = T)){
+  if(!requireNamespace("reticulate", quietly = TRUE)){
     stop("Package 'reticulate' must be installed to use this function.",
-         call.=F)
+         call.=FALSE)
   }
-  reticulate::py_config()
-
-  # Initialize spaCy with en_core_web_lg (CPU)
-  if(!stringr::str_detect("en_core_web_lg", "^en_")){
-    warning("This package was developed and tested on English texts.")
-  }
-
+  
   tryCatch({
     spacyr::spacy_initialize(model = "en_core_web_lg")
   }, error = function(e){
@@ -194,17 +180,16 @@ parse_text <- function(ret_path, keep_hyph_together=F, phrases_to_concatenate=NA
       single_plan_text <- unlist(pages[file_ids==unique_files[m]])
 
       parsedtxt <- spacyr::spacy_parse(single_plan_text,
-                                       pos = T,
-                                       tag = T,
-                                       lemma = T,
-                                       entity = T,
-                                       dependency = T,
-                                       nounphrase = T)
+                                       pos = TRUE,
+                                       tag = TRUE,
+                                       lemma = TRUE,
+                                       entity = TRUE,
+                                       dependency = TRUE,
+                                       nounphrase = TRUE)
 
       lettertokens <- parsedtxt$token[stringr::str_detect(parsedtxt$token, "[a-zA-Z]")]
       lettertokensunicodeescaped <- stringi::stri_escape_unicode(tolower(lettertokens))
-      utils::data(eng_words)
-      pctlettersineng <- sum(lettertokensunicodeescaped %in% eng_words)/length(lettertokensunicodeescaped)
+      pctlettersineng <- sum(lettertokensunicodeescaped %in% textNet::eng_words)/length(lettertokensunicodeescaped)
 
       if(pctlettersineng<0.5){
         warning(paste0("Fewer than 50% of letter-containing tokens in the document ", unique_files[m] ," are English words."))
@@ -231,7 +216,7 @@ parse_text <- function(ret_path, keep_hyph_together=F, phrases_to_concatenate=NA
         saveRDS(all_parsed[[m]], parsed_filenames[m])
       }
     } else {
-      print(paste0("Skipping parsed_filenames[",m,"] - file already exists (set overwrite=T to reparse or test=T to test without saving)"))
+      print(paste0("Skipping parsed_filenames[",m,"] - file already exists (set overwrite=TRUE to reparse or test=TRUE to test without saving)"))
       all_parsed[[m]] <- NULL
     }
   }

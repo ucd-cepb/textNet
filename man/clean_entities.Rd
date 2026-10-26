@@ -2,22 +2,21 @@
 % Please edit documentation in R/clean_entities.R
 \name{clean_entities}
 \alias{clean_entities}
-\title{Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to T.}
+\title{Clean entity name strings}
 \usage{
-clean_entities(v, remove_nums = T, remove_trailing_s = T, concatenator = "_")
+clean_entities(
+  v,
+  remove_nums = TRUE,
+  remove_trailing_s = TRUE,
+  concatenator = "_"
+)
 }
 \arguments{
 \item{v}{a vector of entity names}
 
-\item{remove_nums}{A boolean. If T, sets entities that contain no letters to an empty string. If F, sets entities that contain no letters or numbers to an empty string.}
+\item{remove_nums}{A boolean. If TRUE, sets entities that contain no letters to an empty string. If FALSE, sets entities that contain no letters or numbers to an empty string.}
 
-\item{remove_trailing_s}{A boolean. If T, removes trailing instances of concatenator+s, or apostrophe+s in each element of v.}
+\item{remove_trailing_s}{A boolean. If TRUE, removes trailing instances of concatenator+s, or apostrophe+s in each element of v.}
 
 \item{concatenator}{Defaults to an underscore. Use regex notation. The concatenator used in elements of v.}
 }
@@ -25,11 +24,8 @@ clean_entities(v, remove_nums = T, remove_trailing_s = T, concatenator = "_")
 a cleaned vector of entity names
 }
 \description{
-Take a vector and clean the strings using regex.
-Uppercase or lowercase math font is converted to uppercase or lowercase letters, respectively.
-Any trailing "'s" at the end of the entity name is removed.
-All non-word characters are removed.
-Consecutive underscores are collapsed to a single underscore.
-Leading and trailing underscores are removed.
-Entities that have no letters are removed, if remove_nums is set to T.
+Normalizes a character vector of entity names by converting mathematical
+Unicode characters to ASCII letters, removing non-word characters,
+collapsing consecutive concatenators, and stripping leading/trailing
+concatenators.
 }

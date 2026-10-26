@@ -1,17 +1,12 @@
 # Exported function
 #suggest_entities
 
-#' Suggests potential missed entities from parsed text output
-#'
-#' Analyzes parsed output from parse_text() to identify tokens and phrases that
-#' may be entities but were not tagged by spaCy's NER. Exports suggestions to a
-#' CSV file for user review. After review, the CSV can be used with entity_specify()
-#' to create EntityRuler patterns.
-#' 
+#' @title Suggest potential missed entities
 #' @description
-#' This function is a work in progress and should not be used yet.
-#' @keywords internal
-#' 
+#' Analyses parsed output from [parse_text()] to identify tokens and phrases
+#' that may represent entities not tagged by spaCy's NER. Optionally exports
+#' suggestions to a CSV file for manual review with [entity_specify()].
+#'
 #' @param parsed_output A list of dataframes from parse_text(), or a single dataframe
 #' @param min_frequency Minimum number of occurrences for a token/phrase to be suggested. Defaults to 2.
 #' @param max_suggestions Maximum number of suggestions to return. Defaults to 100.

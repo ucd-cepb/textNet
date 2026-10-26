@@ -1,7 +1,11 @@
 # Exported function
 #entity_specify
 
-#' Creates EntityRuler patterns from entity names
+#' @title Create EntityRuler patterns from entity names
+#' @description
+#' Converts a list of entity names and labels into pattern dictionaries
+#' suitable for spaCy's EntityRuler, for use with [parse_text()].
+#'
 #' @param entity_names A character vector of entity names to be recognized. If file_path is provided, this parameter is ignored.
 #' @param entity_label A character string specifying the entity label to assign to all entities. Defaults to "CUSTOM". Ignored when reading from file.
 #' @param case_sensitive A logical value indicating whether pattern matching should be case sensitive. Defaults to FALSE. Ignored when reading from file.
@@ -10,7 +14,7 @@
 #' @param file_path Optional. Path to a CSV or TXT file containing entity specifications. Supports two formats:
 #'   (1) Standard format with columns: entity_names, entity_label, case_sensitive, whole_word_only, aliases
 #'   (2) Reviewed suggestions format from suggest_entities() with columns: phrase, keep, final_label (or suggested_label).
-#'       Rows with keep=TRUE/T/true/yes/Y/1 are included. Uses final_label if provided, otherwise suggested_label.
+#'       Rows with keep=TRUE/TRUE/true/yes/Y/1 are included. Uses final_label if provided, otherwise suggested_label.
 #' @return A list of pattern dictionaries formatted for spaCy's EntityRuler
 #' @importFrom utils read.csv read.table
 #' @export

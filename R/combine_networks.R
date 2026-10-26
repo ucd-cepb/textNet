@@ -1,9 +1,12 @@
 # Exported functions
 # combine_networks
 
-#' Superimposes multiple textNet igraphs into a single igraph. 
-#' 
-#' @param textnet_igraphs List of textnet igraphs, the outputs of export_to_network(export_format = "igraph)
+#' @title Combine multiple textNet igraphs into one
+#' @description
+#' Superimposes multiple igraph objects produced by [export_to_network()] into
+#' a single igraph, merging nodes with the same name and consolidating edges.
+#'
+#' @param textnet_igraphs List of textNet igraphs, the outputs of export_to_network(export_format = "igraph)
 #' @param mode Either "multiplex" or "weighted" depending on the desired exported network format. If "weighted", collapses multiplex edges into a single weighted edge
 #' 
 #' @return Single igraph object that consolidates nodes and edges from input graphs. If there are multiple nodes with the same name and different attributes originating from different graphs, this function preserves the node attributes associated with the version that appears most commonly. Adds a node attribute num_graphs_in, which denotes the number of input graphs each node was found in. For a weighted graph, the weight is equal to the original number of edges between the respective source and target nodes. Edge attributes for a multiplex graph are described in the help file of textnet_extract. 
@@ -39,25 +42,7 @@ combine_networks <- function(textnet_igraphs, mode = c('multiplex','weighted')){
     stop("All elements in 'textnet_igraphs' must be igraph objects.")
   }
 
-  # Check if mode is missing
-  if(missing(mode)) {
-    stop("Argument 'mode' is missing. Must be either 'multiplex' or 'weighted'.")
-  }
-  
-  # Check if mode is character
-  if(!is.character(mode)) {
-    stop("Argument 'mode' must be a character string ('multiplex' or 'weighted').")
-  }
-  
-  # Check if mode is length 1
-  if(length(mode) != 1) {
-    stop("Argument 'mode' must be a single value ('multiplex' or 'weighted').")
-  }
-  
-  # Check if mode has valid value
-  if(!mode %in% c("multiplex","weighted")){
-    stop("Argument 'mode' must be either 'multiplex' or 'weighted'.")
-  }
+  mode <- match.arg(mode)
 
   num_graphs <- length(textnet_igraphs)
   supernodes <- vector(mode = "list", length = length(num_graphs))
@@ -78,7 +63,7 @@ combine_networks <- function(textnet_igraphs, mode = c('multiplex','weighted')){
   
   supernetwork <- igraph::graph_from_data_frame(superedgesdt,
                                                 vertices = supernodesdt,
-                                                directed = T)
+                                                directed = TRUE)
   
   if(mode == "weighted"){
     weighted_graph <- supernetwork
@@ -88,7 +73,7 @@ combine_networks <- function(textnet_igraphs, mode = c('multiplex','weighted')){
     }
     
     igraph::E(weighted_graph)$weight <- 1
-    weighted_graph <- igraph::simplify(weighted_graph, edge.attr.comb=list(weight="sum"), remove.loops = F)
+    weighted_graph <- igraph::simplify(weighted_graph, edge.attr.comb=list(weight="sum"), remove.loops = FALSE)
     
     return(weighted_graph)
     

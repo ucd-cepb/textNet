@@ -120,7 +120,7 @@ List crawl_sentence_cpp(CharacterVector pos,
         source_or_target[tok_num] = "target";
       } else if (cur_dep == "nsubj" || cur_dep == "nsubjpass" ||
                  cur_dep == "csubj" || cur_dep == "csubjpass" ||
-                 cur_dep == "agent" || cur_dep == "expl") {
+                 cur_dep == "expl") {
         source_or_target[tok_num] = "source";
       } else if (cur_dep == "ROOT") {
         source_or_target[tok_num] = "root_not_verb";

@@ -2,15 +2,15 @@
 % Please edit documentation in R/disambiguate.R
 \name{disambiguate}
 \alias{disambiguate}
-\title{Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.}
+\title{Rename entities in a textnet_extract object}
 \usage{
 disambiguate(
   textnet_extract,
   from,
   to,
-  match_partial_entity = rep(F, length(from)),
+  match_partial_entity = rep(FALSE, length(from)),
   try_drop = NULL,
-  recursive = T,
+  recursive = TRUE,
   concatenator = "_"
 )
 }
@@ -19,34 +19,36 @@ disambiguate(
 
 \item{from}{A list of character vectors representing terms to look for, the same length as 'to'.
 If a term in this list is found, this function replaces it with its corresponding match in 'to'.
-The "acronym" column from the find_intext_acronyms() or extract_front_matter_acronyms() output could be used here.}
+The "acronym" column from the \code{\link[=find_acronyms]{find_acronyms()}} or \code{\link[=extract_front_matter_acronyms]{extract_front_matter_acronyms()}} output could be used here.}
 
 \item{to}{A list of character vectors representing replacement terms, the same length as 'from'.
 If a term in the 'from' list is found, it is replaced with the corresponding term in this list.
-The "name" column from the find_intext_acronyms() or extract_front_matter_acronyms() output could be used here. If an element consists of multiple entities in a vector,
+The "name" column from the \code{\link[=find_acronyms]{find_acronyms()}} or \code{\link[=extract_front_matter_acronyms]{extract_front_matter_acronyms()}} output could be used here. If an element consists of multiple entities in a vector,
 the relevant edges are duplicated in the edgelist, with one edge for each entity in the vector.
 These vector entities are disambiguated first, followed by the rest of the strings in order of appearance in 'from' and 'to'.}
 
 \item{match_partial_entity}{A logical vector of the same length as 'from'.
-If match_partial_entity is T for an element, it can match on the 'from' term separated by concatenator.
-Otherwise, the 'from' term must match the whole entity name to be accepted. Defaults to "F" for all elements.}
+If match_partial_entity is TRUE for an element, it can match on the 'from' term separated by concatenator.
+Otherwise, the 'from' term must match the whole entity name to be accepted. Defaults to "FALSE" for all elements.}
 
 \item{try_drop}{A regex expression representing one or more terms to try dropping.
 The usual case for this is country or state names, such as "^US_".
 If try_drop is supplied, the function first tries to determine whether each element in the textnet_extract matches a term in 'from.'
 If not, it determines whether removing try_drop from the remaining elements enables them to match a term in 'from'.
 If so, the matching textnet_extract elements are replaced with the corresponding element in 'to.'
-The non-matches remains unchanged.}
+The non-matches remain unchanged.}
 
-\item{recursive}{A logical value, defaulting to T. If recursive is T, the function runs multiple times.
+\item{recursive}{A logical value, defaulting to TRUE. If recursive is TRUE, the function runs multiple times.
 The number of times the function is run is determined by the longest "chain" in which a value in 'to' is found in 'from',
 which may in turn correspond to a 'to' value that is found in 'from', and so on.}
 
 \item{concatenator}{The word boundary to look for when match_partial_entity is true. Defaults to "_".}
 }
 \value{
-a cleaned textnet extract. See textnet_extract help file for structure.
+a cleaned textNet extract. See textnet_extract help file for structure.
 }
 \description{
-Renames entities in a textnet_extract that are supplied in 'from' with those supplied in 'to'.
+Replaces entity names supplied in \code{from} with the corresponding names
+in \code{to} throughout a \code{\link[=textnet_extract]{textnet_extract()}} output. Supports partial
+matching, prefix removal, and recursive chaining of replacements.
 }

@@ -2,10 +2,7 @@
 % Please edit documentation in R/entity_consolidate_replicate.R
 \name{entity_consolidate_replicate}
 \alias{entity_consolidate_replicate}
-\title{Modified version of spacyr::entity_consolidate.
-spacyr::entity_consolidate returns a data.frame that no longer has head_token_id and dep_rel data.
-Instead, this function basically breaks off a feature of the original function and adds a new column to the original spacyr data.frame that is the concatenated entity.
-This feature is inefficient in that the concatenated entity is then replicated multiple times, but this does seem to be the easiest way to preserve the other data.}
+\title{Consolidate named entities while preserving dependency data}
 \usage{
 entity_consolidate_replicate(x, concatenator = "_", remove = NULL)
 }
@@ -20,8 +17,13 @@ entity_consolidate_replicate(x, concatenator = "_", remove = NULL)
 original data frame with added column for concatenated entity
 }
 \description{
-Modified version of spacyr::entity_consolidate.
-spacyr::entity_consolidate returns a data.frame that no longer has head_token_id and dep_rel data.
-Instead, this function basically breaks off a feature of the original function and adds a new column to the original spacyr data.frame that is the concatenated entity.
-This feature is inefficient in that the concatenated entity is then replicated multiple times, but this does seem to be the easiest way to preserve the other data.
+Adds a concatenated-entity column to a parsed spacy data frame, keeping the
+token-level dependency information that \code{\link[spacyr:entity_consolidate]{spacyr::entity_consolidate()}} drops.
+}
+\details{
+Unlike \code{\link[spacyr:entity_consolidate]{spacyr::entity_consolidate()}}, which returns a data frame that no
+longer retains \code{head_token_id} and \code{dep_rel}, this function adds a new column
+holding the concatenated entity while leaving the original annotations intact.
+The concatenated entity is replicated across every token of the entity, which
+is inefficient but preserves the remaining columns.
 }

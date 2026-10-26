@@ -1,16 +1,20 @@
 # Exported function
 # textnet_extract 
 
-#' Takes a parsed spacy document and uses dependency parsing to generate an edgelist, nodelist, verblist, and apposititve list
+#' @title Extract an event network from parsed text
+#' @description
+#' Crawls the dependency-parse tree of each sentence to identify
+#' subject-verb-object triples, and returns an edgelist, nodelist, verblist,
+#' and appositive list.
 #'
 #' @param x parsed spacy document
 #' @param concatenator how entity parts are concatenated (defaults to "_")
-#' @param file location where an list object with an edgelist, nodelist, verblist, and appositivelist should be saved as .RDS file
+#' @param file location where a list object with an edgelist, nodelist, verblist, and appositivelist should be saved as .RDS file
 #' @param cl number of cores to crawl sentences in parallel (defaults to 1)
 #' @param keep_entities character vector of spacy entity types to retain, defaults to people (PERSON), organizations (ORG), geographic entities (GPE), and nationalities/religious/political groups (NORP)
 #' @param return_to_memory boolean for whether function should return final result as workspace object
-#' @param keep_incomplete_edges Boolean. If T, keeps edges with only a source or target but not both
-#' @param remove_neg Boolean. If T, removes edges whose head token has a negation child
+#' @param keep_incomplete_edges Boolean. If TRUE, keeps edges with only a source or target but not both
+#' @param remove_neg Boolean. If TRUE, removes edges whose head token has a negation child
 #' @param progress logical; whether to show a progress bar while crawling sentences (default TRUE)
 #' @return A list with four objects:
 #' \itemize{
@@ -32,10 +36,10 @@
 #'      \item xcomp_verb -- list of any open causal complements in the verb phrase
 #'      \item xcomp_helper_token -- list of any auxiliary verbs associated with the open causal complements
 #'      \item xcomp_helper_lemma -- list of base forms of any auxiliary verbs associated with the open causal complements
-#'      \item neg -- Boolean: T if there is a negation token present in the verb phrase; F otherwise
-#'      \item edgeiscomplete -- Boolean: T if the edge has both a source and target node; F otherwise
-#'      \item has_hedge -- Boolean: T if the edge contains a verb or auxiliary verb indicating uncertainty, namely "may","might","can","could", "seem","appear","suggest","tend","assume","indicate","doubt", or "believe"; the value is F otherwise
-#'      \item is_future -- Boolean: T if the edge is future tense, as indicated by auxiliary verbs of the form 'is going to' or 'will/shall'; F otherwise 
+#'      \item neg -- Boolean: TRUE if there is a negation token present in the verb phrase; FALSE otherwise
+#'      \item edgeiscomplete -- Boolean: TRUE if the edge has both a source and target node; FALSE otherwise
+#'      \item has_hedge -- Boolean: TRUE if the edge contains a verb or auxiliary verb indicating uncertainty, namely "may","might","can","could", "seem","appear","suggest","tend","assume","indicate","doubt", or "believe"; the value is FALSE otherwise
+#'      \item is_future -- Boolean: TRUE if the edge is future tense, as indicated by auxiliary verbs of the form 'is going to' or 'will/shall'; FALSE otherwise 
 #'      \item doc_sent_verb -- unique ID for the edge indicating the document, sentence, and edge verb token separated by underscores
 #'    }
 #'    \item verblist -- data.table of verbs and their attributes, imported from VerbNet 3.3
@@ -51,21 +55,19 @@
 #'      \item fullname -- entity that is a head token of the corresponding appositive
 #'    }
 #' }
-#' data frame with original parsed sentence + added dependency parsing
-#' 
 #' @import data.table
 #' @importFrom magrittr %>%
 #' @importFrom dplyr group_by filter
+#' @importFrom rlang .data
 #' @importFrom tidyr expand
 #' @importFrom pbapply pblapply
-#' @importFrom utils data
 #' @export
 #'
 
 textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
                                     keep_entities = c('ORG','GPE','PERSON','NORP'),
-                                    return_to_memory = T, keep_incomplete_edges=F,
-                                    remove_neg = T, progress = TRUE) {
+                                    return_to_memory = TRUE, keep_incomplete_edges=FALSE,
+                                    remove_neg = TRUE, progress = TRUE) {
 
   doc_sent_parent.y <- NULL # silence R CMD check NOTE
 
@@ -102,19 +104,19 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
     stop("'remove_neg' must be a single logical value")
   }
 
-  ### note this should be an error 
-  if(is.null(file) && return_to_memory == F){stop("function not set to save output OR return object to memory")}
+  ### user must either save output to memory or as a file
+  if(is.null(file) && return_to_memory == FALSE){stop("function not set to save output OR return object to memory")}
   x <- data.table::as.data.table(x)
 
   #removes invalid sentences with no verb
   #only keeps sentences that have a subject and object
   #does not keep sentences with compound subject and no object
   #list of subj and obj tags from https://github.com/clir/clearnlp-guidelines/blob/master/md/specifications/dependency_labels.md
-  dep_rels_subj_keep <- c('nsubj','nsubjpass','csubj','csubjpass','agent','expl')        
+  dep_rels_subj_keep <- c('nsubj','nsubjpass','csubj','csubjpass','expl')        
   dep_rels_obj_keep <- c('pobj','iobj','dative','attr','dobj','oprd','ccomp','xcomp','acomp','pcom') 
 
   x <- x[,keep:=any(dep_rel %in% dep_rels_subj_keep) & any(dep_rel %in% dep_rels_obj_keep) & any(pos%in%c('VERB','AUX')),by=.(doc_id,sentence_id)]
-  x <- x[keep==T,]
+  x <- x[keep==TRUE,]
   x$doc_sent <- paste0(x$doc_id, "_", x$sentence_id)
 
 
@@ -130,14 +132,14 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
     on.exit(pbapply::pboptions(op), add = TRUE)
   }
   parse_list <- pbapply::pblapply(sentence_splits,function(y) data.table::as.data.table(crawl_sentence(y)),cl = cl)
-  x <- data.table::rbindlist(mapply(function(x,y) cbind(x,y),x = sentence_splits,y = parse_list,SIMPLIFY = F))
+  x <- data.table::rbindlist(mapply(function(x,y) cbind(x,y),x = sentence_splits,y = parse_list,SIMPLIFY = FALSE))
   
   #"remove" is null because we don't want to remove anything token-wise, but only concatenated-entity-wise
   x <- entity_consolidate_replicate(x,concatenator, remove=NULL)
   
   remove_nums <- ifelse("DATE" %in% keep_entities | "CARDINAL" %in% keep_entities |
                           "QUANTITY" %in% keep_entities | "TIME" %in% keep_entities |
-                          "MONEY" %in% keep_entities | "PERCENT" %in% keep_entities, F, T)
+                          "MONEY" %in% keep_entities | "PERCENT" %in% keep_entities, FALSE, TRUE)
   x$entity_name <- clean_entities(x$entity_name,remove_nums)
   
   #by entity, check which of the head_token_ids in the group is NOT in the list of token_ids in the group.
@@ -148,7 +150,7 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   xappos <- x[x$source_or_target=="appos" & nchar(x$entity_name)>0 & x$entity_type%in%keep_entities,]
   # Build a keyed lookup for x by doc_sent + token_id
   data.table::setkeyv(x, c("doc_sent", "token_id"))
-  cat_splits <- split(xappos, list(xappos$doc_sent, xappos$entity_id), drop=T)
+  cat_splits <- split(xappos, list(xappos$doc_sent, xappos$entity_id), drop=TRUE)
   apposlist <- lapply(cat_splits, function(z) {
       anchor <- which(!(z$head_token_id %in% z$token_id))[1]
       match_row <- x[.(z$doc_sent[1], z$head_token_id[anchor])]
@@ -191,8 +193,8 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
 
     
   #remove verbs with neg
-  if(remove_neg ==T){
-    verb_dt <- verb_dt[neg==F,]
+  if(remove_neg ==TRUE){
+    verb_dt <- verb_dt[neg==FALSE,]
   }
   
     
@@ -204,10 +206,10 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   source_target_list <- x[,.(entity_name, entity_id, entity_type, source_or_target, doc_sent_verb, doc_sent_parent, has_sources)]
   source_target_list <- source_target_list[!duplicated(source_target_list),]
   ## dt of verbs with without source
-  unsourced_verbs <- source_target_list[has_sources==F,]
+  unsourced_verbs <- source_target_list[has_sources==FALSE,]
   ## dt of verbs with source that are also a source
   
-  sources <- source_target_list[has_sources==T & source_or_target=='source',]
+  sources <- source_target_list[has_sources==TRUE & source_or_target=='source',]
     
   ## find sources associated with the unsourced verbs' parent verbs via merge
   adopted_sources_df <- data.table::merge.data.table(
@@ -229,7 +231,7 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   
   #append it to the dataframe
 
-  source_target_list <- rbind(source_target_list,adopted_sources_df,use.names = T)
+  source_target_list <- rbind(source_target_list,adopted_sources_df,use.names = TRUE)
 
   #only keep actual entities from our desired categories and
   #remove entities that are only empty strings due to the cleaning steps above
@@ -256,8 +258,8 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   if (!"target" %in% names(st_pivot)) st_pivot[, target := NA_character_]
 
   if(nrow(st_pivot)>0){
-    st_pivot <- data.table::as.data.table(st_pivot %>% dplyr::group_by(doc_sent_verb) %>% tidyr::expand(source, target))
-    edgelist <- data.table::merge.data.table(st_pivot, verb_dt, by = c("doc_sent_verb"),all.x=F, all.y=F)
+    st_pivot <- data.table::as.data.table(st_pivot %>% dplyr::group_by(.data$doc_sent_verb) %>% tidyr::expand(.data$source, .data$target))
+    edgelist <- data.table::merge.data.table(st_pivot, verb_dt, by = c("doc_sent_verb"),all.x=FALSE, all.y=FALSE)
     
   }else{
     #make an empty data.table if there are no edges in the network
@@ -278,15 +280,15 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
                                        "doc_sent_verb" = character())
   }
   
-  if(keep_incomplete_edges==T){
+  if(keep_incomplete_edges==TRUE){
     #preserves verbs with only sources or targets
     #if there is
     edgelist$edgeiscomplete <- !is.na(edgelist$source) & !is.na(edgelist$target)
-    edgelist[, `:=`(hascompleteedge, any(edgeiscomplete==T)), by = c("doc_sent_verb")]
-    edgelist <- edgelist %>% dplyr::filter((hascompleteedge==T & edgeiscomplete==T) | hascompleteedge==F)
+    edgelist[, `:=`(hascompleteedge, any(edgeiscomplete==TRUE)), by = c("doc_sent_verb")]
+    edgelist <- edgelist %>% dplyr::filter((.data$hascompleteedge==TRUE & .data$edgeiscomplete==TRUE) | .data$hascompleteedge==FALSE)
     edgelist$hascompleteedge <- NULL
   }else{
-    edgelist <- edgelist %>% dplyr::filter(!is.na(source) & !is.na(target))
+    edgelist <- edgelist %>% dplyr::filter(!is.na(.data$source) & !is.na(.data$target))
   }
   
   hedging_helpers <- c("may","might","can","could")
@@ -337,7 +339,7 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   
   nodelist <- nodelist[,sum(num_mentions),by=.(entity_name)]
 
-  nodelist <- merge.data.table(new_type,nodelist,all = T)
+  nodelist <- merge.data.table(new_type,nodelist,all = TRUE)
 
   nodelist <- nodelist[nchar(nodelist$entity_name)>0,]
   colnames(nodelist)[3] <- "num_appearances"
@@ -346,8 +348,7 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   
   #appending verb classification
   #this currently only captures single-word verbs
-  utils::data(verb_classifications)
-  verblist <- data.table::merge.data.table(unique_lemmas,verb_classifications,by.x="head_verb_lemma",by.y="verb", all.x=T, all.y=F)
+  verblist <- data.table::merge.data.table(unique_lemmas,textNet::verb_classifications,by.x="head_verb_lemma",by.y="verb", all.x=TRUE, all.y=FALSE)
   
   #putting source and target first
   data.table::setcolorder(edgelist, c(2:ncol(edgelist),1))

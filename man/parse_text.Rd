@@ -2,17 +2,16 @@
 % Please edit documentation in R/parse_text.R
 \name{parse_text}
 \alias{parse_text}
-\title{Parse text using spaCy (CPU, en_core_web_lg model)}
+\title{Parse text using spaCy}
 \usage{
 parse_text(
-  ret_path,
-  keep_hyph_together = F,
+  keep_hyph_together = FALSE,
   phrases_to_concatenate = NA,
   concatenator = "_",
   text_list,
   parsed_filenames,
-  overwrite = T,
-  test = F,
+  overwrite = TRUE,
+  test = FALSE,
   custom_entities = NULL,
   entity_ruler_patterns = NULL,
   ruler_position = c("after", "before"),
@@ -21,8 +20,6 @@ parse_text(
 )
 }
 \arguments{
-\item{ret_path}{filepath to use for Sys.setenv reticulate python call. Note: Python and miniconda must already be installed.}
-
 \item{keep_hyph_together}{Set to true to replace hyphens within a single word with underscores. Defaults to false.}
 
 \item{phrases_to_concatenate}{character vector of phrases, in which each element is a string consisting of tokens separated by spaces. These are replaced with their concatenated version in order, from left to right. It is suggested that the most specific phrases, with the most words, are arranged at the left.}
@@ -52,6 +49,7 @@ The parsed data will be exported to these files.}
 A data.frame of tokens. For more information on the format, see the spacyr::spacy_parse help file
 }
 \description{
-Creates an edgelist and nodelist for each document using spaCy's en_core_web_lg model.
-For GPU-accelerated processing with the transformer model, use parse_text_trf().
+Passes text through spaCy's \code{en_core_web_lg} model to produce
+token-level annotations including part-of-speech tags, lemmas, dependency
+relations, and named entity labels.
 }
