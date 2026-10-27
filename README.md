@@ -39,10 +39,16 @@ Install the `pak` package if you don't already have it:
 install.packages("pak")
 ```
 
-Then install textNet from GitHub:
+Then install the latest release of textNet from GitHub:
 
 ```
 pak::pak('ucd-cepb/textNet')
+```
+
+To install the development version, which includes features not yet in a release (such as `parse_text_trf()`; see NEWS.md), install from the `dev` branch:
+
+```
+pak::pak('ucd-cepb/textNet@dev')
 ```
 
 Alternatively, clone this repo and install from within the project directory:
