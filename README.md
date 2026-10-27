@@ -21,7 +21,7 @@ respective network characteristics. Its flexibility allows for any
 desired entity categories, such as organizations, geopolitical entities,
 dates, or custom-defined categories, to be preserved.
 
-See paper/paper.pdf for an overview of the package functionality and potential use cases.  
+See paper/paper.pdf, the JOSS paper for v1.1.1, for an overview of the package functionality and potential use cases.  
 
 To demo the package, see vignettes/textNet_vignette_2025.pdf for a reproducible example that transforms raw text data into event networks.
 

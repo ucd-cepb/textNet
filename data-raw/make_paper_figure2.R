@@ -1,3 +1,6 @@
+# Reproduces Figure 2 of the JOSS paper (paper/). Written against textNet v1.1.1;
+# run it with that version installed (pak::pak("ucd-cepb/textNet@v1.1.1")).
+
 library(textNet)
 library(ggraph)
 library(ggplot2)
