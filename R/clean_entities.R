@@ -52,11 +52,9 @@ clean_entities <- function(v, remove_nums=TRUE, remove_trailing_s=TRUE, concaten
              "\\U0001d44c", "\\U0001d44d")
   letts <- c(letters,LETTERS)
   
-  v <- unlist(lapply(1:length(v), function(i){
-    stri_replace_all_regex(v[i], pattern = maths,
-                           replacement = letts,
-                           vectorize_all = FALSE)
-  }))
+  v <- stri_replace_all_regex(v, pattern = maths,
+                              replacement = letts,
+                              vectorize_all = FALSE)
   
   if(remove_trailing_s==TRUE){
     #remove strings with specific placement: trailing "'s"

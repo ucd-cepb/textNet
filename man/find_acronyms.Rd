@@ -2,7 +2,7 @@
 % Please edit documentation in R/find_acronyms.R
 \name{find_acronyms}
 \alias{find_acronyms}
-\title{Detect parenthetically defined acronyms}
+\title{Detect acronyms (deprecated)}
 \usage{
 find_acronyms(str, table_text = NULL)
 }
@@ -16,7 +16,13 @@ a data table with a "name" column and an "acronym" column representing its assoc
 Each row corresponds to a unique match in the document.
 }
 \description{
-Scans a character vector for parenthetical acronym definitions
-(e.g., "River Basin Authority (RBA)") and, optionally, two-column tabular
-definitions. Returns a table of unique name-acronym pairs.
+\code{find_acronyms()} is deprecated as of textNet 1.1.1.9000. Use
+\code{\link[=find_intext_acronyms]{find_intext_acronyms()}} for parenthetically defined acronyms and
+\code{\link[=extract_front_matter_acronyms]{extract_front_matter_acronyms()}} for acronym tables. \code{find_acronyms()}
+still works and returns the same result as in textNet 1.1.1, but emits a
+deprecation warning.
 }
+\seealso{
+\code{\link[=find_intext_acronyms]{find_intext_acronyms()}}, \code{\link[=extract_front_matter_acronyms]{extract_front_matter_acronyms()}}
+}
+\keyword{internal}

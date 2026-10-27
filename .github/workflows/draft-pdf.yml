@@ -1,10 +1,10 @@
 name: Draft PDF
-on: 
-  push:
-    paths:
-      - paper/paper.md
-      - paper/paper.bib
-      - .github/workflows/draft-pdf.yml
+# Archived: this built the JOSS paper for v1.1.1 (see paper/README.md).
+# It no longer runs on push; it only runs if started by hand from the Actions tab.
+# A manual run only uploads the rebuilt PDF as a workflow artifact; it never
+# commits it, so paper/paper.pdf stays the published v1.1.1 copy.
+on:
+  workflow_dispatch:
 
 jobs:
   paper:
@@ -27,9 +27,10 @@ jobs:
           # PDF. Note, this should be the same directory as the input
           # paper.md
           path: paper/paper.pdf
-      - name: Commit PDF to repository
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: '(auto) Paper PDF Draft'
-          # This should be the path to the paper within your repo.
-          add: 'paper/paper.pdf' # 'paper/*.pdf' to commit all PDFs in the paper directory
+      # Disabled so the published v1.1.1 PDF is never overwritten.
+      # - name: Commit PDF to repository
+      #   uses: EndBug/add-and-commit@v9
+      #   with:
+      #     message: '(auto) Paper PDF Draft'
+      #     # This should be the path to the paper within your repo.
+      #     add: 'paper/paper.pdf' # 'paper/*.pdf' to commit all PDFs in the paper directory

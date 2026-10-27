@@ -1,6 +1,6 @@
 Package: textNet
 Title: Generate semantic networks from unstructured policy documents
-Version: 1.1.1
+Version: 1.1.1.9000
 Authors@R: 
     c( 
     person(given = "Elise",
@@ -31,10 +31,15 @@ Imports:
     igraph,
     sna,
     ohenery,
-    methods
+    methods,
+    Rcpp
+LinkingTo:
+    Rcpp
 Suggests:
     reticulate,
     spacyr,
+    duckdb,
+    DBI,
     rmarkdown (>= 2.21),
     knitr (>= 1.42),
     ggraph,
@@ -47,5 +52,5 @@ VignetteBuilder: knitr
 Depends: 
     R (>= 3.5.0)
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
 License: MIT + file LICENSE

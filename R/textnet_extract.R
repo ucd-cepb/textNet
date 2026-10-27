@@ -11,10 +11,11 @@
 #' @param concatenator how entity parts are concatenated (defaults to "_")
 #' @param file location where a list object with an edgelist, nodelist, verblist, and appositivelist should be saved as .RDS file
 #' @param cl number of cores to crawl sentences in parallel (defaults to 1)
-#' @param keep_entities character vector of spacy entity types to retain, defaults to people (PERSON), organizations (ORG), and geographic entities (GPE)
+#' @param keep_entities character vector of spacy entity types to retain, defaults to people (PERSON), organizations (ORG), geographic entities (GPE), and nationalities/religious/political groups (NORP)
 #' @param return_to_memory boolean for whether function should return final result as workspace object
 #' @param keep_incomplete_edges Boolean. If TRUE, keeps edges with only a source or target but not both
 #' @param remove_neg Boolean. If TRUE, removes edges whose head token has a negation child
+#' @param progress logical; whether to show a progress bar while crawling sentences (default TRUE)
 #' @return A list with four objects:
 #' \itemize{
 #'    \item nodelist -- data.table of nodes and their attributes
@@ -64,9 +65,9 @@
 #'
 
 textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
-                                    keep_entities = c('ORG','GPE','PERSON'),
+                                    keep_entities = c('ORG','GPE','PERSON','NORP'),
                                     return_to_memory = TRUE, keep_incomplete_edges=FALSE,
-                                    remove_neg = TRUE) {
+                                    remove_neg = TRUE, progress = TRUE) {
 
   # Input validation
   if(!is.data.frame(x) && !is.data.table(x)) {
@@ -116,7 +117,6 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   x <- x[keep==TRUE,]
   x$doc_sent <- paste0(x$doc_id, "_", x$sentence_id)
 
-
   #entity_type <- entity <- iob <- entity_id <- .SD <- `:=` <- sentence_id <- doc_id <- NULL
   if (!"entity" %in% names(x)) {
     stop("no entities in parsed object: rerun spacy_parse() with entity = TRUE")
@@ -124,6 +124,10 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   
   sentence_splits <- split(x,x$doc_sent)
   print(paste0('crawling ',length(sentence_splits),' sentences'))
+  if (!progress) {
+    op <- pbapply::pboptions(type = "none")
+    on.exit(pbapply::pboptions(op), add = TRUE)
+  }
   parse_list <- pbapply::pblapply(sentence_splits,function(y) data.table::as.data.table(crawl_sentence(y)),cl = cl)
   x <- data.table::rbindlist(mapply(function(x,y) cbind(x,y),x = sentence_splits,y = parse_list,SIMPLIFY = FALSE))
   
@@ -141,15 +145,16 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   #in the non-matching tokens list and grab its entity_name; which is the full name of the appos. the 
   #abbrev is the entity_name of the appos group
   xappos <- x[x$source_or_target=="appos" & nchar(x$entity_name)>0 & x$entity_type%in%keep_entities,]
-  cat_splits <- split(xappos,list(xappos$doc_sent, xappos$entity_id),drop=TRUE)
-  apposlist <- pbapply::pblapply(cat_splits, function(z) {
+  # Build a keyed lookup for x by doc_sent + token_id
+  data.table::setkeyv(x, c("doc_sent", "token_id"))
+  cat_splits <- split(xappos, list(xappos$doc_sent, xappos$entity_id), drop=TRUE)
+  apposlist <- lapply(cat_splits, function(z) {
       anchor <- which(!(z$head_token_id %in% z$token_id))[1]
-      if(x[x$doc_sent==z$doc_sent[1] & x$token_id==z$head_token_id[anchor],"entity_type"]%in%keep_entities){
-        as.data.table(cbind(unname(z[1,"entity_name"]),
-                            unname(x[x$doc_sent==z$doc_sent[1] & x$token_id==z$head_token_id[anchor],"entity_name"])))
-        
+      match_row <- x[.(z$doc_sent[1], z$head_token_id[anchor])]
+      if(nrow(match_row) > 0 && match_row$entity_type[1] %in% keep_entities){
+        data.table::data.table(V1 = z$entity_name[1], V2 = match_row$entity_name[1])
       }
-  }, cl=cl)
+  })
   apposlist <- data.table::rbindlist(apposlist)
   
   #if it's not empty, it will have two columns, which we can name.
@@ -203,23 +208,23 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   
   sources <- source_target_list[has_sources==TRUE & source_or_target=='source',]
     
-  ## find sources associated with the unsourced verbs' parent verbs
-  adopted_source_ids <- lapply(seq_along(unsourced_verbs$doc_sent_parent), function(i)
-           grep(unsourced_verbs$doc_sent_parent[i],sources$doc_sent_verb, value=FALSE))
-  
-  #create a copy of the adopted sources, where the child doc_sent_verb 
-  #overwrites the original source's doc_sent_verb
-  adopted_sources <- lapply(seq_along(adopted_source_ids), function(i){
-      if(length(adopted_source_ids[[i]])>0){
-          tempsources <- sources[adopted_source_ids[[i]],]
-          tempsources$doc_sent_verb <- unsourced_verbs$doc_sent_verb[i]
-      }else{
-        tempsources <- NULL
-      }
-      tempsources
-  })
-    
-  adopted_sources_df <- data.table::rbindlist(adopted_sources, use.names=TRUE,fill=TRUE)
+  ## find sources associated with the unsourced verbs' parent verbs via merge
+  adopted_sources_df <- data.table::merge.data.table(
+    unsourced_verbs[, .(doc_sent_verb, doc_sent_parent)],
+    sources[, .(entity_name, entity_id, entity_type, source_or_target, doc_sent_verb_src = doc_sent_verb, doc_sent_parent, has_sources)],
+    by.x = "doc_sent_parent", by.y = "doc_sent_verb_src",
+    allow.cartesian = TRUE, all.x = FALSE, all.y = FALSE
+  )
+  if (nrow(adopted_sources_df) > 0) {
+    adopted_sources_df[, doc_sent_parent := doc_sent_parent.y]
+    adopted_sources_df[, doc_sent_parent.y := NULL]
+  } else {
+    adopted_sources_df <- data.table::data.table(
+      entity_name = character(), entity_id = numeric(), entity_type = character(),
+      source_or_target = character(), doc_sent_verb = character(),
+      doc_sent_parent = character(), has_sources = logical()
+    )
+  }
   
   #append it to the dataframe
 
@@ -243,7 +248,12 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   source_target_list[,row_id := 1:.N]
   #create all combos of source and target by doc_sent_verb
   st_pivot <- data.table::dcast(source_target_list,doc_sent_verb+row_id~source_or_target, value.var= "entity_name")
-  
+  # dcast only creates columns for values that actually exist in source_or_target;
+  # if a verb has only sources (or only targets), the other column will be absent
+  # and tidyr::expand() will error. Guard against this here.
+  if (!"source" %in% names(st_pivot)) st_pivot[, source := NA_character_]
+  if (!"target" %in% names(st_pivot)) st_pivot[, target := NA_character_]
+
   if(nrow(st_pivot)>0){
     st_pivot <- data.table::as.data.table(st_pivot %>% dplyr::group_by(.data$doc_sent_verb) %>% tidyr::expand(.data$source, .data$target))
     edgelist <- data.table::merge.data.table(st_pivot, verb_dt, by = c("doc_sent_verb"),all.x=FALSE, all.y=FALSE)
@@ -281,25 +291,26 @@ textnet_extract <- function (x, concatenator = "_",file = NULL,cl = 1,
   hedging_helpers <- c("may","might","can","could")
   hedging_verbs <- c("seem","appear","suggest","tend","assume","indicate","doubt","believe")
   if(nrow(edgelist)>0){
-    has_hedging_verb <- sapply(1:nrow(edgelist), function(z) (sum(match(hedging_verbs, 
-                                                                        edgelist$head_verb_lemma[[z]]), na.rm=TRUE)>0 | 
-                                                                sum(match(hedging_verbs, edgelist$xcomp_verb[[z]]), na.rm=TRUE)>0))
-    has_hedging_helper <- sapply(1:nrow(edgelist), function(z) (sum(match(hedging_helpers, 
-                                                                          edgelist$helper_lemma[[z]]), na.rm=TRUE)>0 | 
-                                                                  sum(match(hedging_helpers, edgelist$xcomp_helper_lemma[[z]]), na.rm=TRUE)>0)) #although xcomp_helpers shouldn't have any hedges
+    # Helper: check if any element in each list-column entry matches a word set
+    any_in <- function(lst, words) vapply(lst, function(el) any(el %in% words), logical(1))
+
+    has_hedging_verb <- edgelist$head_verb_lemma %in% hedging_verbs |
+                        any_in(edgelist$xcomp_verb, hedging_verbs)
+    has_hedging_helper <- any_in(edgelist$helper_lemma, hedging_helpers) |
+                          any_in(edgelist$xcomp_helper_lemma, hedging_helpers)
     future_helpers <- c("shall","will","wo","'ll")
-    has_future_helper <- sapply(1:nrow(edgelist), function(z) (sum(match(future_helpers, 
-                                                                         edgelist$helper_lemma[[z]]), na.rm=TRUE)>0 | 
-                                                                 sum(match(future_helpers, edgelist$xcomp_helper_lemma[[z]]), na.rm=TRUE)>0))#although xcomps shouldn't have any future helpers
+    has_future_helper <- any_in(edgelist$helper_lemma, future_helpers) |
+                         any_in(edgelist$xcomp_helper_lemma, future_helpers)
     be_tokens <- c("am","is","are","'m","'s","'re")
-    has_future_going <- sapply(1:nrow(edgelist), function(z){(
-      !is.null(edgelist$xcomp_verb[[z]]) && edgelist$head_verb_name[[z]]=="going" &&
-        (sum(match(be_tokens, edgelist$helper_lemma[[z]]), na.rm=TRUE)>0))
-    })
-    
+    has_future_going <- vapply(seq_len(nrow(edgelist)), function(z) {
+      length(edgelist$xcomp_verb[[z]]) > 0 &&
+        edgelist$head_verb_name[[z]] == "going" &&
+        any(edgelist$helper_lemma[[z]] %in% be_tokens)
+    }, logical(1))
+
     edgelist$has_hedge <- has_hedging_verb | has_hedging_helper
     edgelist$is_future <- has_future_helper | has_future_going
-    
+
     edgelist$doc_sent_parent <- NULL
     edgelist$head_verb_id <- NULL
     edgelist$parent_verb_id <- NULL

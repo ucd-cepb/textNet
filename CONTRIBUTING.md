@@ -2,17 +2,27 @@
 
 Use the following workflow to contribute to this package.
 
+The `main` branch holds the latest release, and development happens on the `dev` branch. Base your work on `dev` and submit pull requests against `dev`. Changes reach `main` only when a new version is released.
+
 1. Fork this repository.
 1. Clone your fork.
-1. Create a new branch with your contribution.
+1. Create a new branch from `dev` with your contribution.
 1. Run `devtools::load_all()` to test your changes to the code.
 1. Thoroughly update documentation for any changes made. To update documentation and NAMESPACE file `devtools::document()`.
 1. Test the installation. To reinstall the package: `pak::local_install()`.
 Note that the vignettes both end up slightly larger than `devtools::check()` prefers, so running as `devtools::check(build_args = "--compact-vignettes=both")` is preferred.
 1. Conduct tests of the new functionality using `testthat`. 
-1. Increment the package version number.
+1. Increment the development version number, i.e. the fourth component (`1.1.1.9000` becomes `1.1.1.9001`), for example with `usethis::use_dev_version()`. Do not change the release number; that is done only at release time.
+1. Add a bullet describing your change under the `# textNet (development version)` heading in NEWS.md.
 1. Stage and commit your changes with clear commit descriptions, then push to GitHub.
-1. Submit a Pull Request on this repo, including a clear description of the alterations.
+1. Submit a Pull Request against the `dev` branch of this repo, including a clear description of the alterations.
+
+# Releasing a new version
+
+1. On `dev`, drop the `.9000` suffix from the version in DESCRIPTION (e.g., `1.2.0`) and rename the NEWS heading to match (`# textNet 1.2.0`).
+1. Run `devtools::check()` and confirm it passes.
+1. Merge `dev` into `main`, tag the merge commit (e.g., `v1.2.0`), and publish a GitHub Release from the tag.
+1. On `dev`, run `usethis::use_dev_version()` to start the next development version.
 
 # Code style/formatting standards
 

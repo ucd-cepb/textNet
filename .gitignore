@@ -43,3 +43,8 @@ Temporary Items
 .claude
 /doc/
 /Meta/
+
+# compiled code
+src/*.o
+src/*.so
+src/*.dll

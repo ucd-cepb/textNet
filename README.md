@@ -21,7 +21,7 @@ respective network characteristics. Its flexibility allows for any
 desired entity categories, such as organizations, geopolitical entities,
 dates, or custom-defined categories, to be preserved.
 
-See paper/paper.pdf for an overview of the package functionality and potential use cases.  
+See paper/paper.pdf, the JOSS paper for v1.1.1, for an overview of the package functionality and potential use cases.  
 
 To demo the package, see vignettes/textNet_vignette_2025.pdf for a reproducible example that transforms raw text data into event networks.
 
@@ -31,7 +31,7 @@ Downloading packages from Github requires creating a Personal Access Token (PAT)
 
 For troubleshooting common problems with PAT, see: https://stackoverflow.com/questions/70908295/failed-to-install-unknown-package-from-github 
 
-You will also need RTools, if not already installed: https://cran.r-project.org/bin/windows/Rtools/
+textNet includes C++ code, so installing it from source requires a compiler. On Windows, install RTools if not already installed: https://cran.r-project.org/bin/windows/Rtools/. On macOS, install the Xcode command line tools (`xcode-select --install`).
 
 Install the `pak` package if you don't already have it:
 
@@ -39,10 +39,16 @@ Install the `pak` package if you don't already have it:
 install.packages("pak")
 ```
 
-Then install textNet from GitHub:
+Then install the latest release of textNet from GitHub:
 
 ```
 pak::pak('ucd-cepb/textNet')
+```
+
+To install the development version, which includes features not yet in a release (such as `parse_text_trf()`; see NEWS.md), install from the `dev` branch:
+
+```
+pak::pak('ucd-cepb/textNet@dev')
 ```
 
 Alternatively, clone this repo and install from within the project directory:
@@ -60,6 +66,14 @@ library(spacyr)
 spacy_install()
 spacy_download_langmodel('en_core_web_lg')
 ```
+For higher-accuracy parsing, `parse_text_trf()` uses spaCy's transformer model `en_core_web_trf` (and a GPU, if PyTorch can find one) instead of spacyr. It takes the same arguments as `parse_text()` and saves Parquet files, which `read_parsed_trf()` reads back. It requires the duckdb and DBI packages, plus the transformer model in the same Python environment:
+
+```
+pak::pak(c("duckdb", "DBI"))
+# in a shell, using the Python environment that has spaCy:
+python -m spacy download en_core_web_trf
+```
+
 Users of spaCy may encounter a variety of unique challenges with this process based on their particular computer setup. For assistance and guidance with common spaCy challenges, please see the spacyr documentation page: https://spacyr.quanteda.io/index.html, the spacy_install documentation page: https://spacyr.quanteda.io/reference/spacy_install.html and the spacyr README: https://cran.r-project.org/web/packages/spacyr/readme/README.html. Windows users experiencing challenges with permissions or access may benefit from this forum post: https://stackoverflow.com/questions/56974927/permission-denied-trying-to-run-python-on-windows-10
 
 A wrapper of pdftools is also included for convenience. Use of this wrapper 'pdf_clean' requires installation of pdftools, which in turn requires the poppler library. 

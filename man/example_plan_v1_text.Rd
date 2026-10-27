@@ -28,7 +28,7 @@ length(example_plan_v1_text)
 substr(example_plan_v1_text[1], 1, 200)
 
 # find acronyms defined in the text
-acronyms_v1 <- find_acronyms(example_plan_v1_text)
+acronyms_v1 <- find_intext_acronyms(example_plan_v1_text)
 head(acronyms_v1)
 }
 \keyword{datasets}

@@ -37,8 +37,8 @@ build_tofrom <- function(acronyms) {
   )
 }
 
-old_acronyms      <- find_acronyms(textNet::example_plan_v1_text)
-new_acronyms      <- find_acronyms(textNet::example_plan_v2_text)
+old_acronyms      <- find_intext_acronyms(textNet::example_plan_v1_text)
+new_acronyms      <- find_intext_acronyms(textNet::example_plan_v2_text)
 
 old_extract_clean <- disambiguate(
   textnet_extract      = extracts[[1]],
